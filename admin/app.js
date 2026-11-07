@@ -583,7 +583,8 @@ function autoPanel() {
   </section>
   <details class="card autolog" ${auto.length ? "open" : ""}><summary><h2>Envoyés automatiquement</h2><span class="chip">${auto.length}</span></summary>
     ${auto.length ? `<ul class="list">${auto.slice(0, 30).map((m, i) => { const p = pr(m); const rel = /relance/i.test(m.subject || ""); const rep = p.statut === "interesse" || p.statut === "client"; return `<li class="item click" style="--i:${i}" data-conv="${esc(m.to_email)}"><div><b>${esc(p.entreprise || m.to_email)}</b> <span class="chip ${rel ? "warn" : "info"}">${rel ? "Relance" : "1er mail"}</span>${rep ? ` <span class="chip ok">A répondu</span>` : p.statut === "pas_interesse" ? ` <span class="chip bad">STOP</span>` : ""}<small>${esc(m.subject || "")} · ${ago(m.date)}</small></div></li>`; }).join("")}</ul>` : `<p class="note">Rien encore. Les premiers mails partiront ${esc(autoNext(on, sentToday, max).replace(/^Prochain envoi : /, "").toLowerCase())}.</p>`}
-  </details>`;
+  </details>
+  ${Object.keys(triCounts()).length ? `<div class="card tri-card"><h2>Réponses triées automatiquement</h2><p class="note">Chaque réponse est lue et rangée toute seule : le prospect passe en « Intéressé » ou « Pas intéressé », et tu reçois une notif.</p>${triBar()}</div>` : `<div class="card tri-card"><h2>Réponses triées automatiquement</h2><p class="note">Dès qu'un prospect répond, sa réponse est rangée toute seule : ✅ partant, ❌ refus, 💬 à lire, 🏖️ absent ou 📭 adresse invalide. Le prospect change de colonne et tu reçois une notif.</p></div>`}`;
 }
 VIEWS.prospects = function () {
   const f = S.fPro || "actifs", q = (S.qPro || "").toLowerCase();
@@ -1074,12 +1075,24 @@ async function syncMail(manual) {
   } catch (e) { S.mailError = e.message; if (manual) toast("Mails : " + e.message); if (S.view === "messages") render(); }
 }
 const fmtWhen = (d) => { const t = new Date(d), n = new Date(); return t.toDateString() === n.toDateString() ? t.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : sDate(d); };
+
+/* ---------- Tri automatique des réponses (fait par la base à chaque mail reçu) ---------- */
+const CAT = { accepte: ["✅ Partant", "ok"], question: ["💬 À lire", "info"], refus: ["❌ Refus", "bad"], absence: ["🏖️ Absent", "warn"], non_distribue: ["📭 Adresse invalide", "bad"] };
+const catOf = (c) => { const m = c.msgs.filter((x) => x.direction === "in" && x.categorie).sort((a, b) => (b.date || "").localeCompare(a.date || ""))[0]; return m ? m.categorie : null; };
+const catChip = (k) => k && CAT[k] ? ` <span class="chip ${CAT[k][1]}">${CAT[k][0]}</span>` : "";
+function triCounts() { const n = {}; D.messages.forEach((m) => { if (m.direction === "in" && m.categorie) n[m.categorie] = (n[m.categorie] || 0) + 1; }); return n; }
+function triBar() {
+  const n = triCounts(), tot = Object.values(n).reduce((a, b) => a + b, 0), f = S.msgCat || "";
+  return `<div class="tri"><span class="tri-l">Tri auto des réponses</span>${[["", "Toutes"], ["accepte", CAT.accepte[0]], ["question", CAT.question[0]], ["refus", CAT.refus[0]], ["absence", CAT.absence[0]], ["non_distribue", CAT.non_distribue[0]]].filter((x) => !x[0] || n[x[0]]).map((x) => `<button type="button" class="tri-b ${f === x[0] ? "on" : ""}" data-msgcat="${x[0]}">${x[1]}${x[0] ? ` <b>${n[x[0]]}</b>` : tot ? ` <b>${tot}</b>` : ""}</button>`).join("")}</div>`;
+}
+document.addEventListener("click", (e) => { const b = e.target.closest("[data-msgcat]"); if (!b) return; S.msgCat = b.dataset.msgcat; if (S.view !== "messages") { location.hash = "#messages"; } else render(); });
 VIEWS.messages = function () {
-  const arch = !!S.msgArch, list = convs(arch);
+  const arch = !!S.msgArch, list = convs(arch).filter((c) => !S.msgCat || catOf(c) === S.msgCat);
   return `<div class="head"><div><h1>Messages</h1><p>Les mails reçus sur contact@tissaweb.fr, rangés par personne. Ils restent aussi dans ta boîte mail.</p></div>
   <div class="actions"><button class="btn primary" type="button" data-compose-new>+ Nouveau mail</button><button class="btn" type="button" data-syncmail>Actualiser</button><button class="btn ghost" type="button" data-msgarch>${arch ? "Voir la boîte de réception" : "Voir les archives"}</button></div></div>
   ${S.mailError ? `<p class="alert warn" style="margin-bottom:12px">Lecture des mails impossible : ${esc(S.mailError)}. Vérifie les secrets dans Supabase (étape 5 du guide).</p>` : ""}
-  <ul class="list">${list.length ? list.map((c) => `<li class="item click ${c.unread ? "info" : ""}" data-conv="${esc(c.email)}"><div><b>${esc(c.name)}</b>${c.last.boite === "equipe" ? ' <span class="chip">equipe@</span>' : ""}${c.unread ? ` <span class="chip info">${c.unread} non lu${c.unread > 1 ? "s" : ""}</span>` : ""}<small>${esc(c.last.subject || "")} · ${esc((c.last.body || "").replace(/\s+/g, " ").slice(0, 90))}</small></div><small class="num">${fmtWhen(c.last.date)}</small></li>`).join("") : `<li class="item"><div class="empty"><h3>${arch ? "Aucune archive" : "Aucun message"}</h3>${arch ? "" : "Les mails reçus sur contact@ apparaissent ici toutes les 2 minutes."}</div></li>`}</ul>`;
+  ${triBar()}
+  <ul class="list">${list.length ? list.map((c) => `<li class="item click ${c.unread ? "info" : ""}" data-conv="${esc(c.email)}"><div><b>${esc(c.name)}</b>${catChip(catOf(c))}${c.last.boite === "equipe" ? ' <span class="chip">equipe@</span>' : ""}${c.unread ? ` <span class="chip info">${c.unread} non lu${c.unread > 1 ? "s" : ""}</span>` : ""}<small>${esc(c.last.subject || "")} · ${esc((c.last.body || "").replace(/\s+/g, " ").slice(0, 90))}</small></div><small class="num">${fmtWhen(c.last.date)}</small></li>`).join("") : `<li class="item"><div class="empty"><h3>${arch ? "Aucune archive" : "Aucun message"}</h3>${arch ? "" : "Les mails reçus sur contact@ apparaissent ici toutes les 2 minutes."}</div></li>`}</ul>`;
 };
 function sheetConversation(email) {
   S.convEmail = email;
@@ -1088,7 +1101,7 @@ function sheetConversation(email) {
     const last = msgs[msgs.length - 1] || {}, lastIn = msgs.filter((m) => m.direction === "in").pop();
     const c = D.clients.find((x) => (x.email || "").toLowerCase() === email);
     return `<div class="row"><span class="note">${esc(email)}</span>${c ? `<a class="btn sm" href="#client/${c.id}">Fiche client</a>` : `<button class="btn sm" type="button" data-conv2client="${esc(email)}">Créer le client</button>`}</div>
-    <div class="thread">${msgs.map((m) => `<div class="bubble ${m.direction}"><div class="bh"><b>${esc(m.direction === "in" ? (m.from_name || m.from_email) : "TissaWeb" + (m.auteur ? " · " + m.auteur : ""))}</b><small>${new Date(m.date).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</small></div><div class="bs">${esc(m.subject || "")}</div><div class="bb">${esc(m.body || "")}</div>${(m.pieces_jointes || []).length ? `<small class="note">📎 ${esc(m.pieces_jointes.join(", "))}</small>` : m.has_attachments ? `<small class="note">📎 Pièce jointe : à voir dans ta boîte mail</small>` : ""}<div class="bact"><button class="linkbtn danger" type="button" data-danger data-delmsg="${m.id}">Supprimer</button></div></div>`).join("")}</div>
+    <div class="thread">${msgs.map((m) => `<div class="bubble ${m.direction}"><div class="bh"><b>${esc(m.direction === "in" ? (m.from_name || m.from_email) : "TissaWeb" + (m.auteur ? " · " + m.auteur : ""))}</b>${m.direction === "in" ? catChip(m.categorie) : ""}<small>${new Date(m.date).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</small></div><div class="bs">${esc(m.subject || "")}</div><div class="bb">${esc(m.body || "")}</div>${(m.pieces_jointes || []).length ? `<small class="note">📎 ${esc(m.pieces_jointes.join(", "))}</small>` : m.has_attachments ? `<small class="note">📎 Pièce jointe : à voir dans ta boîte mail</small>` : ""}<div class="bact"><button class="linkbtn danger" type="button" data-danger data-delmsg="${m.id}">Supprimer</button></div></div>`).join("")}</div>
     <div class="card"><h2>Répondre</h2>${composerHTML({ to: email, from: (lastIn || last).boite || "contact", subject: /^re\s*:/i.test(last.subject || "") ? last.subject : "Re: " + (last.subject || ""), body: "", client_id: c ? c.id : null, prospect_id: (D.prospects.find((x) => (x.email || "").toLowerCase() === email) || {}).id || null, in_reply_to: lastIn ? lastIn.message_id : null })}</div>
     <div class="actions"><button class="btn ghost" type="button" data-convarch="${esc(email)}">${msgs.every((m) => m.archive) ? "Désarchiver" : "Archiver la conversation"}</button><button class="btn ghost danger" type="button" data-danger data-convdel="${esc(email)}">Supprimer la conversation</button></div>`;
   });
