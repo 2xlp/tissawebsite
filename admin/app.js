@@ -278,6 +278,13 @@ function render() {
   if (S.after) { const f = S.after; S.after = null; f(); }
 }
 
+
+/* ---------- Graphique en vraie 3D (barres qui sortent du sol) ---------- */
+function bars3d(steps, opt) {
+  opt = opt || {}; const top = Math.max(1, ...steps.map((x) => x[1])), H = opt.h || 130;
+  return `<div class="b3 ${opt.dark ? "dark" : ""}"><div class="b3-scene"><div class="b3-plate">${steps.map((x, i) => `<div class="b3-bar" style="--i:${i};--hh:${Math.max(8, Math.round(Math.sqrt(x[1] / top) * H))}px;--c:${x[2]}"><i class="t"></i><i class="f"></i><i class="r"></i></div>`).join("")}</div></div>
+    <div class="b3-leg">${steps.map((x) => `<span><i style="background:${x[2]}"></i>${x[0]} <b class="num" data-count="${x[1]}">${x[1]}</b></span>`).join("")}</div></div>`;
+}
 /* ---------- Cockpit du tableau de bord (bandeau vivant) ---------- */
 function cockpitHTML(nTodo) {
   const h = new Date().getHours(), me = S.me ? S.me.nom.split(" ")[0] : "";
@@ -287,7 +294,9 @@ function cockpitHTML(nTodo) {
   const today0 = auto.filter((m) => new Date(m.date) > new Date(Date.now() - 20 * 3600000)).length;
   const dem = D.demandes.filter((d) => d.statut === "nouvelle").length, un = unread(), rel = D.prospects.filter((p) => prState(p)[0] === "À relancer").length;
   const chips = [[dem, "nouvelle(s) demande(s)", "#demandes"], [un, "mail(s) non lu(s)", "#messages"], [rel, "prospect(s) à relancer", "#prospects"]].filter((x) => x[0]);
-  return `<section class="cockpit" id="cockpit"><div class="ck-fx" id="ckFx" aria-hidden="true"></div>
+  const np = (k) => D.prospects.filter((p) => p.statut === k).length;
+  const b3 = bars3d([["À contacter", np("a_contacter"), "#5E6B65"], ["Contactés", np("contacte"), "#4C8DDB"], ["Intéressés", np("interesse"), "#3DDC97"], ["Clients", np("client"), "#F2C14E"]], { dark: true, h: 120 });
+  return `<section class="cockpit" id="cockpit"><div class="ck-fx" id="ckFx" aria-hidden="true"></div><div class="ck-3d" aria-hidden="true">${b3}</div>
     <div class="ck-in"><div class="ck-top"><span class="eyebrow">${frDate(today())}</span><span class="ck-clock num" id="ckClock"></span></div>
       <h1>${hello} ${esc(me)}</h1>
       <p>${nTodo ? `${nTodo} chose${nTodo > 1 ? "s" : ""} à faire aujourd'hui, listée${nTodo > 1 ? "s" : ""} plus bas dans l'ordre.` : "Rien d'urgent : tout est à jour."}</p>
@@ -417,7 +426,7 @@ function navPill() {
   pill.style.opacity = 1; pill.style.transform = `translateY(${a.offsetTop}px)`; pill.style.height = a.offsetHeight + "px";
 }
 /* ---------- Relief 3D : les cartes s'inclinent sous la souris ---------- */
-if (matchMedia("(hover: hover) and (pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
   let cur = null;
   document.addEventListener("pointermove", (e) => {
     const el = e.target.closest && e.target.closest(".kpi,.pilot > *,.pc,.cockpit,.pv-stage,.grid2 > .card");
@@ -527,7 +536,7 @@ function autoPanel() {
   const pr = (m) => D.prospects.find((p) => p.id === m.prospect_id) || D.prospects.find((p) => (p.email || "").toLowerCase() === (m.to_email || "").toLowerCase()) || {};
   return `<section class="pilot" aria-label="Progression de la prospection">
     <div class="pilot-ring" style="--p:${pct}"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="trk"/><circle cx="60" cy="60" r="52" class="val" pathLength="100"/></svg><div><b class="num" data-count="${pct}">${pct}</b><span>%</span><small>des prospects avec mail déjà contactés</small></div></div>
-    <div class="pilot-funnel">${steps.map((x, i) => `<div class="fn ${x[2]}" style="--w:${Math.max(4, Math.round(x[1] / top * 100))}%;--i:${i}"><span>${x[0]}</span><b class="num" data-count="${x[1]}">${x[1]}</b><i></i></div>`).join("")}</div>
+    <div class="pilot-funnel">${bars3d(steps.map((x) => [x[0], x[1], x[2] === "info" ? "#4C8DDB" : x[2] === "ok" ? "#0B7A55" : "#8A9690"]), { h: 110 })}</div>
     <div class="pilot-auto ${on ? "on" : "off"}"><div class="pa-head"><span class="pulse" aria-hidden="true"></span><b>Pilote auto ${on ? "activé" : "coupé"}</b></div>
       <p>${esc(autoNext(on, sentToday, max))}</p>
       <div class="pa-stats"><div><b class="num">${sentToday}/${max}</b><small>aujourd'hui</small></div><div><b class="num">${auto.length}</b><small>envoyés au total</small></div><div><b class="num">${q.length}</b><small>en file</small></div></div>

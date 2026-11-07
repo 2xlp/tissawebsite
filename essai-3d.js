@@ -9,9 +9,9 @@
     '.t3-floor{position:absolute;left:-50%;right:-50%;bottom:-30%;height:90%;background-image:linear-gradient(rgba(61,220,151,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(61,220,151,.16) 1px,transparent 1px);background-size:70px 70px;transform:perspective(700px) rotateX(72deg);transform-origin:50% 0;mask-image:linear-gradient(transparent,#000 30%,#000 60%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 30%,#000 60%,transparent);animation:t3Floor 6s linear infinite}' +
     '@keyframes t3Floor{to{background-position:0 70px}}' +
     '.t3-cam{position:absolute;inset:0;display:grid;place-items:center;perspective:1700px;perspective-origin:50% 38%}' +
-    '.t3-world{position:relative;width:min(64vw,880px);aspect-ratio:16/10;transform-style:preserve-3d;transform:translateY(var(--ty,-4vh)) rotateX(var(--rx,58deg)) rotateY(var(--ry,0deg)) rotateZ(var(--rz,-28deg)) scale(var(--s,.8));transition:transform 1.6s cubic-bezier(.65,0,.25,1)}' +
+    '.t3-world{position:relative;width:min(64vw,880px);aspect-ratio:16/10;transform-style:preserve-3d;transform:translateY(var(--ty,-4vh)) rotateX(var(--rx,58deg)) rotateY(var(--ry,0deg)) rotateZ(var(--rz,-28deg)) scale(var(--s,.8));transition:transform 1.1s cubic-bezier(.65,0,.25,1)}' +
     '.tw3d.dive .t3-world{transition:transform 1.4s cubic-bezier(.7,0,.3,1),opacity .6s ease .9s;transform:translateY(0) rotateX(0) rotateZ(0) scale(3.2);opacity:0}' +
-    '.t3-l{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(var(--z,900px));opacity:var(--o,0);transition:transform 1.3s cubic-bezier(.3,1.25,.4,1),opacity .6s ease}' +
+    '.t3-l{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(var(--z,900px));opacity:var(--o,0);transition:transform .9s cubic-bezier(.3,1.25,.4,1),opacity .6s ease}' +
     '.t3-l .gsite{border-radius:6px}' +
     '.t3-l[data-l=base] .gsite{box-shadow:0 0 0 1px rgba(61,220,151,.5),0 60px 120px -30px rgba(0,0,0,.9)}' +
     '.t3-l:not([data-l=base]) .gsite{background:transparent!important;overflow:visible}' +
@@ -60,15 +60,12 @@
   function steps(nom, d) {
     var slug = E.slug(nom);
     return [
-      { cap: "On réserve votre adresse", p: slug + ".fr : l'adresse que vos clients taperont. Elle est à votre nom, et elle vous appartient.", show: ["base"], url: 1, cam: { rx: 58, rz: -28, s: .78 }, hl: "base" },
-      { cap: "Votre nom, tout en haut", p: "Dès la première seconde, le client sait qu'il est chez vous. Le menu l'emmène où il veut.", show: ["nav"], cam: { rx: 52, rz: -22, s: .82 }, hl: "nav" },
-      { cap: "Un titre qui dit tout", p: "En quelques secondes, il comprend ce que vous faites et pourquoi venir chez vous plutôt qu'ailleurs.", show: ["title"], cam: { rx: 48, rz: -14, s: .86 }, hl: "title" },
-      { cap: "Le bouton qui fait sonner votre téléphone", p: "« " + d.b1 + " » : le geste le plus important du site. Toujours visible, en un seul clic.", show: ["act"], cam: { rx: 44, rz: -8, s: .9 }, hl: "act" },
-      { cap: "Votre univers", p: "Vos photos, vos prix, vos spécialités. Le client se projette avant même de venir.", show: ["vis"], cam: { rx: 42, rz: 4, s: .88 }, hl: "vis" },
-      { cap: "Vos avis Google", p: "Les étoiles rassurent : la plupart des clients lisent les avis avant de choisir un commerce.", show: ["rev"], cam: { rx: 46, rz: 12, s: .86 }, hl: "rev" },
-      { cap: "Chaque pièce a un rôle", p: "Tout est pensé pour une seule chose : que le visiteur vous appelle, réserve ou passe vous voir.", explode: 1, cam: { rx: 50, ry: 0, rz: 24, s: .7 } },
-      { cap: "Et parfait sur téléphone", p: "Une grande partie des recherches se fait sur mobile, souvent juste avant d'appeler. Le bouton reste sous le pouce.", phone: 1, cam: { rx: 18, rz: -6, s: .9 } },
-      { cap: "Votre site est prêt", p: "Assemblé, testé, mis en ligne et visible sur Google. Comptez 7 jours.", flat: 1, cam: { rx: 0, rz: 0, s: 1, ty: 0 } }
+      { cap: "Votre adresse et votre nom", p: slug + ".fr, à votre nom. Le client sait tout de suite qu'il est chez vous.", show: ["base", "nav"], url: 1, cam: { rx: 55, rz: -24, s: .8 }, hl: "nav" },
+      { cap: "Un titre clair + le bouton d'appel", p: "Il comprend ce que vous faites, et « " + d.b1 + " » est à un clic.", show: ["title", "act"], cam: { rx: 46, rz: -10, s: .86 }, hl: "act" },
+      { cap: "Votre univers et vos avis", p: "Vos prix, vos photos, vos étoiles Google : il est rassuré avant de venir.", show: ["vis", "rev"], cam: { rx: 44, rz: 8, s: .86 }, hl: "rev" },
+      { cap: "Chaque pièce a un rôle", p: "Tout est pensé pour qu'il vous appelle, réserve ou passe vous voir.", explode: 1, cam: { rx: 50, ry: 0, rz: 24, s: .7 } },
+      { cap: "Parfait sur téléphone", p: "Le bouton d'appel reste sous le pouce.", phone: 1, cam: { rx: 18, rz: -6, s: .9 } },
+      { cap: "En ligne en 7 jours", p: "Assemblé, testé et visible sur Google.", flat: 1, cam: { rx: 0, rz: 0, s: 1, ty: 0 } }
     ];
   }
 
@@ -113,13 +110,13 @@
       if (s.phone) world.style.setProperty("--uz", "40px");
       if (s.phone || s.flat) { world.style.setProperty("--pz", s.flat ? "60px" : "140px"); world.style.setProperty("--po", 1); world.style.setProperty("--pr", s.flat ? "0deg" : "-18deg"); }
       if (s.flat) { world.style.setProperty("--uz", "0px"); world.style.setProperty("--uo", 0); el.querySelector(".t3-wire").style.setProperty("--w", 0); }
-      timer = setTimeout(function () { go(n + 1); }, s.flat ? 2600 : n === 0 ? 3200 : 3000);
+      timer = setTimeout(function () { go(n + 1); }, s.flat ? 1300 : 1700);
     }
     function finish() {
       if (closed) return; clearTimeout(timer);
       E.render(el.querySelector(".t3-full .t3-gs"), t, nom);
       el.classList.add("dive");
-      timer = setTimeout(function () { el.classList.add("done"); }, reduce ? 0 : 1100);
+      timer = setTimeout(function () { el.classList.add("done"); }, reduce ? 0 : 900);
       try { window.twTrack && window.twTrack("essai_3d_fin", t); } catch (e) {}
     }
     function close() { closed = true; clearTimeout(timer); el.classList.remove("on"); document.documentElement.style.overflow = ""; document.removeEventListener("keydown", key); setTimeout(function () { el.remove(); }, 500); }
@@ -136,7 +133,7 @@
     requestAnimationFrame(function () { el.classList.add("on"); });
     try { window.twTrack && window.twTrack("essai_3d", t); } catch (e) {}
     if (reduce) { Object.keys(L).forEach(function (k) { shown[k] = 1; layer(k, 0, 1); }); finish(); return { close: close }; }
-    setTimeout(function () { go(0); }, 350);
+    setTimeout(function () { go(0); }, 150);
     return { close: close };
   }
   E.cinema = cinema;

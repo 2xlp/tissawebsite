@@ -796,8 +796,16 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
         <li><span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></span>Le site et le nom de domaine sont à vous</li>
       </ul>
     </div>
-
-
+    <div class="hero-3d" aria-hidden="true">
+      <div class="h3-tilt"><div class="h3-ring">
+        <figure class="h3-card" style="--i:0"><div class="h3-bar"><i></i><i></i><i></i><span>le-petrin.fr</span></div><img src="img/demo-boulangerie.jpg" alt="" width="960" height="600" decoding="async"></figure>
+        <figure class="h3-card" style="--i:1"><div class="h3-bar"><i></i><i></i><i></i><span>maison-lucien.fr</span></div><img src="img/demo-barbier.jpg" alt="" width="960" height="600" decoding="async"></figure>
+        <figure class="h3-card" style="--i:2"><div class="h3-bar"><i></i><i></i><i></i><span>lambert-plomberie.fr</span></div><img src="img/demo-plombier.jpg" alt="" width="960" height="600" decoding="async"></figure>
+        <figure class="h3-card" style="--i:3"><div class="h3-bar"><i></i><i></i><i></i><span>maxime-roche.fr</span></div><img src="img/demo-coach.jpg" alt="" width="960" height="600" decoding="async"></figure>
+      </div></div>
+      <div class="h3-floor"></div>
+      <p class="h3-legend">Nos sites de démonstration · glissez pour les faire défiler</p>
+    </div>
   </div>
 </section>
 
@@ -821,7 +829,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
         <button type="button" role="radio" aria-checked="false" data-m="coach">Coach / sport</button>
         <button type="button" role="radio" aria-checked="false" data-m="boutique">Boutique</button>
       </div>
-      <button type="button" class="sl-3d" id="sl3d"><span class="sl-3d-ic" aria-hidden="true">▶</span><span><b>Voir mon site se construire en 3D</b><small>Étape par étape, expliqué · 25 secondes</small></span></button>
+      <button type="button" class="sl-3d" id="sl3d"><span class="sl-3d-ic" aria-hidden="true">▶</span><span><b>Voir mon site se construire en 3D</b><small>Étape par étape, expliqué · 10 secondes</small></span></button>
       <ul class="sl-points">
         <li><b>Sur ordinateur et sur téléphone</b>, prêt à recevoir des appels</li>
         <li><b>Votre nom, vos horaires, vos avis Google</b> réunis au même endroit</li>
@@ -1993,5 +2001,77 @@ addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{p
 </script>
 <!-- ===== fin immersion ===== -->
 
+
+<style>
+/* ===== Hero 3D : pile de nos sites en relief, qui défile toute seule ===== */
+@media (min-width:1100px){
+  .hero-solo .wrap{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);max-width:1280px;gap:40px}
+  .hero-solo h1{font-size:clamp(2.8rem,4.6vw,4.6rem)}
+}
+.hero:has(.hero-3d) .hero-bg{opacity:.1}
+.hero-3d{position:relative;height:clamp(320px,34vw,480px);perspective:1300px;perspective-origin:30% 40%;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.hero-3d:active{cursor:grabbing}
+.h3-tilt{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.h3-ring{position:absolute;inset:0;transform-style:preserve-3d;animation:h3Float 7s ease-in-out infinite}
+@keyframes h3Float{50%{transform:translateY(-12px) rotateZ(.6deg)}}
+.h3-card{position:absolute;margin:0;left:12%;top:16%;width:72%;aspect-ratio:16/11;border-radius:12px;overflow:hidden;background:#1A2420;transform-origin:50% 50%;
+  --x:calc(var(--p) * -11%);--y:calc(var(--p) * -9%);--z:calc(var(--p) * -150px);
+  transform:translate3d(var(--x),var(--y),var(--z)) rotateY(-26deg) rotateX(8deg);opacity:calc(1 - var(--p) * .18);filter:brightness(calc(1 - var(--p) * .22));
+  transition:transform 1s cubic-bezier(.3,1.15,.4,1),opacity .8s ease,filter .8s ease;
+  box-shadow:0 0 0 1px rgba(255,255,255,.12),0 50px 90px -30px rgba(0,0,0,.95)}
+.h3-card.out{transform:translate3d(60%,10%,260px) rotateY(-50deg) rotateX(4deg);opacity:0;transition:transform .7s cubic-bezier(.6,0,.4,1),opacity .6s ease}
+.h3-card.back{transition:none}
+.h3-bar{display:flex;align-items:center;gap:5px;height:9%;padding:0 10px;background:#202B26}
+.h3-bar i{width:7px;height:7px;border-radius:50%;background:#3A4842}
+.h3-bar span{margin-left:8px;font:500 11px var(--body);color:#C9D3CD;background:#141C19;border-radius:5px;padding:2px 8px}
+.h3-card img{display:block;width:100%;height:91%;object-fit:cover;object-position:top;pointer-events:none}
+.h3-card::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.14),transparent 40%);pointer-events:none}
+.h3-floor{position:absolute;left:8%;right:8%;bottom:0;height:70px;border-radius:50%;background:radial-gradient(closest-side,rgba(61,220,151,.3),transparent);filter:blur(10px)}
+.h3-legend{position:absolute;left:0;right:0;bottom:-8px;text-align:center;font-size:.8rem;color:#7D8C85;margin:0}
+@media (max-width:1099px){
+  .hero-3d{margin:4px 0 26px;height:min(66vw,420px)}
+  .hero-solo .wrap{row-gap:0}
+  .hero-solo .hero-text{display:contents}
+  .hero-solo .hero-text > *{order:3}
+  .hero-solo .hero-text > .badge,.hero-solo .hero-text > .kicker,.hero-solo .hero-text > h1{order:1}
+  .hero-solo .hero-3d{order:2}
+}
+@media (prefers-reduced-motion:reduce){.h3-ring{animation:none}.h3-card{transition:none}}
+/* apparitions en 3D partout sur la page */
+@media (prefers-reduced-motion:no-preference){
+  .js .reveal{transform:perspective(1000px) translateY(46px) rotateX(16deg);transform-origin:50% 100%;transition:opacity .8s ease,transform 1s cubic-bezier(.2,.8,.2,1)}
+  .js .reveal.in{transform:none}
+}
+</style>
+<script>
+(function () {
+  var box = document.querySelector(".hero-3d"); if (!box) return;
+  var tilt = box.querySelector(".h3-tilt"), cards = Array.prototype.slice.call(box.querySelectorAll(".h3-card"));
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches, order = cards.slice(), timer = 0, busy = false, visible = true;
+  function place() { order.forEach(function (c, p) { c.style.setProperty("--p", p); c.style.zIndex = 10 - p; }); }
+  function next() {
+    if (busy) return; busy = true; var f = order.shift(); f.classList.add("out");
+    setTimeout(function () { f.classList.add("back"); f.classList.remove("out"); order.push(f); place(); void f.offsetWidth; f.classList.remove("back"); busy = false; }, 650);
+    place();
+  }
+  function prev() { if (busy) return; var l = order.pop(); order.unshift(l); place(); }
+  function loop() { clearInterval(timer); if (!reduce) timer = setInterval(function () { if (visible && !document.hidden) next(); }, 3200); }
+  place(); loop();
+  if ("IntersectionObserver" in window) new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(box);
+  var sx = 0, down = false;
+  box.addEventListener("pointerdown", function (e) { down = true; sx = e.clientX; });
+  box.addEventListener("pointerup", function (e) { if (!down) return; down = false; var dx = e.clientX - sx; if (Math.abs(dx) > 30) { dx < 0 ? next() : prev(); loop(); } else { next(); loop(); } });
+  box.addEventListener("pointercancel", function () { down = false; });
+  box.addEventListener("pointermove", function (e) {
+    if (reduce || e.pointerType !== "mouse") return;
+    var r = box.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+    tilt.style.transform = "rotateX(" + (-y * 14).toFixed(2) + "deg) rotateY(" + (x * 18).toFixed(2) + "deg)";
+  });
+  box.addEventListener("pointerleave", function () { tilt.style.transform = ""; down = false; });
+  if (!reduce) addEventListener("scroll", function () {
+    var k = Math.min(1, scrollY / 600); box.style.transform = "translateY(" + (k * 50).toFixed(1) + "px) rotateX(" + (k * 22).toFixed(1) + "deg) scale(" + (1 - k * .1).toFixed(3) + ")";
+  }, { passive: true });
+})();
+</script>
 </body>
 </html>
