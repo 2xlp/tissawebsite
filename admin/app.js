@@ -1077,18 +1077,18 @@ async function syncMail(manual) {
 const fmtWhen = (d) => { const t = new Date(d), n = new Date(); return t.toDateString() === n.toDateString() ? t.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : sDate(d); };
 
 /* ---------- Tri automatique des réponses (fait par la base à chaque mail reçu) ---------- */
-const CAT = { accepte: ["✅ Partant", "ok"], question: ["💬 À lire", "info"], refus: ["❌ Refus", "bad"], absence: ["🏖️ Absent", "warn"], non_distribue: ["📭 Adresse invalide", "bad"] };
+const CAT = { accepte: ["✅ Partant", "ok"], question: ["💬 À lire", "info"], refus: ["❌ Refus", "bad"], absence: ["🏖️ Absent", "warn"], non_distribue: ["📭 Adresse invalide", "bad"], pub: ["📰 Pubs & notifs", ""], spam: ["🚫 Spam", "bad"] };
 const catOf = (c) => { const m = c.msgs.filter((x) => x.direction === "in" && x.categorie).sort((a, b) => (b.date || "").localeCompare(a.date || ""))[0]; return m ? m.categorie : null; };
 const catChip = (k) => k && CAT[k] ? ` <span class="chip ${CAT[k][1]}">${CAT[k][0]}</span>` : "";
 function triCounts() { const n = {}; D.messages.forEach((m) => { if (m.direction === "in" && m.categorie) n[m.categorie] = (n[m.categorie] || 0) + 1; }); return n; }
 function triBar() {
-  const n = triCounts(), tot = Object.values(n).reduce((a, b) => a + b, 0), f = S.msgCat || "";
-  return `<div class="tri"><span class="tri-l">Tri auto des réponses</span>${[["", "Toutes"], ["accepte", CAT.accepte[0]], ["question", CAT.question[0]], ["refus", CAT.refus[0]], ["absence", CAT.absence[0]], ["non_distribue", CAT.non_distribue[0]]].filter((x) => !x[0] || n[x[0]]).map((x) => `<button type="button" class="tri-b ${f === x[0] ? "on" : ""}" data-msgcat="${x[0]}">${x[1]}${x[0] ? ` <b>${n[x[0]]}</b>` : tot ? ` <b>${tot}</b>` : ""}</button>`).join("")}</div>`;
+  const n = triCounts(), tot = Object.entries(n).filter(([k]) => !["pub", "spam"].includes(k)).reduce((a, [, b]) => a + b, 0), f = S.msgCat || "";
+  return `<div class="tri"><span class="tri-l">Tri auto des réponses</span>${[["", "Toutes"], ["accepte", CAT.accepte[0]], ["question", CAT.question[0]], ["refus", CAT.refus[0]], ["absence", CAT.absence[0]], ["non_distribue", CAT.non_distribue[0]], ["pub", CAT.pub[0]], ["spam", CAT.spam[0]]].filter((x) => !x[0] || n[x[0]]).map((x) => `<button type="button" class="tri-b ${f === x[0] ? "on" : ""}" data-msgcat="${x[0]}">${x[1]}${x[0] ? ` <b>${n[x[0]]}</b>` : tot ? ` <b>${tot}</b>` : ""}</button>`).join("")}</div>`;
 }
 document.addEventListener("click", (e) => { const b = e.target.closest("[data-msgcat]"); if (!b) return; S.msgCat = b.dataset.msgcat; if (S.view !== "messages") { location.hash = "#messages"; } else render(); });
 VIEWS.messages = function () {
-  const arch = !!S.msgArch, list = convs(arch).filter((c) => !S.msgCat || catOf(c) === S.msgCat);
-  return `<div class="head"><div><h1>Messages</h1><p>Les mails reçus sur contact@tissaweb.fr, rangés par personne. Ils restent aussi dans ta boîte mail.</p></div>
+  const arch = !!S.msgArch, list = convs(arch || ["pub", "spam"].includes(S.msgCat)).filter((c) => !S.msgCat || catOf(c) === S.msgCat);
+  return `<div class="head"><div><h1>Messages</h1><p>Les mails reçus, rangés par personne. Les pubs, notifications et spams sont triés et archivés tout seuls.</p></div>
   <div class="actions"><button class="btn primary" type="button" data-compose-new>+ Nouveau mail</button><button class="btn" type="button" data-syncmail>Actualiser</button><button class="btn ghost" type="button" data-msgarch>${arch ? "Voir la boîte de réception" : "Voir les archives"}</button></div></div>
   ${S.mailError ? `<p class="alert warn" style="margin-bottom:12px">Lecture des mails impossible : ${esc(S.mailError)}. Vérifie les secrets dans Supabase (étape 5 du guide).</p>` : ""}
   ${triBar()}
