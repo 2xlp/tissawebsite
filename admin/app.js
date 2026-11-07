@@ -272,7 +272,7 @@ function render() {
   setBadges();
   const v = VIEWS[S.view] || VIEWS.accueil;
   const el = $("view"), changed = S._lastView !== S.view; S._lastView = S.view;
-  el.innerHTML = v();
+  el.innerHTML = v(); flipKpis(el);
   if (changed) { el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter"); countUp(el); }
   cockpitFx(); requestAnimationFrame(navPill);
   if (S.after) { const f = S.after; S.after = null; f(); }
@@ -441,6 +441,21 @@ function celebrate(msg, small) {
   if (typeof DeviceOrientationEvent !== "undefined" && (typeof DeviceOrientationEvent.requestPermission !== "function" || localStorage.getItem("tw-gyro") === "1")) addEventListener("deviceorientation", onOri);
 })();
 document.addEventListener("click", (e) => { if (e.target.closest("[data-gyro]") && window.TW3D) TW3D.ask(); });
+
+/* ---------- Cartes de chiffres qui se retournent en 3D (touche ou clic) ---------- */
+function flipKpis(root) {
+  const box = root.querySelector("[data-flipkpis]"); if (!box) return;
+  const mk = monthKey(), list = D.pieces.filter(mine), prev = new Date(); prev.setMonth(prev.getMonth() - 1); const pk = prev.toISOString().slice(0, 7);
+  const encPrev = list.filter((p) => p.type === "facture" && p.statut === "payee" && (p.paye_le || "").slice(0, 7) === pk).reduce((s, p) => s + total(p), 0);
+  const nbClients = D.clients.length, nbDevis = list.filter((p) => p.type === "devis").length, acc = list.filter((p) => p.type === "devis" && ["accepte", "facture"].includes(p.statut)).length;
+  const backs = [`Mois dernier : <b>${eur0(encPrev)}</b>`, `${nbClients} client${nbClients > 1 ? "s" : ""} au total`, nbDevis ? `${Math.round(acc / nbDevis * 100)} % de devis acceptés` : "Aucun devis pour l'instant", `${D.abonnements.filter((a) => a.actif).length} abonnement(s) actif(s)`];
+  box.querySelectorAll(".kpi").forEach((k, i) => {
+    if (k.querySelector(".kf")) return;
+    k.innerHTML = `<div class="kf"><div class="kfront">${k.innerHTML}</div><div class="kback"><span>${k.querySelector("span").textContent}</span><p>${backs[i] || ""}</p><small>Touche pour revenir</small></div></div>`;
+    k.tabIndex = 0; k.setAttribute("role", "button");
+  });
+}
+document.addEventListener("click", (e) => { const k = e.target.closest("[data-flipkpis] .kpi"); if (k) k.classList.toggle("flipped"); });
 /* ---------- Pastille du menu qui glisse vers la page active ---------- */
 function navPill() {
   const nav = $("nav"); if (!nav) return;
@@ -510,7 +525,7 @@ VIEWS.accueil = function () {
   const dl = nextDeadline(); if (dl && daysBetween(today(), dl.date) <= 15) todo.push({ c: "info", t: `Déclaration URSSAF avant le ${frDate(dl.date)}`, s: dl.label, a: `<a class="btn sm" href="#urssaf">Montants</a>` });
   const recent = D.journal.slice(0, 8);
   return `${cockpitHTML(todo.length)}
-  <div class="kpis">
+  <div class="kpis" data-flipkpis>
     <div class="kpi"><span>Encaissé ce mois</span><b class="num" data-eur="${encMois}">${eur0(encMois)}</b><span>${MOIS[new Date().getMonth()]}</span></div>
     <div class="kpi"><span>À encaisser</span><b class="num" data-eur="${due.reduce((s, p) => s + total(p), 0)}">${eur0(due.reduce((s, p) => s + total(p), 0))}</b><span>${due.length ? due.length + " facture(s)" + (late.length ? " · " + late.length + " en retard" : "") : "Rien en attente"}</span></div>
     <div class="kpi"><span>Devis en attente</span><b class="num" data-eur="${qs.reduce((s, p) => s + total(p), 0)}">${eur0(qs.reduce((s, p) => s + total(p), 0))}</b><span>${qs.length} devis envoyé(s)</span></div>

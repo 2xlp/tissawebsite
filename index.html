@@ -2073,5 +2073,49 @@ addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{p
   }, { passive: true });
 })();
 </script>
+
+<style>
+/* ===== Encore plus de 3D sur le site ===== */
+/* logo en cube */
+.logo .mark.cube3{background:transparent!important;perspective:260px}
+.cube3 .cb{position:relative;width:var(--cs,32px);height:var(--cs,32px);transform-style:preserve-3d;animation:cubeSpin 9s cubic-bezier(.6,0,.4,1) infinite}
+.cube3 .cb i{position:absolute;inset:0;display:grid;place-items:center;background:#0C1310;border-radius:7px;box-shadow:inset 0 0 0 1px rgba(61,220,151,.5)}
+.cube3 .cb i svg{width:62%;height:62%}
+.cube3 .f{transform:translateZ(calc(var(--cs,32px) / 2))}.cube3 .b{transform:rotateY(180deg) translateZ(calc(var(--cs,32px) / 2))}.cube3 .l{transform:rotateY(-90deg) translateZ(calc(var(--cs,32px) / 2))}.cube3 .r{transform:rotateY(90deg) translateZ(calc(var(--cs,32px) / 2))}.cube3 .t{transform:rotateX(90deg) translateZ(calc(var(--cs,32px) / 2));background:#0B7A55!important}.cube3 .d{transform:rotateX(-90deg) translateZ(calc(var(--cs,32px) / 2))}
+@keyframes cubeSpin{0%{transform:rotateX(-18deg) rotateY(-30deg)}25%{transform:rotateX(-18deg) rotateY(60deg)}50%{transform:rotateX(-18deg) rotateY(150deg)}75%{transform:rotateX(70deg) rotateY(240deg)}100%{transform:rotateX(-18deg) rotateY(330deg)}}
+/* titres en relief */
+.g3s main h2{text-shadow:0 1px 0 rgba(12,19,16,.10),0 2px 0 rgba(12,19,16,.09),0 3px 0 rgba(12,19,16,.08),0 4px 0 rgba(12,19,16,.07),0 5px 0 rgba(12,19,16,.06),0 12px 22px rgba(12,19,16,.16)}
+.g3s .hero h1,.g3s .sl h2{text-shadow:0 1px 0 #0a3d2b,0 2px 0 #093626,0 3px 0 #082f21,0 4px 0 #07291d,0 5px 0 #062218,0 6px 0 #051c14,0 18px 30px rgba(0,0,0,.6)}
+/* les sections bougent en relief avec la souris ou le téléphone, les cartes flottent au-dessus */
+@media (prefers-reduced-motion:no-preference){
+  .g3s main section > .wrap{transform:perspective(1600px) rotateX(calc(var(--gy,0) * -3deg)) rotateY(calc(var(--gx,0) * 4deg));transform-style:preserve-3d;transition:transform .35s ease-out}
+  .g3s main section > .wrap > *,.g3s main section > .wrap > * > *{transform-style:preserve-3d}
+  .g3s #services .card,.g3s .why,.g3s #tarifs .plan,.g3s #engagements .trust,.g3s .avis-card{translate:0 0 34px;box-shadow:0 34px 60px -36px rgba(12,19,16,.5)}
+}
+/* tarifs : la carte du milieu sort de la page */
+.g3s #tarifs .plan.featured,.g3s #tarifs .plan.pop{translate:0 0 70px}
+</style>
+<script>
+(function () {
+  document.querySelectorAll(".logo .mark").forEach(function (m) {
+    var svg = m.innerHTML; m.classList.add("cube3"); m.style.setProperty("--cs", m.offsetWidth ? m.offsetWidth + "px" : "36px");
+    m.innerHTML = '<span class="cb">' + ["f", "b", "l", "r", "t", "d"].map(function (k) { return '<i class="' + k + '">' + svg + '</i>'; }).join("") + '</span>';
+  });
+  var R = document.documentElement; R.classList.add("g3s");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+  function loop() { x += (tx - x) * .1; y += (ty - y) * .1; R.style.setProperty("--gx", x.toFixed(3)); R.style.setProperty("--gy", y.toFixed(3)); raf = Math.abs(tx - x) + Math.abs(ty - y) > .002 ? requestAnimationFrame(loop) : 0; }
+  function set(a, b) { tx = Math.max(-1, Math.min(1, a)); ty = Math.max(-1, Math.min(1, b)); if (!raf) raf = requestAnimationFrame(loop); }
+  if (matchMedia("(pointer: fine)").matches) document.addEventListener("pointermove", function (e) { set(e.clientX / innerWidth * 2 - 1, e.clientY / innerHeight * 2 - 1); }, { passive: true });
+  else {
+    /* téléphone : le capteur sur Android ; sur iPhone, le défilement fait le travail */
+    var on = function (e) { if (e.gamma != null) set(e.gamma / 25, (e.beta - 40) / 25); };
+    /* pas de demande d'autorisation sur iPhone : on ne dérange jamais un visiteur */
+    if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission !== "function") addEventListener("deviceorientation", on);
+    /* et au défilement, les sections basculent légèrement */
+    addEventListener("scroll", function () { set(0, Math.sin(scrollY / 400) * .6); }, { passive: true });
+  }
+})();
+</script>
 </body>
 </html>
