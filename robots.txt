@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /demo-plombier.html
+Disallow: /demo-boulangerie.html
+Disallow: /demo-coach.html
+Disallow: /demo-barbier.html
+Disallow: /admin/
+
+Sitemap: https://tissaweb.fr/sitemap.xml

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Maxime Roche Coaching · Démo coach TissaWeb</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&display=swap">
+<style>
+/* Démo coach sportif : énergique et net. Hero photo plein écran, objectifs, méthode, formules, réservation de créneau interactive. */
+:root{
+  --bg:#F1F1EE; --surface:#FFFFFF; --ink:#111214; --muted:#5E6168; --line:#DEDED8;
+  --accent:#FF5A1F; --accent-dark:#E0450C; --dark:#111214; --dark-2:#1C1D21;
+  --display:"Archivo Black","Arial Black",Arial,sans-serif; --body:"Archivo",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+img{max-width:100%;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:.98;text-transform:uppercase;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:clamp(2.2rem,5vw,3.4rem)}
+.kicker{display:inline-block;font-weight:700;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:14px}
+section{padding-block:96px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font:700 1rem var(--body);text-transform:uppercase;letter-spacing:.04em;padding:16px 26px;border-radius:6px;border:2px solid transparent;text-decoration:none;cursor:pointer;transition:transform .2s,background .2s}
+.btn-main{background:var(--accent);color:#fff}
+.btn-main:hover{background:var(--accent-dark);transform:translateY(-1px)}
+.btn-ghost{border-color:rgba(255,255,255,.5);color:#fff}
+.btn-ghost:hover{border-color:#fff}
+.ph{position:relative;overflow:hidden;background:var(--fb,linear-gradient(135deg,#2A2C31,#111214))}
+.ph img{width:100%;height:100%;object-fit:cover}
+
+.demo-bar{background:#000;color:#BDBDBD;font-size:.85rem;text-align:center;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px))}
+.demo-bar a{color:#fff;font-weight:700}
+
+/* header */
+header{position:absolute;left:0;right:0;z-index:20;color:#fff}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:20px}
+.logo{font-family:var(--display);font-size:1.25rem;text-transform:uppercase;text-decoration:none;letter-spacing:.01em}
+.logo span{color:var(--accent)}
+nav ul{display:flex;gap:28px;list-style:none}
+nav a{text-decoration:none;font-weight:600;opacity:.85}
+nav a:hover{opacity:1}
+@media (max-width:820px){nav{display:none}}
+.top-wrap{position:relative}
+
+/* hero */
+.hero{position:relative;min-height:640px;display:flex;align-items:flex-end;color:#fff;padding-block:150px 72px}
+.hero .ph{position:absolute;inset:0}
+.hero .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(17,18,20,.92) 0%,rgba(17,18,20,.6) 55%,rgba(17,18,20,.2) 100%)}
+.hero .wrap{position:relative;z-index:1;width:100%}
+.hero h1{font-size:clamp(2.8rem,7.5vw,6rem);max-width:11ch;margin-bottom:22px}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:1.15rem;color:#D4D4D4;max-width:32em;margin-bottom:32px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:36px}
+.chips span{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);backdrop-filter:blur(6px);border-radius:999px;padding:7px 14px;font-size:.9rem;font-weight:500}
+
+/* objectifs */
+.goals{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.goal{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:26px 22px;transition:transform .2s,border-color .2s}
+.goal:hover{transform:translateY(-3px);border-color:var(--ink)}
+.goal .n{font-family:var(--display);font-size:.9rem;color:var(--accent-dark)}
+.goal h3{font-size:1.3rem;margin:16px 0 10px}
+.goal p{color:var(--muted);font-size:.95rem}
+@media (max-width:960px){.goals{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.goals{grid-template-columns:1fr}}
+
+/* méthode */
+.method{background:var(--dark);color:#fff}
+.method .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.method .wrap>*{min-width:0}
+.method .ph{border-radius:14px;aspect-ratio:4/5;max-width:100%}
+.method p.intro{color:#B9B9B9;margin:16px 0 30px;max-width:32em}
+.steps{list-style:none;display:grid;gap:22px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:52px 1fr;gap:16px;align-items:start}
+.steps li::before{counter-increment:s;content:counter(s);width:52px;height:52px;border-radius:10px;background:var(--dark-2);border:1px solid #2E3036;display:grid;place-items:center;font-family:var(--display);font-size:1.3rem;color:var(--accent)}
+.steps b{display:block;font-size:1.1rem}
+.steps span{color:#B9B9B9;font-size:.96rem}
+@media (max-width:860px){.method .wrap{grid-template-columns:1fr}.method .ph{aspect-ratio:16/10}}
+
+/* formules */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:30px 26px;display:flex;flex-direction:column;gap:14px}
+.plan.hot{background:var(--dark);color:#fff;border-color:var(--dark);position:relative}
+.plan.hot::before{content:"Le plus choisi";position:absolute;top:-12px;left:26px;background:var(--accent);color:#fff;font-weight:700;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:4px}
+.plan h3{font-size:1.4rem}
+.price{font-family:var(--display);font-size:2.8rem;line-height:1;font-variant-numeric:tabular-nums}
+.price small{font-family:var(--body);font-size:.95rem;font-weight:500;color:var(--muted)}
+.plan.hot .price small,.plan.hot li{color:#C9C9C9}
+.plan ul{list-style:none;display:grid;gap:10px;flex:1;padding-top:14px;border-top:1px solid var(--line)}
+.plan.hot ul{border-color:#2E3036}
+.plan li{display:flex;gap:10px;color:var(--muted);font-size:.96rem}
+.plan li::before{content:"→";color:var(--accent);font-weight:700}
+.plan .btn{width:100%}
+.plan .btn-dark{background:var(--ink);color:#fff}
+.plan .btn-dark:hover{background:#000}
+@media (max-width:900px){.plans{grid-template-columns:1fr}}
+
+/* réservation */
+.book{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:start}
+.book>*{min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px}
+.panel h3{font-size:1.1rem;margin-bottom:14px}
+.panel + .panel{margin-top:18px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:600 .95rem var(--body);background:var(--bg);border:1.5px solid var(--line);color:var(--ink);border-radius:8px;padding:10px 14px;cursor:pointer;transition:border-color .15s}
+.opt:hover{border-color:var(--ink)}
+.opt[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.opt:disabled{opacity:.4;cursor:not-allowed;text-decoration:line-through}
+.days .opt{display:grid;text-align:center;min-width:70px;line-height:1.2}
+.days .opt small{font-weight:500;font-size:.75rem;opacity:.8;text-transform:uppercase}
+.summary{position:sticky;top:20px;background:var(--dark);color:#fff;border-radius:14px;padding:28px;display:grid;gap:14px}
+.summary h3{font-size:1.3rem}
+.summary dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:.96rem}
+.summary dt{color:#9C9C9C}
+.summary dd{text-align:right;font-weight:600}
+.summary .total{border-top:1px solid #2E3036;padding-top:14px;display:flex;justify-content:space-between;font-family:var(--display);font-size:1.4rem}
+.summary input{font:inherit;width:100%;border-radius:8px;border:1px solid #2E3036;background:var(--dark-2);color:#fff;padding:12px 14px}
+.summary input::placeholder{color:#7D7D7D}
+.ok{background:rgba(255,90,31,.14);border:1px solid rgba(255,90,31,.4);border-radius:8px;padding:12px;font-size:.92rem}
+@media (max-width:900px){.book{grid-template-columns:1fr}.summary{position:static}}
+
+/* FAQ */
+.faq{max-width:780px;display:grid;gap:10px}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 22px}
+summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--accent);font-family:var(--display)}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin-top:10px}
+
+footer{background:#000;color:#9C9C9C;font-size:.92rem}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-block:32px}
+footer a{color:#fff}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.goal{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="demo-bar">Site de démonstration · coach fictif · <a href="index.html">← Retour à TissaWeb</a></div>
+
+<div class="top-wrap">
+<header>
+  <div class="wrap">
+    <a href="#top" class="logo">Maxime <span>Roche</span></a>
+    <nav aria-label="Navigation"><ul><li><a href="#objectifs">Objectifs</a></li><li><a href="#formules">Formules</a></li><li><a href="#reserver">Réserver</a></li></ul></nav>
+    <a href="#reserver" class="btn btn-main" style="padding:11px 18px;font-size:.88rem">Réserver</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="ph" style="--fb:linear-gradient(120deg,#1C1D21,#3A3D44)"><img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1600&q=70&auto=format&fit=crop" alt="Coach accompagnant un client pendant un exercice" onerror="this.remove()"></div>
+  <div class="wrap">
+    <span class="kicker" style="color:var(--accent)">Coach sportif diplômé d'État</span>
+    <h1>Reprenez votre forme <span>en main.</span></h1>
+    <p>Des séances sur-mesure à domicile, en salle ou en extérieur. Un programme adapté à votre niveau, et un suivi chaque semaine.</p>
+    <div class="cta">
+      <a href="#reserver" class="btn btn-main">Réserver ma séance offerte</a>
+      <a href="#formules" class="btn btn-ghost">Voir les formules</a>
+    </div>
+    <div class="chips"><span>1re séance offerte</span><span>À domicile ou en extérieur</span><span>Tous niveaux</span></div>
+  </div>
+</section>
+</div>
+
+<section id="objectifs">
+  <div class="wrap">
+    <span class="kicker">Votre objectif</span>
+    <h2 style="margin-bottom:40px">On part de là où vous êtes</h2>
+    <div class="goals">
+      <article class="goal"><span class="n">01</span><h3>Perte de poids</h3><p>Cardio, renforcement et conseils alimentaires simples, sans régime extrême.</p></article>
+      <article class="goal"><span class="n">02</span><h3>Prise de muscle</h3><p>Un programme progressif pour gagner en force, avec la bonne technique.</p></article>
+      <article class="goal"><span class="n">03</span><h3>Remise en forme</h3><p>Reprendre le sport après une pause, à votre rythme et sans se blesser.</p></article>
+      <article class="goal"><span class="n">04</span><h3>Prépa physique</h3><p>Trail, course, sport collectif : une préparation ciblée pour un objectif précis.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="method">
+  <div class="wrap">
+    <div class="ph" style="--fb:linear-gradient(160deg,#2A2C31,#111214)"><img src="https://images.unsplash.com/photo-1534258936925-c58bed479fcb?w=1000&q=70&auto=format&fit=crop" alt="Deux personnes qui s'entraînent en salle" loading="lazy" onerror="this.remove()"></div>
+    <div>
+      <span class="kicker" style="color:var(--accent)">La méthode</span>
+      <h2>Simple, suivi, efficace</h2>
+      <p class="intro">Pas de programme copié-collé. Tout part d'un bilan et s'ajuste chaque semaine selon vos progrès.</p>
+      <ol class="steps">
+        <li><div><b>Bilan offert</b><span>45 minutes pour faire le point sur votre forme, vos contraintes et votre objectif.</span></div></li>
+        <li><div><b>Programme sur-mesure</b><span>Des séances adaptées à votre niveau et à votre emploi du temps.</span></div></li>
+        <li><div><b>Suivi chaque semaine</b><span>On mesure, on ajuste, et on garde la motivation entre deux séances.</span></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="formules">
+  <div class="wrap">
+    <span class="kicker">Formules</span>
+    <h2 style="margin-bottom:44px">Choisissez votre rythme</h2>
+    <div class="plans">
+      <article class="plan">
+        <h3>Découverte</h3>
+        <div class="price">0 €<small> · 45 min</small></div>
+        <ul><li>Bilan forme complet</li><li>Une première séance d'essai</li><li>Sans engagement</li></ul>
+        <a href="#reserver" class="btn btn-dark" data-plan="decouverte">Réserver</a>
+      </article>
+      <article class="plan hot">
+        <h3>Pack 10 séances</h3>
+        <div class="price">450 €<small> · soit 45 €/séance</small></div>
+        <ul><li>10 séances d'1 h, valables 4 mois</li><li>Programme personnalisé</li><li>Suivi par message entre les séances</li></ul>
+        <a href="#reserver" class="btn btn-main" data-plan="pack">Choisir ce pack</a>
+      </article>
+      <article class="plan">
+        <h3>Suivi mensuel</h3>
+        <div class="price">199 €<small> /mois</small></div>
+        <ul><li>4 séances d'1 h par mois</li><li>Plan nutrition simple</li><li>Bilan mensuel de progression</li></ul>
+        <a href="#reserver" class="btn btn-dark" data-plan="mensuel">Choisir ce suivi</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="reserver" style="padding-top:0">
+  <div class="wrap">
+    <span class="kicker">Réservation</span>
+    <h2 style="margin-bottom:40px">Réservez votre créneau</h2>
+    <div class="book">
+      <div>
+        <div class="panel"><h3>1. Formule</h3>
+          <div class="opts" id="plans">
+            <button type="button" class="opt" data-v="decouverte" data-price="0" aria-pressed="true">Séance découverte</button>
+            <button type="button" class="opt" data-v="pack" data-price="450" aria-pressed="false">Pack 10 séances</button>
+            <button type="button" class="opt" data-v="mensuel" data-price="199" aria-pressed="false">Suivi mensuel</button>
+          </div>
+        </div>
+        <div class="panel"><h3>2. Lieu</h3>
+          <div class="opts" id="places">
+            <button type="button" class="opt" aria-pressed="true">À domicile</button>
+            <button type="button" class="opt" aria-pressed="false">En salle</button>
+            <button type="button" class="opt" aria-pressed="false">En extérieur</button>
+          </div>
+        </div>
+        <div class="panel"><h3>3. Jour</h3><div class="opts days" id="days"></div></div>
+        <div class="panel"><h3>4. Heure</h3><div class="opts" id="slots"></div></div>
+      </div>
+      <aside class="summary" aria-live="polite">
+        <h3>Votre réservation</h3>
+        <dl>
+          <dt>Formule</dt><dd id="sPlan">Séance découverte</dd>
+          <dt>Lieu</dt><dd id="sPlace">À domicile</dd>
+          <dt>Date</dt><dd id="sDay">—</dd>
+          <dt>Heure</dt><dd id="sSlot">—</dd>
+        </dl>
+        <div class="total"><span>Total</span><span id="sPrice">0 €</span></div>
+        <label for="b-name" style="font-size:.9rem;color:#9C9C9C">Votre prénom et téléphone</label>
+        <input id="b-name" placeholder="Julie · 06 12 34 56 78">
+        <button class="btn btn-main" id="confirm" type="button">Confirmer</button>
+        <p class="ok" id="bookOk" hidden></p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <span class="kicker">Questions</span>
+    <h2 style="margin-bottom:32px">Avant de commencer</h2>
+    <div class="faq">
+      <details><summary>Je n'ai pas fait de sport depuis des années, c'est possible ?</summary><p>Oui, c'est même le cas le plus fréquent. Le bilan sert à partir de votre niveau réel, sans brûler les étapes.</p></details>
+      <details><summary>Faut-il du matériel à la maison ?</summary><p>Non. Le coach apporte le petit matériel (élastiques, kettlebells, tapis) pour les séances à domicile.</p></details>
+      <details><summary>Puis-je annuler une séance ?</summary><p>Oui, gratuitement jusqu'à 24 h avant. Au-delà, la séance est décomptée du pack.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span>© Maxime Roche Coaching · coach fictif</span><span>Site de démonstration réalisé par <a href="index.html">TissaWeb</a></span></div></footer>
+
+<script>
+(function(){
+  var state={plan:'Séance découverte',price:0,place:'À domicile',day:null,slot:null};
+  function group(id,cb){
+    var box=document.getElementById(id);
+    box.addEventListener('click',function(e){
+      var b=e.target.closest('.opt'); if(!b||b.disabled)return;
+      box.querySelectorAll('.opt').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+      cb(b);
+    });
+  }
+  function render(){
+    document.getElementById('sPlan').textContent=state.plan;
+    document.getElementById('sPlace').textContent=state.place;
+    document.getElementById('sDay').textContent=state.day||'—';
+    document.getElementById('sSlot').textContent=state.slot||'—';
+    document.getElementById('sPrice').textContent=state.price+' €';
+  }
+  group('plans',function(b){state.plan=b.textContent;state.price=+b.dataset.price;render()});
+  group('places',function(b){state.place=b.textContent;render()});
+
+  /* 7 prochains jours (dimanche fermé) */
+  var days=document.getElementById('days'),names=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],months=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+  for(var i=1;i<=7;i++){
+    var d=new Date();d.setDate(d.getDate()+i);
+    var b=document.createElement('button');b.type='button';b.className='opt';b.setAttribute('aria-pressed','false');
+    b.innerHTML='<small>'+names[d.getDay()]+'</small>'+d.getDate()+' '+months[d.getMonth()];
+    b.dataset.label=names[d.getDay()]+' '+d.getDate()+' '+months[d.getMonth()];
+    b.dataset.seed=d.getDate();
+    if(d.getDay()===0)b.disabled=true;
+    days.appendChild(b);
+  }
+  var hours=['7:00','8:00','12:15','17:30','18:30','19:30'];
+  function slots(seed){
+    var box=document.getElementById('slots');box.innerHTML='';
+    hours.forEach(function(h,k){
+      var b=document.createElement('button');b.type='button';b.className='opt';b.textContent=h.replace(':',' h ');b.setAttribute('aria-pressed','false');
+      if((seed+k)%4===0)b.disabled=true; /* créneaux déjà pris (démo) */
+      box.appendChild(b);
+    });
+  }
+  slots(0);
+  group('days',function(b){state.day=b.dataset.label;state.slot=null;slots(+b.dataset.seed);render()});
+  group('slots',function(b){state.slot=b.textContent;render()});
+
+  /* boutons des formules -> présélection */
+  document.querySelectorAll('[data-plan]').forEach(function(a){
+    a.addEventListener('click',function(){var b=document.querySelector('#plans [data-v="'+a.dataset.plan+'"]');if(b)b.click()});
+  });
+
+  document.getElementById('confirm').addEventListener('click',function(){
+    var ok=document.getElementById('bookOk');
+    if(!state.day||!state.slot){ok.textContent='Choisissez un jour et une heure pour continuer.';ok.hidden=false;return}
+    ok.textContent='Démo : sur le vrai site, le coach reçoit la demande ('+state.day+' à '+state.slot+') et vous confirme par SMS.';ok.hidden=false;
+  });
+})();
+</script>
+<!-- TissaWeb : animations douces + bouton démo -->
+<style>
+@media (prefers-reduced-motion:no-preference){
+  .tw-rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+  .tw-rv.tw-in{opacity:1;transform:none}
+  @keyframes twUpD{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .tw-hero-in>*{animation:twUpD .8s cubic-bezier(.2,.7,.2,1) both}
+  .tw-hero-in>:nth-child(2){animation-delay:.08s}.tw-hero-in>:nth-child(3){animation-delay:.16s}.tw-hero-in>:nth-child(4){animation-delay:.24s}.tw-hero-in>:nth-child(5){animation-delay:.32s}
+  a[class*=btn],button[class*=btn]{transition:transform .2s ease,box-shadow .2s ease,background-color .2s,color .2s}
+  a[class*=btn]:hover,button[class*=btn]:hover{transform:translateY(-1px)}
+}
+.tw-demo-cta{position:fixed;left:16px;bottom:16px;z-index:999;display:flex;align-items:center;gap:10px;padding:9px 16px 9px 9px;border-radius:999px;background:#0C1310;color:#fff;font:600 14px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none;box-shadow:0 14px 34px -12px rgba(0,0,0,.55);transition:transform .2s,box-shadow .2s;max-width:calc(100vw - 32px)}
+.tw-demo-cta:hover{transform:translateY(-2px);box-shadow:0 18px 40px -12px rgba(0,0,0,.6)}
+.tw-demo-cta i{flex:none;width:30px;height:30px;border-radius:50%;background:#0B7A55;display:grid;place-items:center;font-style:normal}
+.tw-demo-cta small{display:block;font-weight:500;color:#9FAAA4;font-size:11px}
+.tw-demo-cta b{color:#3DDC97}
+@media (max-width:640px){.tw-demo-cta{bottom:calc(12px + env(safe-area-inset-bottom,0px));left:12px;font-size:13px}}
+</style>
+<a class="tw-demo-cta" href="index.html#contact"><i><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M3 5h14"/><path d="M10 5v12"/></svg></i><span><small>Site de démonstration TissaWeb</small>Je veux le même <b>→</b></span></a>
+<script>
+(function(){var secs=document.querySelectorAll('section');if(!secs.length)return;
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+var hero=secs[0].querySelector('.wrap>div,.wrap')||secs[0];if(!reduce&&hero)hero.classList.add('tw-hero-in');
+if(reduce||!('IntersectionObserver' in window))return;
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('tw-in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+for(var i=1;i<secs.length;i++){var w=secs[i].querySelector('.wrap')||secs[i];[].forEach.call(w.children,function(el,k){if(el.offsetHeight<4)return;el.classList.add('tw-rv');el.style.transitionDelay=Math.min(k,4)*70+'ms';io.observe(el)})}
+})();
+</script>
+<script src="/stats.js" defer></script>
+</body>
+</html>

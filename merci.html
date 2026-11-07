@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Merci — TissaWeb</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@700;800&family=Onest:wght@400;500;600&display=swap">
+<style>
+html:lang(ar) body,html:lang(zh-CN) body{font-family:"Onest","Noto Sans Arabic","Geeza Pro","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+html:lang(ar) h1,html:lang(zh-CN) h1{letter-spacing:0}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;display:grid;place-items:center;background:#0C1310;color:#fff;font-family:"Onest",system-ui,sans-serif;padding:24px max(20px,env(safe-area-inset-right,0px)) 24px max(20px,env(safe-area-inset-left,0px));
+background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px}
+.card{max-width:520px;text-align:center;display:grid;gap:22px;justify-items:center}
+.ok{width:76px;height:76px;border-radius:50%;background:#0B7A55;display:grid;place-items:center;box-shadow:0 0 0 10px rgba(11,122,85,.18)}
+h1{font-family:"Schibsted Grotesk",Arial,sans-serif;font-weight:800;font-size:clamp(2rem,6vw,2.8rem);letter-spacing:-.03em;line-height:1.05}
+p{color:#A9B3AE;font-size:1.08rem;line-height:1.6}
+.steps{list-style:none;display:grid;gap:10px;text-align:start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px 22px;width:100%}
+.steps li{display:flex;gap:12px;color:#D9DFDB}
+.steps b{color:#3DDC97;font-family:"Schibsted Grotesk",Arial,sans-serif}
+a.btn{display:inline-flex;padding:15px 26px;border-radius:10px;background:#fff;color:#0C1310;font-weight:600;text-decoration:none}
+a.btn:hover{background:#E9ECE7}
+.logo{font-family:"Schibsted Grotesk",Arial,sans-serif;font-weight:800;font-size:1.2rem;color:#fff;text-decoration:none}
+.logo em{font-style:normal;color:#3DDC97}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="ok" aria-hidden="true"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>
+  <h1>Merci, c'est bien reçu !</h1>
+  <p>Votre demande est arrivée chez nous. Vous allez aussi recevoir un mail de confirmation.</p>
+  <ol class="steps">
+    <li><b>1</b>On étudie votre activité et votre demande</li>
+    <li><b>2</b>On vous répond par mail sous 24 h</li>
+    <li><b>3</b>On vous propose un prix fixe, sans engagement</li>
+  </ol>
+  <a class="btn" href="index.html">Retour au site</a>
+  <a class="logo" href="index.html">Tissa<em>Web</em></a>
+</main>
+<script src="i18n.js"></script>
+<script src="/stats.js" defer></script>
+</body>
+</html>
