@@ -273,11 +273,88 @@ function render() {
   const el = $("view"), changed = S._lastView !== S.view; S._lastView = S.view;
   el.innerHTML = v();
   if (changed) { el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter"); countUp(el); }
+  cockpitFx(); requestAnimationFrame(navPill);
   if (S.after) { const f = S.after; S.after = null; f(); }
 }
+
+/* ---------- Cockpit du tableau de bord (bandeau vivant) ---------- */
+function cockpitHTML(nTodo) {
+  const h = new Date().getHours(), me = S.me ? S.me.nom.split(" ")[0] : "";
+  const hello = h < 5 ? "Bonne nuit" : h < 18 ? "Bonjour" : "Bonsoir";
+  const c = cfg(), on = c.auto_prospect === true, max = c.auto_par_jour || 5;
+  const auto = D.messages.filter((m) => m.direction === "out" && m.auteur === "Auto");
+  const today0 = auto.filter((m) => new Date(m.date) > new Date(Date.now() - 20 * 3600000)).length;
+  const dem = D.demandes.filter((d) => d.statut === "nouvelle").length, un = unread(), rel = D.prospects.filter((p) => prState(p)[0] === "À relancer").length;
+  const chips = [[dem, "nouvelle(s) demande(s)", "#demandes"], [un, "mail(s) non lu(s)", "#messages"], [rel, "prospect(s) à relancer", "#prospects"]].filter((x) => x[0]);
+  return `<section class="cockpit" id="cockpit"><div class="ck-fx" id="ckFx" aria-hidden="true"></div>
+    <div class="ck-in"><div class="ck-top"><span class="eyebrow">${frDate(today())}</span><span class="ck-clock num" id="ckClock"></span></div>
+      <h1>${hello} ${esc(me)}</h1>
+      <p>${nTodo ? `${nTodo} chose${nTodo > 1 ? "s" : ""} à faire aujourd'hui, listée${nTodo > 1 ? "s" : ""} plus bas dans l'ordre.` : "Rien d'urgent : tout est à jour."}</p>
+      <div class="ck-chips">${chips.map((x) => `<a class="ck-chip" href="${x[2]}"><b class="num" data-count="${x[0]}">${x[0]}</b> ${x[1]}</a>`).join("")}
+        <a class="ck-chip ${on ? "live" : ""}" href="#prospects"><span class="pulse" aria-hidden="true"></span>Pilote auto ${on ? `· ${today0}/${max} aujourd'hui` : "coupé"}</a></div></div></section>`;
+}
+const CK = { cv: null, gl: null, raf: 0, t0: performance.now(), mx: .7, my: .6, tx: .7, ty: .6 };
+function cockpitFx() {
+  const host = $("ckFx"); if (!host) { if (CK.raf) cancelAnimationFrame(CK.raf); CK.raf = 0; return; }
+  if (!CK.cv) {
+    CK.cv = document.createElement("canvas");
+    const gl = CK.cv.getContext("webgl", { antialias: false, alpha: false, powerPreference: "low-power" });
+    if (!gl) return;
+    const VS = "attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;gl_Position=vec4(p,0.,1.);}";
+    const FS = "precision mediump float;varying vec2 v;uniform float t,a;uniform vec2 m,r;" +
+      "float h1(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}" +
+      "float n(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);return mix(mix(h1(i),h1(i+vec2(1,0)),u.x),mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),u.x),u.y);}" +
+      "float fb(vec2 p){float x=0.,k=.5;mat2 M=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<4;i++){x+=k*n(p);p=M*p;k*=.5;}return x;}" +
+      "float H(vec2 u){vec2 p=(u-.5)*vec2(a,1.)*1.3;vec2 q=vec2(fb(p+vec2(0.,t*.10)),fb(p+vec2(5.2,1.3)-t*.08));float h=fb(p+2.4*q+vec2(t*.04,0.));vec2 mm=(m-.5)*vec2(a,1.)*1.3;float d=length(p-mm);return h+exp(-d*d*4.)*.12;}" +
+      "void main(){float e=1.5/r.y;float h=H(v),hx=H(v+vec2(e,0.)),hy=H(v+vec2(0.,e));vec3 N=normalize(vec3((h-hx)*4.2,(h-hy)*4.2,e*60.));" +
+      "vec2 u=v+N.xy*.16;vec3 c=mix(vec3(.02,.20,.12),vec3(.04,.54,.31),smoothstep(-.2,1.2,u.y+.15*sin(u.x*3.+t*.2)));c=mix(c,vec3(.35,.86,.58),smoothstep(.55,1.,1.-length(u-vec2(.85,.85))*1.3)*.8);c*=.55+.45*h;" +
+      "c+=vec3(.78,1.,.88)*pow(1.-abs(sin(h*9.-t*.35+N.x*2.)),18.)*.14;c+=vec3(.98,1.,.96)*pow(max(dot(reflect(-normalize(vec3(-.45,.6,.65)),N),vec3(0,0,1)),0.),70.)*.7;gl_FragColor=vec4(max(c*.8,vec3(.03,.12,.08)),1.);}";
+    const sh = (ty, src) => { const o = gl.createShader(ty); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
+    const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS); if (!vs || !fs) return;
+    const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr); if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
+    gl.useProgram(pr); const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    CK.gl = gl; CK.U = { t: gl.getUniformLocation(pr, "t"), a: gl.getUniformLocation(pr, "a"), m: gl.getUniformLocation(pr, "m"), r: gl.getUniformLocation(pr, "r") };
+    document.addEventListener("pointermove", (e) => { const h = $("cockpit"); if (!h) return; const r = h.getBoundingClientRect(); CK.tx = (e.clientX - r.left) / r.width; CK.ty = 1 - (e.clientY - r.top) / r.height; }, { passive: true });
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) cockpitFx(); });
+  }
+  if (!CK.gl) return;
+  host.appendChild(CK.cv);
+  const gl = CK.gl, w = host.clientWidth, h = host.clientHeight, sc = innerWidth < 820 ? .4 : .5;
+  CK.cv.width = Math.max(2, Math.round(w * sc)); CK.cv.height = Math.max(2, Math.round(h * sc)); gl.viewport(0, 0, CK.cv.width, CK.cv.height);
+  gl.uniform1f(CK.U.a, w / Math.max(1, h)); gl.uniform2f(CK.U.r, CK.cv.width, CK.cv.height);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const clock = () => { const c = $("ckClock"); if (c) c.textContent = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }); };
+  const frame = (now) => {
+    if (!$("ckFx") || !CK.cv.isConnected) { CK.raf = 0; return; }
+    CK.mx += (CK.tx - CK.mx) * .05; CK.my += (CK.ty - CK.my) * .05;
+    gl.uniform1f(CK.U.t, (now - CK.t0) / 1000); gl.uniform2f(CK.U.m, CK.mx, CK.my); gl.drawArrays(gl.TRIANGLES, 0, 3);
+    CK.raf = reduce || document.hidden ? 0 : requestAnimationFrame(frame);
+  };
+  clock(); if (!CK.iv) CK.iv = setInterval(clock, 1000); if (CK.raf) cancelAnimationFrame(CK.raf); CK.raf = 0;
+  $("cockpit").classList.add("on");
+  if (reduce) frame(performance.now() + 6000); else CK.raf = requestAnimationFrame(frame);
+}
+/* ---------- Pastille du menu qui glisse vers la page active ---------- */
+function navPill() {
+  const nav = $("nav"); if (!nav) return;
+  let pill = nav.querySelector(".nav-pill"); if (!pill) { pill = document.createElement("i"); pill.className = "nav-pill"; pill.setAttribute("aria-hidden", "true"); nav.prepend(pill); }
+  const a = nav.querySelector("a[aria-current=page]"); if (!a) { pill.style.opacity = 0; return; }
+  pill.style.opacity = 1; pill.style.transform = `translateY(${a.offsetTop}px)`; pill.style.height = a.offsetHeight + "px";
+}
+/* ---------- Lumière qui suit la souris sur les cartes ---------- */
+document.addEventListener("pointermove", (e) => {
+  const el = e.target.closest && e.target.closest(".card,.kpi,.pilot > *,.item,.ck-chip"); if (!el) return;
+  const r = el.getBoundingClientRect(); el.style.setProperty("--mx", (e.clientX - r.left) + "px"); el.style.setProperty("--my", (e.clientY - r.top) + "px");
+}, { passive: true });
 /* Animation des chiffres (seulement en changeant de page, et pas si l'utilisateur a réduit les animations) */
 function countUp(root) {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  root.querySelectorAll("[data-eur]").forEach((n) => {
+    const to = +n.dataset.eur; if (!to) return; const t0 = performance.now(), d = 1000;
+    const step = (t) => { const k = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - k, 3); n.textContent = eur0(Math.round(to * e)); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
   root.querySelectorAll("[data-count]").forEach((n) => {
     const to = +n.dataset.count; if (!to) return; const t0 = performance.now(), d = 900;
     const step = (t) => { const k = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - k, 3); n.textContent = Math.round(to * e); if (k < 1) requestAnimationFrame(step); };
@@ -313,12 +390,12 @@ VIEWS.accueil = function () {
   if (relances.length) todo.push({ c: "warn", t: `${relances.length} prospect${relances.length > 1 ? "s" : ""} à relancer`, s: relances.slice(0, 3).map((p) => p.entreprise).join(", "), a: `<a class="btn sm" href="#prospects">Voir</a>` });
   const dl = nextDeadline(); if (dl && daysBetween(today(), dl.date) <= 15) todo.push({ c: "info", t: `Déclaration URSSAF avant le ${frDate(dl.date)}`, s: dl.label, a: `<a class="btn sm" href="#urssaf">Montants</a>` });
   const recent = D.journal.slice(0, 8);
-  return `<div class="head"><div><span class="eyebrow">${frDate(today())}</span><h1>Bonjour ${esc(S.me ? S.me.nom.split(" ")[0] : "")}</h1><p>Tout ce qui demande une action est listé ici, dans l'ordre.</p></div></div>
+  return `${cockpitHTML(todo.length)}
   <div class="kpis">
-    <div class="kpi"><span>Encaissé ce mois</span><b class="num">${eur0(encMois)}</b><span>${MOIS[new Date().getMonth()]}</span></div>
-    <div class="kpi"><span>À encaisser</span><b class="num">${eur0(due.reduce((s, p) => s + total(p), 0))}</b><span>${due.length ? due.length + " facture(s)" + (late.length ? " · " + late.length + " en retard" : "") : "Rien en attente"}</span></div>
-    <div class="kpi"><span>Devis en attente</span><b class="num">${eur0(qs.reduce((s, p) => s + total(p), 0))}</b><span>${qs.length} devis envoyé(s)</span></div>
-    <div class="kpi"><span>Maintenance</span><b class="num">${eur0(mrr)}</b><span>par mois, récurrent</span></div>
+    <div class="kpi"><span>Encaissé ce mois</span><b class="num" data-eur="${encMois}">${eur0(encMois)}</b><span>${MOIS[new Date().getMonth()]}</span></div>
+    <div class="kpi"><span>À encaisser</span><b class="num" data-eur="${due.reduce((s, p) => s + total(p), 0)}">${eur0(due.reduce((s, p) => s + total(p), 0))}</b><span>${due.length ? due.length + " facture(s)" + (late.length ? " · " + late.length + " en retard" : "") : "Rien en attente"}</span></div>
+    <div class="kpi"><span>Devis en attente</span><b class="num" data-eur="${qs.reduce((s, p) => s + total(p), 0)}">${eur0(qs.reduce((s, p) => s + total(p), 0))}</b><span>${qs.length} devis envoyé(s)</span></div>
+    <div class="kpi"><span>Maintenance</span><b class="num" data-eur="${mrr}">${eur0(mrr)}</b><span>par mois, récurrent</span></div>
   </div>
   ${objHTML()}
   ${dashCharts()}

@@ -342,3 +342,51 @@ code{background:var(--bg);padding:1px 6px;border-radius:5px;font-size:.85em}
 .autolog .item{animation:twRise .45s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * .04s)}
 @media (max-width:980px){.pilot{grid-template-columns:1fr}.pilot-ring{justify-content:flex-start}}
 @media (prefers-reduced-motion:reduce){.main.enter > *,.pilot-ring .val,.fn i::after,.autolog .item,.main::before,.pilot-ring::after,.pilot-auto.on .pulse{animation:none!important}}
+
+/* ===== Immersion v2 : cockpit vivant, pastille de menu, lumière sous la souris ===== */
+.cockpit{position:relative;overflow:hidden;border-radius:calc(var(--r) + 4px);background:#0C1310;color:#fff;margin-bottom:18px;min-height:210px;isolation:isolate;box-shadow:0 30px 60px -40px rgba(12,19,16,.7)}
+.ck-fx{position:absolute;inset:0;z-index:-1;opacity:0;transition:opacity 1.4s ease}
+.cockpit.on .ck-fx{opacity:1}
+.ck-fx canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ck-fx::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,19,16,.9) 0%,rgba(12,19,16,.7) 40%,rgba(12,19,16,.15) 100%)}
+.ck-in{position:relative;padding:26px 28px 24px;display:grid;gap:8px}
+.ck-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.cockpit .eyebrow{color:#9FE8C4}
+.ck-clock{font-family:var(--display);font-weight:700;font-size:1rem;color:#D8F5E7;letter-spacing:.02em;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:4px 10px;border-radius:999px;backdrop-filter:blur(6px)}
+.cockpit h1{color:#fff;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.035em}
+.cockpit p{margin:0;color:#B8C6BF;max-width:46ch}
+.ck-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.ck-chip{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;text-decoration:none;font-size:.86rem;backdrop-filter:blur(8px);transition:background .25s,transform .25s,border-color .25s}
+.ck-chip:hover{background:rgba(255,255,255,.16);border-color:rgba(159,232,196,.5);transform:translateY(-2px)}
+.ck-chip b{font-family:var(--display);color:#9FE8C4}
+.ck-chip .pulse{width:8px;height:8px;border-radius:50%;background:#8C9892}
+.ck-chip.live .pulse{background:var(--web);box-shadow:0 0 0 0 rgba(61,220,151,.6);animation:twPulse 1.8s infinite}
+.main.enter .cockpit h1{animation:twWord .9s cubic-bezier(.2,.8,.2,1) both .1s}
+@keyframes twWord{from{opacity:0;transform:translateY(20px);filter:blur(6px)}}
+
+.side nav{position:relative}
+.nav-pill{position:absolute;left:0;right:0;top:0;border-radius:9px;background:var(--accent);box-shadow:0 8px 22px -10px rgba(61,220,151,.6),inset 0 0 0 1px rgba(255,255,255,.08);transition:transform .45s cubic-bezier(.3,1.3,.5,1),height .3s,opacity .3s;pointer-events:none;z-index:0}
+.side nav a{position:relative;z-index:1;transition:color .25s,background .25s}
+.side nav:has(.nav-pill) a[aria-current=page]{background:transparent}
+
+.card,.kpi,.pilot > *,.item{background-image:radial-gradient(420px circle at var(--mx,-500px) var(--my,-500px),rgba(11,122,85,.08),transparent 45%)}
+.pilot-ring{background-image:radial-gradient(420px circle at var(--mx,-500px) var(--my,-500px),rgba(61,220,151,.16),transparent 45%),linear-gradient(135deg,#0C1310,#123528)}
+.kpi{transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
+.kpi:hover{transform:translateY(-3px);border-color:rgba(11,122,85,.35);box-shadow:0 18px 36px -26px rgba(12,19,16,.5)}
+.main.enter .kpi{animation:twRise .6s cubic-bezier(.2,.8,.2,1) both}
+.main.enter .kpi:nth-child(2){animation-delay:.07s}.main.enter .kpi:nth-child(3){animation-delay:.14s}.main.enter .kpi:nth-child(4){animation-delay:.21s}
+.main.enter tbody tr{animation:twRise .45s cubic-bezier(.2,.8,.2,1) both}
+.main.enter tbody tr:nth-child(2){animation-delay:.03s}.main.enter tbody tr:nth-child(3){animation-delay:.06s}.main.enter tbody tr:nth-child(4){animation-delay:.09s}.main.enter tbody tr:nth-child(5){animation-delay:.12s}.main.enter tbody tr:nth-child(6){animation-delay:.15s}.main.enter tbody tr:nth-child(7){animation-delay:.18s}.main.enter tbody tr:nth-child(n+8){animation-delay:.21s}
+.main.enter .list .item{animation:twRise .45s cubic-bezier(.2,.8,.2,1) both}
+.main.enter .list .item:nth-child(2){animation-delay:.04s}.main.enter .list .item:nth-child(3){animation-delay:.08s}.main.enter .list .item:nth-child(n+4){animation-delay:.12s}
+
+.sheet{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:palFade .3s ease both}
+.sheet > section{animation:twSheet .5s cubic-bezier(.2,.9,.25,1.04) both;box-shadow:-30px 0 60px -30px rgba(0,0,0,.45)}
+@keyframes twSheet{from{transform:translateX(60px);opacity:0}}
+.toast:not([hidden]){animation:twToast .45s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes twToast{from{opacity:0;transform:translate(-50%,16px) scale(.96)}}
+.btn{transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .2s,background .2s,border-color .2s}
+.btn:active{transform:scale(.97)}
+.btn.primary:hover{box-shadow:0 10px 24px -12px rgba(11,122,85,.8)}
+@media (max-width:820px){.ck-in{padding:20px 18px}.cockpit{min-height:0}}
+@media (prefers-reduced-motion:reduce){.main.enter .cockpit h1,.main.enter .kpi,.main.enter tbody tr,.main.enter .list .item,.sheet,.sheet > section,.toast:not([hidden]),.ck-chip.live .pulse{animation:none!important}.nav-pill{transition:none}}
