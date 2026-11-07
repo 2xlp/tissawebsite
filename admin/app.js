@@ -270,8 +270,19 @@ function route() {
 function render() {
   setBadges();
   const v = VIEWS[S.view] || VIEWS.accueil;
-  $("view").innerHTML = v();
+  const el = $("view"), changed = S._lastView !== S.view; S._lastView = S.view;
+  el.innerHTML = v();
+  if (changed) { el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter"); countUp(el); }
   if (S.after) { const f = S.after; S.after = null; f(); }
+}
+/* Animation des chiffres (seulement en changeant de page, et pas si l'utilisateur a réduit les animations) */
+function countUp(root) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  root.querySelectorAll("[data-count]").forEach((n) => {
+    const to = +n.dataset.count; if (!to) return; const t0 = performance.now(), d = 900;
+    const step = (t) => { const k = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - k, 3); n.textContent = Math.round(to * e); if (k < 1) requestAnimationFrame(step); };
+    n.textContent = "0"; requestAnimationFrame(step);
+  });
 }
 function rerender() { render(); if (!$("sheet").hidden && S.sheetRender) S.sheetRender(); }
 
@@ -321,6 +332,48 @@ VIEWS.demandes = function () {
   <div class="filters"><select id="fDem"><option value="ouvertes"${f === "ouvertes" ? " selected" : ""}>À traiter</option><option value="convertie"${f === "convertie" ? " selected" : ""}>Devis créé</option><option value="archivee"${f === "archivee" ? " selected" : ""}>Archivées</option><option value="toutes"${f === "toutes" ? " selected" : ""}>Toutes</option></select></div>
   <ul class="list">${rows.length ? rows.map((d) => `<li class="item click ${d.statut === "nouvelle" ? "info" : ""}" data-dem="${d.id}"><div><b>${esc(d.nom)}</b> <span class="chip ${DSTAT[d.statut] ? DSTAT[d.statut][1] : ""}">${DSTAT[d.statut] ? DSTAT[d.statut][0] : esc(d.statut)}</span><small>${esc(d.activite || "")}${d.offre ? " · " + esc(d.offre) : ""} · ${esc(d.email)} · ${ago(d.created_at)}${d.langue && d.langue !== "fr" ? " · site en " + esc(d.langue.toUpperCase()) : ""}</small>${d.message ? `<small style="margin-top:4px;color:var(--ink-2)">« ${esc(d.message.slice(0, 140))}${d.message.length > 140 ? "…" : ""} »</small>` : ""}</div></li>`).join("") : `<li class="item"><div class="empty"><h3>Aucune demande ici</h3>Dès qu'un visiteur remplit le formulaire de tissaweb.fr, elle apparaît ici et dans le tableau de bord.</div></li>`}</ul>`;
 };
+
+/* ---------- Pilote auto : progression + mails envoyés automatiquement ---------- */
+function autoQueue() {
+  const ok = (p) => p.email && (p.priorite ?? 50) < 50 && (/\b(vous|votre|vos)\b/i.test(p.angle || "") || !(p.site_actuel || /a déjà un site|site wix|site [a-z0-9.-]+\.(fr|com|net)/i.test(p.notes || "")));
+  const t = today();
+  const rel = D.prospects.filter((p) => ok(p) && p.statut === "contacte" && (p.nb_contacts || 0) === 1 && p.prochaine_action && p.prochaine_action <= t);
+  const neu = D.prospects.filter((p) => ok(p) && p.statut === "a_contacter" && !(p.nb_contacts || 0)).sort((a, b) => (a.priorite || 50) - (b.priorite || 50));
+  return rel.concat(neu);
+}
+function autoNext(on, sentToday, max) {
+  if (!on) return "Envoi auto coupé";
+  const now = new Date(), P = (d) => Object.fromEntries(new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", weekday: "long", hour: "numeric", hour12: false }).formatToParts(d).map((x) => [x.type, x.value]));
+  const p = P(now), h = +p.hour, we = /samedi|dimanche/.test(p.weekday);
+  if (!we && h >= 9 && h < 11 && sentToday < max) return "En cours : 1 mail toutes les 20 min";
+  for (let i = (we || h >= 9) ? 1 : 0; i < 8; i++) { const d = new Date(now.getTime() + i * 86400000), q = P(d); if (!/samedi|dimanche/.test(q.weekday)) return "Prochain envoi : " + (i === 0 ? "aujourd'hui" : i === 1 ? "demain" : q.weekday) + " à 9 h"; }
+  return "";
+}
+function autoPanel() {
+  const c = cfg(), on = c.auto_prospect === true, max = c.auto_par_jour || 5;
+  const auto = D.messages.filter((m) => m.direction === "out" && m.auteur === "Auto").sort((a, b) => new Date(b.date) - new Date(a.date));
+  const d0 = new Date(Date.now() - 20 * 3600000), sentToday = auto.filter((m) => new Date(m.date) > d0).length;
+  const withMail = D.prospects.filter((p) => p.email && p.statut !== "pas_interesse");
+  const touched = withMail.filter((p) => (p.nb_contacts || 0) > 0 || ["interesse", "client"].includes(p.statut)).length;
+  const pct = withMail.length ? Math.round(touched / withMail.length * 100) : 0;
+  const n = (s) => D.prospects.filter((p) => p.statut === s).length;
+  const steps = [["À contacter", n("a_contacter"), ""], ["Contactés", n("contacte"), "info"], ["Intéressés", n("interesse"), "ok"], ["Clients", n("client"), "ok"]];
+  const top = Math.max(1, ...steps.map((x) => x[1]));
+  const q = autoQueue();
+  const pr = (m) => D.prospects.find((p) => p.id === m.prospect_id) || D.prospects.find((p) => (p.email || "").toLowerCase() === (m.to_email || "").toLowerCase()) || {};
+  return `<section class="pilot" aria-label="Progression de la prospection">
+    <div class="pilot-ring" style="--p:${pct}"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="trk"/><circle cx="60" cy="60" r="52" class="val" pathLength="100"/></svg><div><b class="num" data-count="${pct}">${pct}</b><span>%</span><small>des prospects avec mail déjà contactés</small></div></div>
+    <div class="pilot-funnel">${steps.map((x, i) => `<div class="fn ${x[2]}" style="--w:${Math.max(4, Math.round(x[1] / top * 100))}%;--i:${i}"><span>${x[0]}</span><b class="num" data-count="${x[1]}">${x[1]}</b><i></i></div>`).join("")}</div>
+    <div class="pilot-auto ${on ? "on" : "off"}"><div class="pa-head"><span class="pulse" aria-hidden="true"></span><b>Pilote auto ${on ? "activé" : "coupé"}</b></div>
+      <p>${esc(autoNext(on, sentToday, max))}</p>
+      <div class="pa-stats"><div><b class="num">${sentToday}/${max}</b><small>aujourd'hui</small></div><div><b class="num">${auto.length}</b><small>envoyés au total</small></div><div><b class="num">${q.length}</b><small>en file</small></div></div>
+      ${q.length ? `<small class="pa-next">Prochains : ${q.slice(0, 3).map((p) => esc(p.entreprise)).join(", ")}${q.length > 3 ? "…" : ""}</small>` : ""}
+      <a class="btn sm" href="#reglages">${on ? "Régler / couper" : "Activer"}</a></div>
+  </section>
+  <details class="card autolog" ${auto.length ? "open" : ""}><summary><h2>Envoyés automatiquement</h2><span class="chip">${auto.length}</span></summary>
+    ${auto.length ? `<ul class="list">${auto.slice(0, 30).map((m, i) => { const p = pr(m); const rel = /relance/i.test(m.subject || ""); const rep = p.statut === "interesse" || p.statut === "client"; return `<li class="item click" style="--i:${i}" data-conv="${esc(m.to_email)}"><div><b>${esc(p.entreprise || m.to_email)}</b> <span class="chip ${rel ? "warn" : "info"}">${rel ? "Relance" : "1er mail"}</span>${rep ? ` <span class="chip ok">A répondu</span>` : p.statut === "pas_interesse" ? ` <span class="chip bad">STOP</span>` : ""}<small>${esc(m.subject || "")} · ${ago(m.date)}</small></div></li>`; }).join("")}</ul>` : `<p class="note">Rien encore. Les premiers mails partiront ${esc(autoNext(on, sentToday, max).replace(/^Prochain envoi : /, "").toLowerCase())}.</p>`}
+  </details>`;
+}
 VIEWS.prospects = function () {
   const f = S.fPro || "actifs", q = (S.qPro || "").toLowerCase();
   const order = { a_relancer: 0, a_contacter: 1, interesse: 2, contacte: 3, client: 4, pas_interesse: 5 };
@@ -332,6 +385,7 @@ VIEWS.prospects = function () {
   }).sort((a, b) => (order[prState(a)[0] === "À relancer" ? "a_relancer" : a.statut] - order[prState(b)[0] === "À relancer" ? "a_relancer" : b.statut]) || ((a.priorite || 50) - (b.priorite || 50)));
   const cnt = (s) => D.prospects.filter((p) => p.statut === s).length;
   return `<div class="head"><div><h1>Prospection</h1><p>${cnt("a_contacter")} à contacter · ${cnt("contacte")} contactés · ${cnt("interesse")} intéressés · ${cnt("client")} devenus clients. Les relances se programment toutes seules ${cfg().relance_prospect} jours après chaque mail.</p></div><div class="actions"><button class="btn primary" type="button" data-bulk>Envoi groupé</button><button class="btn" type="button" data-newprospect>+ Prospect</button></div></div>
+  ${autoPanel()}
   <div class="filters"><select id="fPro"><option value="actifs"${f === "actifs" ? " selected" : ""}>En cours</option><option value="a_relancer"${f === "a_relancer" ? " selected" : ""}>À relancer</option><option value="a_contacter"${f === "a_contacter" ? " selected" : ""}>À contacter</option><option value="interesse"${f === "interesse" ? " selected" : ""}>Intéressés</option><option value="client"${f === "client" ? " selected" : ""}>Devenus clients</option><option value="pas_interesse"${f === "pas_interesse" ? " selected" : ""}>Pas intéressés</option><option value="tous"${f === "tous" ? " selected" : ""}>Tous</option></select><input id="qPro" type="search" placeholder="Rechercher" value="${esc(S.qPro || "")}"></div>
   <div class="tablewrap"><table><thead><tr><th>Commerce</th><th>Activité</th><th>Contact</th><th>Statut</th><th>Prochaine action</th></tr></thead><tbody>
   ${rows.length ? rows.map((p) => { const s = prState(p); return `<tr class="click" data-prospect="${p.id}"><td><b>${esc(p.entreprise)}</b><br><small>${esc(p.adresse || "")}</small></td><td>${esc(p.activite || "")}</td><td><small>${esc(p.email || "pas de mail")}<br>${esc(p.tel || "")}</small></td><td><span class="chip ${s[1]}">${s[0]}</span>${p.nb_contacts ? `<br><small>${p.nb_contacts} mail(s)</small>` : ""}</td><td class="num">${p.prochaine_action ? sDate(p.prochaine_action) : p.statut === "a_contacter" ? "Maintenant" : ""}</td></tr>`; }).join("") : `<tr><td colspan="5"><div class="empty"><h3>Aucun prospect</h3>Ajoute un commerce avec « + Prospect ».</div></td></tr>`}
