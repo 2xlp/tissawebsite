@@ -230,8 +230,9 @@ function mailProspect(pr, kind) {
   const direct = /\b(vous|votre|vos)\b/i.test(pr.angle || "");
   const exemple = /boulang|pâtiss/.test(metier) ? "notre site de démonstration pour une boulangerie" : /barb|coiff/.test(metier) ? "notre démo pour un barbier, avec la prise de rendez-vous" : /plomb|électri|artisan|garage/.test(metier) ? "notre démo pour un artisan, avec le bouton d'appel et la demande de devis" : "nos sites de démonstration";
   if (kind === "auto") kind = n === 0 ? "premier" : n === 1 ? "relance1" : "relance2";
+  const apercu = window.TWEssai ? `\n\nJ'ai préparé un aperçu de ce que pourrait être le site de ${pr.entreprise}, à votre nom : ${TWEssai.lien(pr.entreprise, (S.pvm && S.pvm[pr.id]) || TWEssai.metier(pr.activite))}` : "";
   const M = {
-    premier: direct ? [`${pr.entreprise} – votre site internet`, `Bonjour,\n\nJe m'appelle ${me}, je crée des sites internet pour les commerces et artisans de Dijon avec mon associé, chez TissaWeb.\n\n${pr.angle.trim()}\n\nNos sites sont livrés en 7 jours, à prix fixe : à partir de 315 € au lieu de 450 € (-30 % pour nos 5 premiers clients). Vous pouvez voir ${exemple} sur tissaweb.fr.\n\nSeriez-vous d'accord pour que je vous montre à quoi pourrait ressembler le vôtre ? C'est gratuit et sans engagement.${sigEquipe()}${STOPLINE}`] : [`Un site internet pour ${pr.entreprise} ?`, `Bonjour,\n\nJe m'appelle ${me}, je crée des sites internet pour les commerces et artisans de Dijon avec mon associé, chez TissaWeb.\n\nEn cherchant ${pr.entreprise} sur Google, j'ai vu ${avis}, mais pas de site pour présenter ce que vous faites.${accroche ? "\n\nPar exemple : " + accroche.charAt(0).toLowerCase() + accroche.slice(1) + "." : ""}\n\nNos sites sont livrés en 7 jours, à prix fixe : à partir de 315 € au lieu de 450 € (-30 % pour nos 5 premiers clients). Vous pouvez voir ${exemple} sur tissaweb.fr.\n\nSeriez-vous d'accord pour que je vous montre à quoi ressemblerait le vôtre ? C'est gratuit et sans engagement.${sigEquipe()}${STOPLINE}`],
+    premier: direct ? [`${pr.entreprise} – votre site internet`, `Bonjour,\n\nJe m'appelle ${me}, je crée des sites internet pour les commerces et artisans de Dijon avec mon associé, chez TissaWeb.\n\n${pr.angle.trim()}${apercu}\n\nNos sites sont livrés en 7 jours, à prix fixe : à partir de 315 € au lieu de 450 € (-30 % pour nos 5 premiers clients). Vous pouvez voir ${exemple} sur tissaweb.fr.\n\nSeriez-vous d'accord pour que je vous montre à quoi pourrait ressembler le vôtre ? C'est gratuit et sans engagement.${sigEquipe()}${STOPLINE}`] : [`Un site internet pour ${pr.entreprise} ?`, `Bonjour,\n\nJe m'appelle ${me}, je crée des sites internet pour les commerces et artisans de Dijon avec mon associé, chez TissaWeb.\n\nEn cherchant ${pr.entreprise} sur Google, j'ai vu ${avis}, mais pas de site pour présenter ce que vous faites.${accroche ? "\n\nPar exemple : " + accroche.charAt(0).toLowerCase() + accroche.slice(1) + "." : ""}${apercu}\n\nNos sites sont livrés en 7 jours, à prix fixe : à partir de 315 € au lieu de 450 € (-30 % pour nos 5 premiers clients). Vous pouvez voir ${exemple} sur tissaweb.fr.\n\nSeriez-vous d'accord pour que je vous montre à quoi ressemblerait le vôtre ? C'est gratuit et sans engagement.${sigEquipe()}${STOPLINE}`],
     relance1: [`${pr.entreprise} – petite relance`, `Bonjour,\n\nJe me permets de revenir vers vous suite à mon message de la semaine dernière au sujet d'un site internet pour ${pr.entreprise}.\n\nJe peux vous montrer en 5 minutes à quoi ressemblerait votre site, sans engagement. Des exemples sont visibles sur tissaweb.fr.\n\nUn simple « oui » en réponse suffit, et je vous envoie une proposition.${sigEquipe()}${STOPLINE}`],
     relance2: [`Dernier message – ${pr.entreprise}`, `Bonjour,\n\nC'est mon dernier message, promis : je ne voudrais pas vous déranger.\n\nSi un jour vous souhaitez un site pour ${pr.entreprise} (horaires, photos, contact, avis Google réunis au même endroit), vous pouvez me répondre à tout moment, même dans plusieurs mois. L'offre de lancement à -30 % reste valable pour nos 5 premiers clients.\n\nBonne continuation !${sigEquipe()}`],
     maquette: [`Une maquette gratuite pour ${pr.entreprise}`, `Bonjour,\n\nPour vous rendre les choses concrètes, je vous propose de préparer gratuitement une maquette de la page d'accueil de ${pr.entreprise}, avec vos vraies informations (horaires, adresse, avis).\n\nVous la regardez, et si elle ne vous plaît pas, vous ne nous devez rien. Ça vous tente ?\n\nIl me suffit de votre accord en réponse à ce mail.${sigEquipe()}${STOPLINE}`],
@@ -291,7 +292,8 @@ function cockpitHTML(nTodo) {
       <h1>${hello} ${esc(me)}</h1>
       <p>${nTodo ? `${nTodo} chose${nTodo > 1 ? "s" : ""} à faire aujourd'hui, listée${nTodo > 1 ? "s" : ""} plus bas dans l'ordre.` : "Rien d'urgent : tout est à jour."}</p>
       <div class="ck-chips">${chips.map((x) => `<a class="ck-chip" href="${x[2]}"><b class="num" data-count="${x[0]}">${x[0]}</b> ${x[1]}</a>`).join("")}
-        <a class="ck-chip ${on ? "live" : ""}" href="#prospects"><span class="pulse" aria-hidden="true"></span>Pilote auto ${on ? `· ${today0}/${max} aujourd'hui` : "coupé"}</a></div></div></section>`;
+        <a class="ck-chip ${on ? "live" : ""}" href="#prospects"><span class="pulse" aria-hidden="true"></span>Pilote auto ${on ? `· ${today0}/${max} aujourd'hui` : "coupé"}</a></div></div>
+    ${D.journal.length ? `<div class="ck-feed" aria-label="Activité en direct"><span class="ck-live">EN DIRECT</span><div class="ck-track"><div class="ck-run">${(() => { const it = D.journal.slice(0, 10).map((j) => `<span><i></i>${esc(j.texte)} <small>${ago(j.created_at)}</small></span>`).join(""); return it + it; })()}</div></div></div>` : ""}</section>`;
 }
 const CK = { cv: null, gl: null, raf: 0, t0: performance.now(), mx: .7, my: .6, tx: .7, ty: .6 };
 function cockpitFx() {
@@ -337,6 +339,72 @@ function cockpitFx() {
   clock(); if (!CK.iv) CK.iv = setInterval(clock, 1000); if (CK.raf) cancelAnimationFrame(CK.raf); CK.raf = 0;
   $("cockpit").classList.add("on");
   if (reduce) frame(performance.now() + 6000); else CK.raf = requestAnimationFrame(frame);
+}
+
+/* ---------- Aperçu du futur site du prospect (même générateur que tissaweb.fr) ---------- */
+S.pvm = S.pvm || {};
+function pvMetier(p) { return S.pvm[p.id] || (window.TWEssai ? TWEssai.metier(p.activite) : "boutique"); }
+function pvBlock(p) {
+  if (!window.TWEssai) return "";
+  const m = pvMetier(p), lien = TWEssai.lien(p.entreprise, m), tel = (p.tel || "").replace(/[^\d+]/g, "");
+  const me = S.me ? S.me.nom.split(" ")[0] : "Hugo";
+  const sms = `Bonjour, c'est ${me} de TissaWeb (Dijon). J'ai préparé un aperçu du site que pourrait avoir ${p.entreprise} : ${lien} Je peux vous le faire en 7 jours. Bonne journée !`;
+  return `<section class="pv">
+    <div class="pv-stage"><div class="pv-browser"><div class="pv-bar"><i></i><i></i><i></i><span>${esc(TWEssai.slug(p.entreprise))}.fr</span></div><div class="pv-screen"><div data-pv="${p.id}" data-pvm="${m}" data-pvn="${esc(p.entreprise)}"></div></div></div>
+      <div class="pv-phone"><div class="pv-screen"><div data-pv="${p.id}" data-pvm="${m}" data-pvn="${esc(p.entreprise)}"></div></div></div></div>
+    <div class="pv-side"><span class="eyebrow">Son futur site</span><h3>Montre-lui, il signe.</h3>
+      <p class="note">Le prospect ouvre ce lien et voit son site à son nom sur tissaweb.fr, avec le bouton pour te demander un devis.</p>
+      <div class="pv-ms">${Object.keys(TWEssai.T).map((k) => `<button type="button" class="${k === m ? "on" : ""}" data-pvset="${k}" data-id="${p.id}">${TWEssai.T[k].label}</button>`).join("")}</div>
+      <div class="pv-act"><button class="btn primary" type="button" data-pvcopy="${esc(lien)}">Copier son lien perso</button>${tel ? `<a class="btn" href="sms:${tel}?&body=${encodeURIComponent(sms)}">Envoyer par SMS</a>` : ""}<a class="btn ghost" href="${esc(lien)}" target="_blank" rel="noopener">Voir</a></div></div>
+  </section>`;
+}
+function hydratePv(root) {
+  if (!window.TWEssai || !root) return;
+  root.querySelectorAll("[data-pv]").forEach((el) => TWEssai.render(el, el.dataset.pvm, el.dataset.pvn));
+}
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-pvset],[data-pvcopy]"); if (!b) return;
+  if (b.dataset.pvset) { S.pvm[b.dataset.id] = b.dataset.pvset; return S.sheetRender && S.sheetRender(); }
+  const url = b.dataset.pvcopy;
+  (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => toast("Lien copié : colle-le dans un mail, un SMS ou un DM Insta"), () => prompt("Copie ce lien :", url));
+});
+
+/* ---------- Pipeline glisser-déposer ---------- */
+const COLS = [["a_contacter", "À contacter"], ["contacte", "Contactés"], ["interesse", "Intéressés"], ["client", "Clients"], ["pas_interesse", "Pas intéressés"]];
+function proBoard(cnt, q) {
+  const list = D.prospects.filter((p) => !q || (p.entreprise + " " + (p.activite || "") + " " + (p.adresse || "")).toLowerCase().includes(q));
+  const card = (p, i) => { const s = prState(p); return `<article class="pc" draggable="true" data-prospect="${p.id}" data-drag="${p.id}" style="--i:${Math.min(i, 12)}"><b>${esc(p.entreprise)}</b><small>${esc(p.activite || "")}</small><div class="pc-f">${p.email ? `<span class="pc-t on">mail</span>` : `<span class="pc-t">pas de mail</span>`}${p.tel ? `<span class="pc-t on">tél</span>` : ""}${s[0] === "À relancer" ? `<span class="pc-t warn">à relancer</span>` : ""}${p.nb_contacts ? `<span class="pc-t">${p.nb_contacts} mail${p.nb_contacts > 1 ? "s" : ""}</span>` : ""}</div></article>`; };
+  return `<div class="head"><div><h1>Prospection</h1><p>Glisse une carte d'une colonne à l'autre pour changer son statut. Clique dessus pour ouvrir la fiche et son futur site.</p></div><div class="actions"><div class="seg mode"><button type="button" data-promode="liste" aria-pressed="false">Liste</button><button type="button" data-promode="tableau" aria-pressed="true">Tableau</button></div><button class="btn primary" type="button" data-bulk>Envoi groupé</button><button class="btn" type="button" data-newprospect>+ Prospect</button></div></div>
+  <div class="filters"><input id="qPro" type="search" placeholder="Rechercher" value="${esc(S.qPro || "")}"></div>
+  <div class="board">${COLS.map(([k, label]) => { const items = list.filter((p) => p.statut === k).sort((a, b) => (a.priorite || 50) - (b.priorite || 50)); return `<section class="col" data-col="${k}"><header><span>${label}</span><b class="num">${items.length}</b></header><div class="col-body">${items.map(card).join("") || `<p class="col-empty">Dépose une carte ici</p>`}</div></section>`; }).join("")}</div>`;
+}
+document.addEventListener("click", (ev) => { const b = ev.target.closest("[data-promode]"); if (!b) return; S.proMode = b.dataset.promode; S._lastView = null; render(); });
+document.addEventListener("dragstart", (e) => { const c = e.target.closest && e.target.closest("[data-drag]"); if (!c) return; e.dataTransfer.setData("text/plain", c.dataset.drag); e.dataTransfer.effectAllowed = "move"; c.classList.add("dragging"); document.body.classList.add("is-dragging"); });
+document.addEventListener("dragend", (e) => { document.querySelectorAll(".dragging,.col.over").forEach((x) => x.classList.remove("dragging", "over")); document.body.classList.remove("is-dragging"); });
+document.addEventListener("dragover", (e) => { const col = e.target.closest && e.target.closest("[data-col]"); if (!col) return; e.preventDefault(); document.querySelectorAll(".col.over").forEach((x) => x !== col && x.classList.remove("over")); col.classList.add("over"); });
+document.addEventListener("drop", async (e) => {
+  const col = e.target.closest && e.target.closest("[data-col]"); if (!col) return; e.preventDefault();
+  const id = e.dataTransfer.getData("text/plain"), p = byId("prospects", id), st = col.dataset.col; col.classList.remove("over");
+  if (!p || p.statut === st) return;
+  const patch = { statut: st }; if (st !== "contacte") patch.prochaine_action = null;
+  const r = await upd("prospects", id, patch); await log("prospect", `${r.entreprise} : ${PSTAT[st][0].toLowerCase()}`, { prospect_id: id });
+  S._lastView = null; render();
+  const el = document.querySelector(`[data-drag="${id}"]`); if (el) el.classList.add("landed");
+  if (st === "client") celebrate("Nouveau client : " + r.entreprise + " !"); else if (st === "interesse") celebrate(r.entreprise + " est intéressé !", true); else toast(`${r.entreprise} → ${PSTAT[st][0]}`);
+});
+
+/* ---------- Célébration (victoires) ---------- */
+function celebrate(msg, small) {
+  toast(msg, 3200);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cv = document.createElement("canvas"); cv.className = "fx-canvas"; document.body.appendChild(cv);
+  const dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext("2d"); g.scale(dpr, dpr);
+  const cols = ["#0B7A55", "#3DDC97", "#FFFFFF", "#C9F2DD", "#0C1310"], N = small ? 70 : 170, P = [];
+  for (let i = 0; i < N; i++) { const a = -Math.PI / 2 + (Math.random() - .5) * 1.9, v = (small ? 7 : 10) + Math.random() * 9; P.push({ x: W / 2 + (Math.random() - .5) * 120, y: H * .62, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: Math.random() * 6.28, vr: (Math.random() - .5) * .35, w: 6 + Math.random() * 7, h: 3 + Math.random() * 5, c: cols[i % cols.length] }); }
+  const t0 = performance.now();
+  (function f(now) { const t = (now - t0) / 1000; g.clearRect(0, 0, W, H);
+    P.forEach((p) => { p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; g.save(); g.globalAlpha = Math.max(0, 1 - t / 2.4); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); g.restore(); });
+    if (t < 2.5) requestAnimationFrame(f); else cv.remove(); })(t0);
 }
 /* ---------- Pastille du menu qui glisse vers la page active ---------- */
 function navPill() {
@@ -464,7 +532,8 @@ VIEWS.prospects = function () {
     return !q || (p.entreprise + " " + (p.activite || "") + " " + (p.adresse || "")).toLowerCase().includes(q);
   }).sort((a, b) => (order[prState(a)[0] === "À relancer" ? "a_relancer" : a.statut] - order[prState(b)[0] === "À relancer" ? "a_relancer" : b.statut]) || ((a.priorite || 50) - (b.priorite || 50)));
   const cnt = (s) => D.prospects.filter((p) => p.statut === s).length;
-  return `<div class="head"><div><h1>Prospection</h1><p>${cnt("a_contacter")} à contacter · ${cnt("contacte")} contactés · ${cnt("interesse")} intéressés · ${cnt("client")} devenus clients. Les relances se programment toutes seules ${cfg().relance_prospect} jours après chaque mail.</p></div><div class="actions"><button class="btn primary" type="button" data-bulk>Envoi groupé</button><button class="btn" type="button" data-newprospect>+ Prospect</button></div></div>
+  if (S.proMode === "tableau") return proBoard(cnt, q);
+  return `<div class="head"><div><h1>Prospection</h1><p>${cnt("a_contacter")} à contacter · ${cnt("contacte")} contactés · ${cnt("interesse")} intéressés · ${cnt("client")} devenus clients. Les relances se programment toutes seules ${cfg().relance_prospect} jours après chaque mail.</p></div><div class="actions"><div class="seg mode"><button type="button" data-promode="liste" aria-pressed="${S.proMode !== "tableau"}">Liste</button><button type="button" data-promode="tableau" aria-pressed="${S.proMode === "tableau"}">Tableau</button></div><button class="btn primary" type="button" data-bulk>Envoi groupé</button><button class="btn" type="button" data-newprospect>+ Prospect</button></div></div>
   ${autoPanel()}
   <div class="filters"><select id="fPro"><option value="actifs"${f === "actifs" ? " selected" : ""}>En cours</option><option value="a_relancer"${f === "a_relancer" ? " selected" : ""}>À relancer</option><option value="a_contacter"${f === "a_contacter" ? " selected" : ""}>À contacter</option><option value="interesse"${f === "interesse" ? " selected" : ""}>Intéressés</option><option value="client"${f === "client" ? " selected" : ""}>Devenus clients</option><option value="pas_interesse"${f === "pas_interesse" ? " selected" : ""}>Pas intéressés</option><option value="tous"${f === "tous" ? " selected" : ""}>Tous</option></select><input id="qPro" type="search" placeholder="Rechercher" value="${esc(S.qPro || "")}"></div>
   <div class="tablewrap"><table><thead><tr><th>Commerce</th><th>Activité</th><th>Contact</th><th>Statut</th><th>Prochaine action</th></tr></thead><tbody>
@@ -570,7 +639,7 @@ VIEWS.reglages = function () {
 };
 
 /* ================= panneaux ================= */
-function openSheet(title, renderFn) { S.sheetRender = () => { $("sheetTitle").textContent = typeof title === "function" ? title() : title; $("sheetBody").innerHTML = renderFn(); }; S.sheetRender(); $("sheet").hidden = false; document.body.style.overflow = "hidden"; $("sheet").querySelector("section").scrollTop = 0; }
+function openSheet(title, renderFn) { S.sheetRender = () => { $("sheetTitle").textContent = typeof title === "function" ? title() : title; $("sheetBody").innerHTML = renderFn(); hydratePv($("sheetBody")); }; S.sheetRender(); $("sheet").hidden = false; document.body.style.overflow = "hidden"; $("sheet").querySelector("section").scrollTop = 0; }
 function closeSheet() { $("sheet").hidden = true; S.sheetRender = null; S.mail = null; document.body.style.overflow = ""; }
 
 function sheetDemande(id) {
@@ -602,7 +671,7 @@ function sheetProspect(id) {
     return `${id ? `<div class="row"><span class="chip ${s[1]}">${s[0]}</span><span class="note">${p.nb_contacts || 0} mail(s) envoyé(s)${p.dernier_contact ? " · dernier le " + sDate(p.dernier_contact) : ""}${p.prochaine_action ? " · relance prévue le " + sDate(p.prochaine_action) : ""}</span></div>
     <div class="actions">${p.email && !["client", "pas_interesse"].includes(p.statut) ? `<button class="btn primary" type="button" data-prsent="${p.id}">J'ai envoyé le mail</button>` : ""}${p.statut !== "client" ? `<button class="btn" type="button" data-prstat="interesse" data-id="${p.id}">Intéressé</button><button class="btn" type="button" data-pr2devis="${p.id}">Devenu client → devis</button><button class="btn ghost" type="button" data-prstat="pas_interesse" data-id="${p.id}">Pas intéressé</button>` : p.client_id ? `<a class="btn" href="#client/${p.client_id}">Voir la fiche client</a>` : ""}${p.tel ? `<a class="btn ghost" href="tel:${esc(p.tel.replace(/\s/g, ""))}">Appeler</a>` : ""}</div>` : ""}
     ${p.statut !== "client" && id && !p.email ? `<p class="alert warn">Pas d'adresse mail : passe en boutique ou appelle, puis note le résultat ici.</p>` : ""}
-    ${id ? prospectQuick(p) + prospectShort(p) : ""}
+    ${id ? pvBlock(p) + prospectQuick(p) + prospectShort(p) : ""}
     ${dr ? `<p class="alert warn">Ce que tu avais écrit a été récupéré (pas encore enregistré). <button class="btn sm ghost" type="button" data-pdraftclear="${id || ""}">Effacer</button></p>` : ""}
     <div class="card"><div class="fgrid">
       <label class="f full">Commerce<input id="pEnt" value="${esc(p.entreprise)}"></label>
@@ -1124,17 +1193,17 @@ document.addEventListener("click", async (ev) => {
     if (ds.copy) { if (!S.mail) return; return copy(ds.copy === "sub" ? S.mail.sub : S.mail.body, $("mailBody")); }
     if (ds.pdf) { const p = byId("pieces", ds.pdf), d = pdfFor(p); if (!d) return toast("Le générateur de PDF n'a pas chargé"); d.save(`${p.numero}_${cname(p.client_id).replace(/[^\w\-]+/g, "-").slice(0, 40)}.pdf`); return; }
     if (ds.sent) { const p = await upd("pieces", ds.sent, { statut: "envoye", envoye_le: today() }); await log(p.type, `${kindLabel(p)} ${p.numero} envoyé${p.type === "facture" ? "e" : ""} au client`, { client_id: p.client_id }); toast("Marqué comme envoyé"); return rerender(); }
-    if (ds.accept) { const fa = await devisAccepte(byId("pieces", ds.accept)); render(); return fa ? sheetPiece(fa.id) : rerender(); }
+    if (ds.accept) { const fa = await devisAccepte(byId("pieces", ds.accept)); celebrate("Devis accepté !"); render(); return fa ? sheetPiece(fa.id) : rerender(); }
     if (ds.refuse) { const p = await upd("pieces", ds.refuse, { statut: "refuse" }); await log("devis", `Devis ${p.numero} refusé`, { client_id: p.client_id }); return rerender(); }
     if (ds.inv) { const f = await makeInvoice(byId("pieces", ds.id), ds.inv); render(); return sheetPiece(f.id); }
     if (ds.payask) { $("payBox").hidden = false; $("payBox").scrollIntoView({ block: "nearest" }); return; }
-    if (ds.payok) { await facturePayee(byId("pieces", ds.payok), $("payDate").value || today(), $("payHow").value); toast("Paiement enregistré"); return rerender(); }
+    if (ds.payok) { await facturePayee(byId("pieces", ds.payok), $("payDate").value || today(), $("payHow").value); celebrate("Paiement encaissé !"); return rerender(); }
     if (ds.pdel) { $("pDelAsk").hidden = false; return; }
     if (ds.pdelyes) { await del("pieces", ds.pdelyes); closeSheet(); toast("Supprimé"); return render(); }
     if (ds.dem2devis) { const p = await demandeVersDevis(byId("demandes", ds.dem2devis)); render(); return sheetEditor(p.id); }
     if (ds.demstat) { await upd("demandes", ds.id, { statut: ds.demstat, traite_par: S.me ? S.me.nom : "" }); toast("Demande mise à jour"); if (ds.demstat !== "repondu") closeSheet(); return rerender(); }
     if (ds.prsent) { const p = byId("prospects", ds.prsent); await upd("prospects", p.id, { statut: "contacte", dernier_contact: today(), prochaine_action: addDays(today(), cfg().relance_prospect), nb_contacts: (p.nb_contacts || 0) + 1 }); await log("prospect", `Mail ${(p.nb_contacts || 0) ? "de relance " : ""}envoyé à ${p.entreprise}`, { prospect_id: p.id }); toast(`Relance programmée dans ${cfg().relance_prospect} jours`); return rerender(); }
-    if (ds.prstat) { const p = await upd("prospects", ds.id, { statut: ds.prstat, prochaine_action: null }); await log("prospect", `${p.entreprise} : ${PSTAT[ds.prstat][0].toLowerCase()}`, { prospect_id: p.id }); return rerender(); }
+    if (ds.prstat) { const p = await upd("prospects", ds.id, { statut: ds.prstat, prochaine_action: null }); await log("prospect", `${p.entreprise} : ${PSTAT[ds.prstat][0].toLowerCase()}`, { prospect_id: p.id }); if (ds.prstat === "client") celebrate("Nouveau client : " + p.entreprise + " !"); else if (ds.prstat === "interesse") celebrate(p.entreprise + " est intéressé !", true); return rerender(); }
     if (ds.pr2devis) { const c = await prospectVersClient(byId("prospects", ds.pr2devis)); render(); return sheetEditor(null, c.id); }
     if (t.hasAttribute("data-pdraftclear")) { pDraftDel(ds.pdraftclear); return sheetProspect(ds.pdraftclear || null); }
     if (t.hasAttribute("data-prsave")) {
