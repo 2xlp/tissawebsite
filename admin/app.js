@@ -355,7 +355,7 @@ function pvBlock(p) {
     <div class="pv-side"><span class="eyebrow">Son futur site</span><h3>Montre-lui, il signe.</h3>
       <p class="note">Le prospect ouvre ce lien et voit son site à son nom sur tissaweb.fr, avec le bouton pour te demander un devis.</p>
       <div class="pv-ms">${Object.keys(TWEssai.T).map((k) => `<button type="button" class="${k === m ? "on" : ""}" data-pvset="${k}" data-id="${p.id}">${TWEssai.T[k].label}</button>`).join("")}</div>
-      <div class="pv-act"><button class="btn primary" type="button" data-pvcopy="${esc(lien)}">Copier son lien perso</button>${tel ? `<a class="btn" href="sms:${tel}?&body=${encodeURIComponent(sms)}">Envoyer par SMS</a>` : ""}<a class="btn ghost" href="${esc(lien)}" target="_blank" rel="noopener">Voir</a></div></div>
+      <div class="pv-act"><button class="btn pv-3d" type="button" data-pv3d="${p.id}">▶ Construction 3D</button><button class="btn primary" type="button" data-pvcopy="${esc(lien)}">Copier son lien perso</button>${tel ? `<a class="btn" href="sms:${tel}?&body=${encodeURIComponent(sms)}">Envoyer par SMS</a>` : ""}<a class="btn ghost" href="${esc(lien)}" target="_blank" rel="noopener">Voir</a></div></div>
   </section>`;
 }
 function hydratePv(root) {
@@ -363,6 +363,9 @@ function hydratePv(root) {
   root.querySelectorAll("[data-pv]").forEach((el) => TWEssai.render(el, el.dataset.pvm, el.dataset.pvn));
 }
 document.addEventListener("click", (ev) => {
+  const b3 = ev.target.closest("[data-pv3d]");
+  if (b3 && TWEssai.cinema) { const p = byId("prospects", b3.dataset.pv3d); const m = pvMetier(p), lien = TWEssai.lien(p.entreprise, m);
+    return TWEssai.cinema({ nom: p.entreprise, metier: m, cta: { text: "Copier son lien perso", onClick: () => { (navigator.clipboard ? navigator.clipboard.writeText(lien) : Promise.reject()).then(() => toast("Lien copié : il verra la même construction sur tissaweb.fr"), () => prompt("Copie ce lien :", lien)); } } }); }
   const b = ev.target.closest("[data-pvset],[data-pvcopy]"); if (!b) return;
   if (b.dataset.pvset) { S.pvm[b.dataset.id] = b.dataset.pvset; return S.sheetRender && S.sheetRender(); }
   const url = b.dataset.pvcopy;
@@ -412,6 +415,19 @@ function navPill() {
   let pill = nav.querySelector(".nav-pill"); if (!pill) { pill = document.createElement("i"); pill.className = "nav-pill"; pill.setAttribute("aria-hidden", "true"); nav.prepend(pill); }
   const a = nav.querySelector("a[aria-current=page]"); if (!a) { pill.style.opacity = 0; return; }
   pill.style.opacity = 1; pill.style.transform = `translateY(${a.offsetTop}px)`; pill.style.height = a.offsetHeight + "px";
+}
+/* ---------- Relief 3D : les cartes s'inclinent sous la souris ---------- */
+if (matchMedia("(hover: hover) and (pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  let cur = null;
+  document.addEventListener("pointermove", (e) => {
+    const el = e.target.closest && e.target.closest(".kpi,.pilot > *,.pc,.cockpit,.pv-stage,.grid2 > .card");
+    if (cur && cur !== el) { cur.style.transform = ""; cur.classList.remove("t3d"); }
+    cur = el; if (!el) return;
+    const r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+    const k = el.classList.contains("cockpit") || el.classList.contains("card") ? 3 : el.classList.contains("pv-stage") ? 10 : 7;
+    el.classList.add("t3d"); el.style.transform = `perspective(900px) rotateX(${(-y * k).toFixed(2)}deg) rotateY(${(x * k).toFixed(2)}deg) translateZ(6px)`;
+  }, { passive: true });
+  document.addEventListener("pointerleave", () => { if (cur) cur.style.transform = ""; }, true);
 }
 /* ---------- Lumière qui suit la souris sur les cartes ---------- */
 document.addEventListener("pointermove", (e) => {
