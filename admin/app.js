@@ -296,6 +296,9 @@ function cockpitHTML(nTodo) {
 const CK = { cv: null, gl: null, raf: 0, t0: performance.now(), mx: .7, my: .6, tx: .7, ty: .6 };
 function cockpitFx() {
   const host = $("ckFx"); if (!host) { if (CK.raf) cancelAnimationFrame(CK.raf); CK.raf = 0; return; }
+  /* fond animé retiré (demande de Hugo) : on garde seulement l'horloge en direct */
+  const tick = () => { const c = $("ckClock"); if (c) c.textContent = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }); };
+  tick(); if (!CK.iv) CK.iv = setInterval(tick, 1000); $("cockpit").classList.add("on"); return;
   if (!CK.cv) {
     CK.cv = document.createElement("canvas");
     const gl = CK.cv.getContext("webgl", { antialias: false, alpha: false, powerPreference: "low-power" });

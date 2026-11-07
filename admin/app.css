@@ -300,15 +300,14 @@ code{background:var(--bg);padding:1px 6px;border-radius:5px;font-size:.85em}
 .card,.item,.tablewrap{transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,border-color .25s}
 .card:hover{box-shadow:0 14px 34px -22px rgba(12,19,16,.45)}
 .item.click:hover,tr.click:hover{transform:translateX(3px)}
-.main::before{content:"";position:fixed;inset:-20% -10% auto auto;width:60vmax;height:60vmax;pointer-events:none;z-index:-1;
-  background:radial-gradient(closest-side,rgba(11,122,85,.10),transparent 70%);animation:twDrift 22s ease-in-out infinite alternate}
+
 @keyframes twDrift{to{transform:translate(-18vmax,22vmax) scale(1.15)}}
 .main{position:relative;isolation:isolate}
 
 .pilot{display:grid;grid-template-columns:auto 1fr minmax(240px,320px);gap:16px;align-items:stretch;margin-bottom:16px}
 .pilot > *{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
 .pilot-ring{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#0C1310,#123528);color:#fff;border-color:transparent;position:relative;overflow:hidden}
-.pilot-ring::after{content:"";position:absolute;inset:auto -30% -60% auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(closest-side,rgba(61,220,151,.35),transparent);animation:twDrift 9s ease-in-out infinite alternate}
+
 .pilot-ring svg{width:112px;height:112px;flex:none;transform:rotate(-90deg)}
 .pilot-ring circle{fill:none;stroke-width:10}
 .pilot-ring .trk{stroke:rgba(255,255,255,.12)}
@@ -390,3 +389,7 @@ code{background:var(--bg);padding:1px 6px;border-radius:5px;font-size:.85em}
 .btn.primary:hover{box-shadow:0 10px 24px -12px rgba(11,122,85,.8)}
 @media (max-width:820px){.ck-in{padding:20px 18px}.cockpit{min-height:0}}
 @media (prefers-reduced-motion:reduce){.main.enter .cockpit h1,.main.enter .kpi,.main.enter tbody tr,.main.enter .list .item,.sheet,.sheet > section,.toast:not([hidden]),.ck-chip.live .pulse{animation:none!important}.nav-pill{transition:none}}
+
+/* Sans bulles : cockpit sobre, quadrillage fin comme le site */
+.ck-fx{display:none}
+.cockpit{background:#0C1310;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px}

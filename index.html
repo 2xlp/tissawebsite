@@ -801,6 +801,260 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
   </div>
 </section>
 
+<!-- =================== 2b. STUDIO EN DIRECT : le visiteur voit SON site naître =================== -->
+<section class="sl" id="essai" aria-labelledby="slTitle">
+  <div class="wrap sl-grid">
+    <div class="sl-copy">
+      <span class="sl-eyebrow"><i aria-hidden="true"></i>Essayez, c'est instantané</span>
+      <h2 id="slTitle">Tapez le nom de votre commerce.<br><span>Votre site apparaît.</span></h2>
+      <label class="sl-field" for="slName"><span class="sr-only">Nom de votre commerce</span>
+        <input id="slName" type="text" maxlength="32" autocomplete="organization" placeholder="Ex. : Boulangerie Martin" spellcheck="false">
+        <span class="sl-caret" aria-hidden="true"></span>
+      </label>
+      <div class="sl-chips" role="radiogroup" aria-label="Votre activité">
+        <button type="button" role="radio" aria-checked="true" data-m="boulangerie">Boulangerie</button>
+        <button type="button" role="radio" aria-checked="false" data-m="barbier">Coiffeur / barbier</button>
+        <button type="button" role="radio" aria-checked="false" data-m="artisan">Artisan</button>
+        <button type="button" role="radio" aria-checked="false" data-m="coach">Coach / sport</button>
+      </div>
+      <ul class="sl-points">
+        <li><b>Sur ordinateur et sur téléphone</b>, prêt à recevoir des appels</li>
+        <li><b>Votre nom, vos horaires, vos avis Google</b> réunis au même endroit</li>
+        <li><b>En ligne en 7 jours</b>, à prix fixe</li>
+      </ul>
+      <a href="#contact" class="btn btn-accent btn-lg sl-cta" id="slCta">Je veux ce site pour mon commerce</a>
+      <p class="sl-note">Aperçu généré en direct dans votre navigateur. Votre vrai site est conçu sur-mesure avec vos photos et vos textes.</p>
+    </div>
+
+    <div class="sl-stage" aria-hidden="true">
+      <div class="sl-browser">
+        <div class="sl-bar"><i></i><i></i><i></i><span class="sl-url"><b id="slUrl">boulangerie-martin</b>.fr</span></div>
+        <div class="sl-screen"><div class="gsite" data-t="boulangerie"></div></div>
+      </div>
+      <div class="sl-phone">
+        <div class="sl-notch"></div>
+        <div class="sl-screen"><div class="gsite" data-t="boulangerie"></div></div>
+      </div>
+      <div class="sl-badge" id="slBadge"><b>+1</b> appel reçu</div>
+    </div>
+  </div>
+</section>
+
+<style>
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sl{position:relative;background:#0C1310;color:#fff;padding-block:24px 120px;overflow:hidden;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px}
+.sl-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:56px;align-items:center}
+.sl-eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7FE0B4}
+.sl-eyebrow i{width:8px;height:8px;border-radius:50%;background:#3DDC97;box-shadow:0 0 0 0 rgba(61,220,151,.6);animation:slPing 1.8s infinite}
+@keyframes slPing{70%{box-shadow:0 0 0 10px rgba(61,220,151,0)}100%{box-shadow:0 0 0 0 rgba(61,220,151,0)}}
+.sl h2{color:#fff;font-size:clamp(2rem,4.2vw,3.2rem);letter-spacing:-.035em;line-height:1.05;margin:14px 0 26px}
+.sl h2 span{color:#8FA39A}
+.sl-field{position:relative;display:block}
+.sl-field input{width:100%;font:700 clamp(1.25rem,2.4vw,1.6rem)/1.2 var(--display);letter-spacing:-.02em;color:#fff;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.16);border-radius:14px;padding:18px 20px;outline:none;transition:border-color .25s,background .25s,box-shadow .25s}
+.sl-field input::placeholder{color:rgba(255,255,255,.35)}
+.sl-field input:focus{border-color:#3DDC97;background:rgba(255,255,255,.09);box-shadow:0 0 0 4px rgba(61,220,151,.15)}
+.sl-chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 26px}
+.sl-chips button{font:600 .9rem var(--body);color:#C9D3CD;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:9px 15px;cursor:pointer;transition:all .2s}
+.sl-chips button:hover{border-color:rgba(255,255,255,.4);color:#fff}
+.sl-chips button[aria-checked=true]{background:#fff;color:#0C1310;border-color:#fff}
+.sl-points{list-style:none;padding:0;margin:0 0 30px;display:grid;gap:10px;color:#AEBBB4;font-size:.98rem}
+.sl-points li{padding-left:26px;position:relative}
+.sl-points li::before{content:"";position:absolute;left:0;top:.45em;width:14px;height:8px;border-left:2.5px solid #3DDC97;border-bottom:2.5px solid #3DDC97;transform:rotate(-45deg)}
+.sl-points b{color:#fff;font-weight:600}
+.sl-note{font-size:.82rem;color:#7D8C85;margin-top:14px;max-width:40ch}
+
+/* --- scène : navigateur + téléphone --- */
+.sl-stage{position:relative;padding:0 0 60px 0}
+.sl-browser{border-radius:14px;overflow:hidden;background:#1A2420;box-shadow:0 50px 100px -40px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08);transform:perspective(1600px) rotateY(-7deg) rotateX(3deg);transform-origin:left center;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.sl-stage:hover .sl-browser{transform:perspective(1600px) rotateY(-3deg) rotateX(1deg)}
+.sl-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#202B26}
+.sl-bar i{width:10px;height:10px;border-radius:50%;background:#3A4842}
+.sl-url{margin-left:14px;flex:1;max-width:340px;font:500 .78rem var(--body);color:#93A39B;background:#141C19;border-radius:7px;padding:5px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl-url b{color:#E6EEEA;font-weight:600}
+.sl-browser .sl-screen{aspect-ratio:16/10;position:relative;overflow:hidden}
+.sl-phone{position:absolute;right:-18px;bottom:0;width:31%;min-width:150px;aspect-ratio:9/19;border-radius:30px;background:#0A0F0D;padding:9px;box-shadow:0 40px 80px -30px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.12);transform:rotate(3deg);transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.sl-stage:hover .sl-phone{transform:rotate(0) translateY(-8px)}
+.sl-phone .sl-screen{height:100%;border-radius:22px;overflow:hidden;position:relative}
+.sl-notch{position:absolute;top:13px;left:50%;transform:translateX(-50%);width:34%;height:16px;border-radius:12px;background:#0A0F0D;z-index:3}
+.sl-badge{position:absolute;left:-14px;bottom:40px;display:flex;align-items:center;gap:8px;background:#fff;color:#0C1310;font:600 .9rem var(--body);padding:11px 16px 11px 12px;border-radius:14px;box-shadow:0 20px 40px -18px rgba(0,0,0,.6);opacity:0;transform:translateY(12px) scale(.95);transition:all .5s cubic-bezier(.3,1.4,.5,1)}
+.sl-badge b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#0B7A55;color:#fff;font-size:.78rem}
+.sl-badge.show{opacity:1;transform:none}
+
+/* --- le site généré : tout est en unités du conteneur, il s'adapte au navigateur ET au téléphone --- */
+.gsite{position:absolute;inset:0;container-type:inline-size;overflow:hidden;font-family:var(--body);--b:#F6EFE4;--k:#3B2516;--a:#B8862B;--m:#7A6555;background:var(--b);color:var(--k)}
+.gsite *{box-sizing:border-box}
+.g-in{position:absolute;inset:0;display:flex;flex-direction:column}
+.g-top{display:none;font-size:1.3cqw;font-weight:600;text-align:center;padding:.6cqw;background:var(--a);color:#fff}
+.g-nav{display:flex;align-items:center;justify-content:space-between;padding:2.6cqw 5cqw}
+.g-logo{display:flex;align-items:center;gap:1.2cqw;font:800 2.2cqw/1 var(--display);letter-spacing:-.02em;white-space:nowrap;max-width:46%;overflow:hidden;text-overflow:ellipsis}
+.g-logo i{flex:none;width:3.2cqw;height:3.2cqw;border-radius:50%;background:var(--a)}
+.g-links{display:flex;gap:3cqw;font-size:1.45cqw;color:var(--m)}
+.g-btn{display:inline-flex;align-items:center;justify-content:center;font:700 1.45cqw/1 var(--body);padding:1.4cqw 2.4cqw;border-radius:99px;background:var(--k);color:var(--b);white-space:nowrap}
+.g-btn.alt{background:transparent;color:var(--k);box-shadow:inset 0 0 0 .2cqw currentColor}
+.g-hero{flex:1;display:grid;grid-template-columns:1.1fr .9fr;gap:4cqw;align-items:center;padding:1cqw 5cqw 4cqw}
+.g-kick{font-size:1.25cqw;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--a);margin-bottom:1.4cqw}
+.g-h{font:800 5.2cqw/1 var(--display);letter-spacing:-.04em;margin:0 0 2cqw}
+.g-h em{font-style:italic;font-weight:500;color:var(--a);font-family:Georgia,"Times New Roman",serif}
+.g-p{font-size:1.5cqw;line-height:1.5;color:var(--m);margin:0 0 2.6cqw;max-width:36ch}
+.g-act{display:flex;gap:1.4cqw;flex-wrap:wrap}
+.g-vis{position:relative;height:100%;min-height:22cqw;display:grid;place-items:center}
+.g-shape{width:80%;height:88%;border-radius:999px 999px 2cqw 2cqw;background:linear-gradient(160deg,#D9A35B,#8C5527 70%,#5E3518)}
+.g-stamp{position:absolute;right:4%;bottom:6%;width:11cqw;height:11cqw;border-radius:50%;background:#F2C14E;color:#3B2516;display:grid;place-items:center;text-align:center;font:800 1.5cqw/1.15 var(--display);transform:rotate(-12deg)}
+.g-rev{display:flex;align-items:center;gap:1.2cqw;font-size:1.35cqw;color:var(--m);margin-top:2.4cqw}
+.g-rev b{color:#E8A317;letter-spacing:.1em;font-size:1.6cqw}
+.g-call{display:none}
+
+/* thèmes */
+.gsite[data-t=barbier]{--b:#111111;--k:#F3EEE6;--a:#C9A45C;--m:#9E978C}
+.gsite[data-t=barbier] .g-h{text-transform:uppercase;font-size:5.8cqw;letter-spacing:-.03em}
+.gsite[data-t=barbier] .g-logo{text-transform:uppercase;letter-spacing:.06em}
+.gsite[data-t=barbier] .g-btn{border-radius:.6cqw;background:var(--a);color:#111}
+.gsite[data-t=barbier] .g-btn.alt{background:transparent;color:var(--k)}
+.gsite[data-t=barbier] .g-shape{border-radius:.6cqw;background:repeating-linear-gradient(135deg,#1C1A17 0 1.2cqw,#211E1A 1.2cqw 2.4cqw);box-shadow:inset 0 0 0 .3cqw #3A3225}
+.gsite[data-t=barbier] .g-stamp{background:#C9A45C;color:#111;border-radius:.6cqw;transform:none;width:auto;height:auto;padding:1.4cqw 1.8cqw;left:auto}
+.gsite[data-t=artisan]{--b:#0F2233;--k:#FFFFFF;--a:#E07B24;--m:#A9B8C6}
+.gsite[data-t=artisan] .g-top{display:block}
+.gsite[data-t=artisan] .g-h{text-transform:uppercase;font-size:5.4cqw}
+.gsite[data-t=artisan] .g-btn{border-radius:.6cqw;background:var(--a);color:#fff}
+.gsite[data-t=artisan] .g-btn.alt{background:transparent;color:#fff}
+.gsite[data-t=artisan] .g-shape{border-radius:1.4cqw;background:#16304A;box-shadow:inset 0 0 0 .2cqw #24496B}
+.gsite[data-t=artisan] .g-stamp{background:#E07B24;color:#fff;border-radius:1cqw;transform:none;width:auto;height:auto;padding:1.4cqw 1.8cqw}
+.gsite[data-t=coach]{--b:#0B0B0B;--k:#FFFFFF;--a:#FF4F1F;--m:#A3A3A3;background:linear-gradient(120deg,#0B0B0B 40%,#2A2A2A)}
+.gsite[data-t=coach] .g-h{text-transform:uppercase;font-size:5.8cqw;font-weight:600;letter-spacing:-.03em}
+.gsite[data-t=coach] .g-btn{border-radius:.4cqw;background:var(--a);color:#fff}
+.gsite[data-t=coach] .g-btn.alt{background:transparent;color:#fff}
+.gsite[data-t=coach] .g-shape{border-radius:1cqw;background:linear-gradient(200deg,#3A3A3A,#141414)}
+.gsite[data-t=coach] .g-stamp{background:#FF4F1F;color:#fff;transform:rotate(-8deg)}
+.g-list{position:absolute;inset:12% 10%;display:grid;align-content:center;gap:1.6cqw;font-size:1.35cqw;color:var(--k)}
+.g-list div{display:flex;align-items:center;gap:1.2cqw;background:rgba(255,255,255,.06);border-radius:1cqw;padding:1.4cqw 1.6cqw}
+.g-list i{flex:none;width:2.4cqw;height:2.4cqw;border-radius:50%;background:var(--a);opacity:.9}
+.gsite[data-t=boulangerie] .g-list{display:none}
+
+/* version téléphone (conteneur étroit) */
+@container (max-width:420px){
+  .g-top{font-size:3.4cqw;padding:2cqw}
+  .g-nav{padding:13cqw 6cqw 4cqw}
+  .g-top{padding:11cqw 3cqw 2.4cqw}
+  .g-top + .g-nav{padding-top:4cqw}
+  .g-logo{font-size:5.2cqw;max-width:58%;gap:2.4cqw}.g-logo i{width:7cqw;height:7cqw}
+  .g-links{display:none}
+  .g-nav .g-btn{font-size:3.4cqw;padding:2.6cqw 3.6cqw}
+  .g-hero{grid-template-columns:1fr;align-content:start;gap:5cqw;padding:2cqw 6cqw 22cqw}
+  .g-kick{font-size:3cqw;margin-bottom:3cqw}
+  .g-h,.gsite[data-t] .g-h{font-size:11cqw;margin-bottom:4cqw}
+  .g-p{font-size:3.7cqw;margin-bottom:5cqw}
+  .g-act .g-btn{font-size:3.6cqw;padding:3.4cqw 4.6cqw}
+  .g-act .g-btn.alt{display:none}
+  .g-rev{font-size:3.4cqw;gap:2cqw;margin-top:5cqw}.g-rev b{font-size:3.8cqw}
+  .g-vis{min-height:44cqw;height:44cqw;order:-1}
+  .g-shape{width:100%;height:100%;border-radius:4cqw}
+  .g-stamp,.gsite[data-t] .g-stamp{width:auto;height:auto;padding:2.4cqw 3cqw;font-size:3cqw;border-radius:2cqw;right:3cqw;bottom:3cqw}
+  .g-list{font-size:3.2cqw;gap:2.4cqw;inset:8% 8%}.g-list div{padding:2.6cqw;border-radius:2cqw}.g-list i{width:4.6cqw;height:4.6cqw}
+  .g-call{display:flex;position:absolute;left:5cqw;right:5cqw;bottom:5cqw;justify-content:center;font:700 4cqw/1 var(--body);padding:4.4cqw;border-radius:99px;background:var(--a);color:#fff;box-shadow:0 3cqw 8cqw -3cqw rgba(0,0,0,.5)}
+}
+
+/* animation de construction */
+.gsite [data-b]{opacity:0;transform:translateY(1.6cqw);filter:blur(.4cqw)}
+.gsite.built [data-b]{opacity:1;transform:none;filter:none;transition:opacity .55s ease,transform .7s cubic-bezier(.2,.8,.2,1),filter .55s ease;transition-delay:calc(var(--d,0) * 90ms)}
+.gsite .g-shape[data-b]{transform:scale(.92)}
+.gsite.built .g-shape[data-b]{transform:none}
+
+@media (max-width:980px){
+  .sl-grid{grid-template-columns:1fr;gap:40px}
+  .sl-stage{padding:0 0 70px;margin-right:20px}
+  .sl-browser{transform:none}.sl-stage:hover .sl-browser{transform:none}
+  .sl-phone{right:-20px;width:36%}
+  .sl-badge{left:0;bottom:16px}
+}
+@media (max-width:560px){.sl{padding-block:8px 80px}.sl-phone{width:42%;right:-14px}}
+.gsite .g-h{color:var(--k)}
+@media (max-width:980px){
+  .sl-copy{display:contents}
+  .sl-grid{gap:0}
+  .sl-eyebrow{order:1;justify-self:start}.sl h2{order:2}.sl-field{order:3}.sl-chips{order:4}
+  .sl-stage{order:5;margin:6px 0 34px}.sl-points{order:6}.sl-cta{order:7;justify-self:start}.sl-note{order:8}
+}
+@media (max-width:560px){
+  .sl-browser{display:none}
+  .sl-stage{padding:0;margin:4px auto 34px;width:min(78%,300px)}
+  .sl-phone{position:relative;right:auto;width:100%;min-width:0;transform:none}
+  .sl-stage:hover .sl-phone{transform:none}
+  .sl-badge{left:-22px;bottom:70px}
+  .sl-cta{width:100%;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){.gsite [data-b]{opacity:1;transform:none;filter:none}.sl-eyebrow i{animation:none}.sl-browser,.sl-phone{transition:none}}
+</style>
+
+<script>
+(function () {
+  var root = document.getElementById("essai"); if (!root) return;
+  var input = document.getElementById("slName"), url = document.getElementById("slUrl"), badge = document.getElementById("slBadge"), cta = document.getElementById("slCta");
+  var sites = root.querySelectorAll(".gsite"), chips = root.querySelectorAll("[data-m]");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var T = {
+    boulangerie: { def: "Boulangerie Martin", kick: "Boulangerie · Pâtisserie", h: "Du pain au levain, <em>cuit chaque matin.</em>", p: "Farines de meuniers de la région, levain naturel et fournée dès 6 h. Commandez la veille, on vous le met de côté.", b1: "Commander pour demain", b2: "Horaires & accès", nav: "Commander", links: ["Nos produits", "Commander", "Horaires"], stamp: "Fait<br>maison<br>ici", call: "Appeler la boutique", rev: "4,9 sur Google · 212 avis", act: "Restaurant / Commerce de bouche" },
+    barbier: { def: "Barber Club", kick: "Barbier · Coiffeur homme", h: "Coupe nette.<br><span style=\"color:var(--a)\">Barbe soignée.</span>", p: "Coupes aux ciseaux et à la tondeuse, taille de barbe et rasage à la serviette chaude. Réservez en 30 secondes.", b1: "Prendre rendez-vous", b2: "Voir les tarifs", nav: "Réserver", links: ["Prestations", "Galerie", "Infos"], stamp: "Créneau dispo · 17 h 30", call: "Réserver maintenant", rev: "5,0 sur Google · 148 avis", list: ["Coupe homme · 25 €", "Coupe + barbe · 35 €", "Rasage serviette chaude · 20 €"], act: "Coiffure / Beauté" },
+    artisan: { def: "Durand Plomberie", kick: "Plombier chauffagiste à Dijon", h: "Fuite ? Panne ?<br><span style=\"color:var(--a)\">On arrive.</span>", p: "Dépannage, entretien de chaudière et salle de bain dans toute la métropole. Devis clair avant chaque intervention.", b1: "Appeler", b2: "Devis gratuit", nav: "Urgence", links: ["Services", "Tarifs", "Zone", "Contact"], stamp: "Sur place en 1 h", call: "Appeler maintenant", rev: "4,8 sur Google · 96 avis", list: ["Intervention 7j/7", "Devis gratuit avant travaux", "Garantie sur les réparations"], top: "Dépannage disponible maintenant · 7j/7", act: "Artisan / BTP" },
+    coach: { def: "Studio Forme", kick: "Coach sportif diplômé d'État", h: "Reprenez votre forme <span style=\"color:var(--a)\">en main.</span>", p: "Des séances sur-mesure à domicile, en salle ou en extérieur, avec un programme adapté à votre niveau.", b1: "Ma séance offerte", b2: "Les formules", nav: "Réserver", links: ["Objectifs", "Formules", "Avis"], stamp: "1re séance offerte", call: "Réserver ma séance", rev: "5,0 sur Google · 74 avis", list: ["Perte de poids", "Remise en forme", "Préparation physique"], act: "Profession libérale" }
+  };
+  var cur = "boulangerie", typed = false;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function slug(s) { return (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "votre-commerce"; }
+  function name() { return (input.value || "").trim() || T[cur].def; }
+  function html(t) {
+    var d = T[t], n = esc(name()), i = 0, D = function () { return ' data-b style="--d:' + (i++) + '"'; };
+    return '<div class="g-in">' + (d.top ? '<div class="g-top"' + D() + '>' + d.top + '</div>' : '') +
+      '<div class="g-nav"><div class="g-logo"' + D() + '><i></i><span class="g-name">' + n + '</span></div><div class="g-links"' + D() + '>' + d.links.map(function (l) { return "<span>" + l + "</span>"; }).join("") + '</div><span class="g-btn"' + D() + '>' + d.nav + '</span></div>' +
+      '<div class="g-hero"><div><div class="g-kick"' + D() + '>' + d.kick + '</div><h3 class="g-h"' + D() + '>' + d.h + '</h3><p class="g-p"' + D() + '>' + d.p + '</p>' +
+      '<div class="g-act"' + D() + '><span class="g-btn">' + d.b1 + '</span><span class="g-btn alt">' + d.b2 + '</span></div><div class="g-rev"' + D() + '><b>★★★★★</b>' + d.rev + '</div></div>' +
+      '<div class="g-vis"><div class="g-shape"' + D() + '></div>' + (d.list ? '<div class="g-list"' + D() + '>' + d.list.map(function (l) { return "<div><i></i>" + l + "</div>"; }).join("") + '</div>' : '') + '<div class="g-stamp"' + D() + '>' + d.stamp + '</div></div></div>' +
+      '<span class="g-call"' + D() + '>' + d.call + '</span></div>';
+  }
+  function build() {
+    sites.forEach(function (s) { s.dataset.t = cur; s.classList.remove("built"); s.innerHTML = html(cur); void s.offsetWidth; requestAnimationFrame(function () { s.classList.add("built"); }); });
+    url.textContent = slug(name());
+    badge.classList.remove("show"); clearTimeout(build._b);
+    build._b = setTimeout(function () { badge.classList.add("show"); }, reduce ? 0 : 1600);
+  }
+  function rename() { root.querySelectorAll(".g-name").forEach(function (e) { e.textContent = name(); }); url.textContent = slug(name()); }
+  function pick(m, rebuild) { cur = m; chips.forEach(function (c) { c.setAttribute("aria-checked", c.dataset.m === m ? "true" : "false"); }); if (rebuild !== false) build(); }
+
+  chips.forEach(function (c) { c.addEventListener("click", function () { stop(); pick(c.dataset.m); }); });
+  input.addEventListener("input", function () { stop(); typed = true; rename(); });
+  input.addEventListener("focus", function () { stop(); if (!typed) { input.value = ""; rename(); } });
+
+  /* le bouton prépare le formulaire de contact avec ce que le visiteur a tapé */
+  cta.addEventListener("click", function () {
+    var f = document.getElementById("f-act"), msg = document.getElementById("f-msg"), d = T[cur];
+    if (f) Array.prototype.forEach.call(f.options, function (o) { if (o.text === d.act) f.value = o.value || o.text; });
+    if (msg && !msg.value) msg.value = "Bonjour, j'aimerais un site comme l'aperçu pour « " + name() + " ». ";
+    try { window.twTrack && window.twTrack("essai_cta", cur); } catch (e) {}
+  });
+
+  /* démo automatique tant que le visiteur n'a rien touché : le nom s'écrit tout seul */
+  var demo = [["boulangerie", "Boulangerie Martin"], ["barbier", "Barber Club Dijon"], ["artisan", "Durand Plomberie"], ["coach", "Studio Forme"]], di = 0, timer = 0, running = false;
+  function stop() { running = false; clearTimeout(timer); root.classList.remove("demo"); }
+  function typeName(txt, k) {
+    if (!running) return;
+    input.value = txt.slice(0, k); rename();
+    if (k < txt.length) timer = setTimeout(function () { typeName(txt, k + 1); }, 55 + Math.random() * 60);
+    else timer = setTimeout(next, 3800);
+  }
+  function next() {
+    if (!running) return;
+    var s = demo[di++ % demo.length]; input.value = ""; pick(s[0]); timer = setTimeout(function () { typeName(s[1], 1); }, 500);
+  }
+  function start() { if (typed || running || reduce) return; running = true; root.classList.add("demo"); next(); }
+
+  pick("boulangerie");
+  if (reduce) { input.value = ""; rename(); return; }
+  if ("IntersectionObserver" in window) new IntersectionObserver(function (en) { if (en[0].isIntersecting) start(); else stop(); }, { threshold: .35 }).observe(root);
+  else start();
+})();
+</script>
+
+
 <!-- =================== 3. SECTEURS =================== -->
 <div class="sectors">
   <div class="wrap">
@@ -1756,55 +2010,6 @@ addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{p
   if (!hero) return;
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---- 1. Matière verte en WebGL (sans librairie) ---- */
-  var wrap = document.createElement("div"); wrap.className = "hero-fluid"; wrap.setAttribute("aria-hidden", "true");
-  var cv = document.createElement("canvas"); wrap.appendChild(cv);
-  hero.insertBefore(wrap, hero.querySelector(".wrap"));
-  var gl = cv.getContext("webgl", { antialias: false, alpha: false, powerPreference: "low-power" });
-  if (gl) {
-    var VS = "attribute vec2 p;varying vec2 v;void main(){v=p*.5+.5;gl_Position=vec4(p,0.,1.);}";
-    var FS = "precision mediump float;varying vec2 v;uniform float t,a;uniform vec2 m,r;uniform float s;" +
-      "float h1(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}" +
-      "float n(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);return mix(mix(h1(i),h1(i+vec2(1,0)),u.x),mix(h1(i+vec2(0,1)),h1(i+vec2(1,1)),u.x),u.y);}" +
-      "float fb(vec2 p){float x=0.,k=.5;mat2 M=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<4;i++){x+=k*n(p);p=M*p;k*=.5;}return x;}" +
-      "float H(vec2 u){vec2 p=(u-.5)*vec2(a,1.)*1.6;p.y+=s*.6;vec2 q=vec2(fb(p+vec2(0.,t*.10)),fb(p+vec2(5.2,1.3)-t*.08));float h=fb(p+2.4*q+vec2(t*.04,0.));" +
-      "vec2 mm=(m-.5)*vec2(a,1.)*1.6;float d=length(p-mm);h+=exp(-d*d*3.)*.12;return h;}" +
-      "vec3 B(vec2 u){vec3 c=mix(vec3(.02,.20,.12),vec3(.04,.54,.31),smoothstep(-.2,1.2,u.y+.15*sin(u.x*3.+t*.2)));" +
-      "c=mix(c,vec3(.35,.86,.58),smoothstep(.55,1.,1.-length(u-vec2(.78,.8))*1.3)*.8);return c;}" +
-      "void main(){float e=1.5/r.y;float h=H(v),hx=H(v+vec2(e,0.)),hy=H(v+vec2(0.,e));vec3 N=normalize(vec3((h-hx)*4.2,(h-hy)*4.2,e*60.));" +
-      "vec3 L=normalize(vec3(-.45,.6,.65));vec3 c=B(v+N.xy*.16)*(.55+.45*h);" +
-      "c+=vec3(.78,1.,.88)*pow(1.-abs(sin(h*9.-t*.35+N.x*2.)),18.)*.14;c+=vec3(.98,1.,.96)*pow(max(dot(reflect(-L,N),vec3(0,0,1)),0.),70.)*.8;" +
-      "c+=vec3(.7,1.,.85)*pow(1.-max(N.z,0.),2.6)*.25;gl_FragColor=vec4(max(c*.85,vec3(.03,.12,.08)),1.);}";
-    function sh(type, src) { var o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; }
-    var vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
-    if (vs && fs) {
-      var pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
-      if (gl.getProgramParameter(pr, gl.LINK_STATUS)) {
-        gl.useProgram(pr);
-        var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-        var loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-        var U = { t: gl.getUniformLocation(pr, "t"), a: gl.getUniformLocation(pr, "a"), m: gl.getUniformLocation(pr, "m"), r: gl.getUniformLocation(pr, "r"), s: gl.getUniformLocation(pr, "s") };
-        var mx = .75, my = .6, tx = .75, ty = .6, visible = true, t0 = performance.now(), raf = 0;
-        var scale = innerWidth < 820 ? .35 : .5; /* rendu en basse définition, lissé par le navigateur : léger pour les téléphones */
-        function size() { var w = hero.clientWidth, h = hero.clientHeight; cv.width = Math.max(2, Math.round(w * scale)); cv.height = Math.max(2, Math.round(h * scale)); gl.viewport(0, 0, cv.width, cv.height); gl.uniform1f(U.a, w / Math.max(1, h)); gl.uniform2f(U.r, cv.width, cv.height); }
-        function frame(now) {
-          mx += (tx - mx) * .05; my += (ty - my) * .05;
-          gl.uniform1f(U.t, (now - t0) / 1000); gl.uniform2f(U.m, mx, my);
-          gl.uniform1f(U.s, Math.min(1, scrollY / Math.max(1, hero.clientHeight)));
-          gl.drawArrays(gl.TRIANGLES, 0, 3);
-          if (!reduce && visible && !document.hidden) raf = requestAnimationFrame(frame); else raf = 0;
-        }
-        function wake() { if (!raf && !reduce && visible && !document.hidden) raf = requestAnimationFrame(frame); }
-        size(); addEventListener("resize", function () { size(); if (reduce) frame(performance.now() + 8000); });
-        hero.addEventListener("pointermove", function (e) { var r = hero.getBoundingClientRect(); tx = (e.clientX - r.left) / r.width; ty = 1 - (e.clientY - r.top) / r.height; });
-        if ("IntersectionObserver" in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; wake(); }).observe(hero);
-        document.addEventListener("visibilitychange", wake);
-        frame(performance.now() + (reduce ? 8000 : 0));
-        hero.classList.add("fluid-on");
-      }
-    }
-  }
   if (reduce) return;
 
   /* ---- 2. Le texte du hero s'éloigne doucement au défilement ---- */
