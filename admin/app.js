@@ -301,6 +301,7 @@ function cockpitHTML(nTodo) {
       <h1>${hello} ${esc(me)}</h1>
       <p>${nTodo ? `${nTodo} chose${nTodo > 1 ? "s" : ""} à faire aujourd'hui, listée${nTodo > 1 ? "s" : ""} plus bas dans l'ordre.` : "Rien d'urgent : tout est à jour."}</p>
       <div class="ck-chips">${chips.map((x) => `<a class="ck-chip" href="${x[2]}"><b class="num" data-count="${x[0]}">${x[0]}</b> ${x[1]}</a>`).join("")}
+        ${window.TW3D && TW3D.need() ? `<button type="button" class="ck-chip gyro" data-gyro>📱 Activer la 3D (penche ton téléphone)</button>` : ""}
         <a class="ck-chip ${on ? "live" : ""}" href="#prospects"><span class="pulse" aria-hidden="true"></span>Pilote auto ${on ? `· ${today0}/${max} aujourd'hui` : "coupé"}</a></div></div>
     ${D.journal.length ? `<div class="ck-feed" aria-label="Activité en direct"><span class="ck-live">EN DIRECT</span><div class="ck-track"><div class="ck-run">${(() => { const it = D.journal.slice(0, 10).map((j) => `<span><i></i>${esc(j.texte)} <small>${ago(j.created_at)}</small></span>`).join(""); return it + it; })()}</div></div></div>` : ""}</section>`;
 }
@@ -418,6 +419,28 @@ function celebrate(msg, small) {
     P.forEach((p) => { p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; g.save(); g.globalAlpha = Math.max(0, 1 - t / 2.4); g.translate(p.x, p.y); g.rotate(p.r); g.fillStyle = p.c; g.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); g.restore(); });
     if (t < 2.5) requestAnimationFrame(f); else cv.remove(); })(t0);
 }
+
+/* ---------- 3D partout : logo en cube, et toute l'appli bouge en relief avec le téléphone (ou la souris) ---------- */
+(function () {
+  document.querySelectorAll(".brand .mark").forEach((m) => {
+    if (m.classList.contains("cube3")) return; const svg = m.innerHTML;
+    m.classList.add("cube3"); m.innerHTML = `<span class="cb">${["f", "b", "l", "r", "t", "d"].map((k) => `<i class="${k}">${svg}</i>`).join("")}</span>`;
+  });
+  const R = document.documentElement, reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+  const loop = () => { x += (tx - x) * .12; y += (ty - y) * .12; R.style.setProperty("--gx", x.toFixed(3)); R.style.setProperty("--gy", y.toFixed(3)); raf = Math.abs(tx - x) + Math.abs(ty - y) > .002 ? requestAnimationFrame(loop) : 0; };
+  const set = (a, b) => { tx = Math.max(-1, Math.min(1, a)); ty = Math.max(-1, Math.min(1, b)); if (!raf) raf = requestAnimationFrame(loop); };
+  R.classList.add("g3d");
+  if (reduce) { R.style.setProperty("--gx", ".35"); R.style.setProperty("--gy", "-.25"); return; }
+  if (matchMedia("(pointer: fine)").matches) document.addEventListener("pointermove", (e) => set(e.clientX / innerWidth * 2 - 1, e.clientY / innerHeight * 2 - 1), { passive: true });
+  const onOri = (e) => { if (e.gamma == null) return; set(e.gamma / 25, (e.beta - 40) / 25); };
+  window.TW3D = {
+    need: () => typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function" && localStorage.getItem("tw-gyro") !== "1",
+    ask: async () => { try { const r = await DeviceOrientationEvent.requestPermission(); if (r === "granted") { localStorage.setItem("tw-gyro", "1"); addEventListener("deviceorientation", onOri); toast("3D activée : penche ton téléphone"); render(); } else toast("Autorisation refusée"); } catch (e) { toast("Impossible d'activer le capteur"); } }
+  };
+  if (typeof DeviceOrientationEvent !== "undefined" && (typeof DeviceOrientationEvent.requestPermission !== "function" || localStorage.getItem("tw-gyro") === "1")) addEventListener("deviceorientation", onOri);
+})();
+document.addEventListener("click", (e) => { if (e.target.closest("[data-gyro]") && window.TW3D) TW3D.ask(); });
 /* ---------- Pastille du menu qui glisse vers la page active ---------- */
 function navPill() {
   const nav = $("nav"); if (!nav) return;
