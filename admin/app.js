@@ -210,7 +210,7 @@ function mailPiece(p, kind) {
   const c = client(p.client_id) || {}, e = em(p.emetteur), hello = "Bonjour" + (c.nom ? " " + c.nom : "") + ",";
   if (kind === "relance") return { to: c.email, sub: "Rappel – facture " + p.numero, body: `${hello}\n\nSauf erreur de notre part, la facture ${p.numero} de ${eur(total(p))}, arrivée à échéance le ${frDate(p.echeance)}, n'a pas encore été réglée.\n\nVous la trouverez à nouveau en pièce jointe. Si le paiement est déjà parti, merci de ne pas tenir compte de ce message.${e.iban ? "\n\nIBAN : " + e.iban : ""}${e.lien ? "\nPaiement par carte : " + e.lien : ""}${sig(p.emetteur)}` };
   if (kind === "merci") return { to: c.email, sub: "Paiement bien reçu – " + p.numero, body: `${hello}\n\nNous avons bien reçu votre paiement de ${eur(total(p))} pour la facture ${p.numero}. Merci !${p.kind === "acompte" ? "\n\nOn lance la création de votre site. Pour avancer vite, envoyez-nous si possible votre logo, quelques photos et vos horaires." : ""}${sig(p.emetteur)}` };
-  if (p.type === "devis") return { to: c.email, sub: "Votre devis TissaWeb – " + p.numero, body: `${hello}\n\nComme convenu, voici votre devis ${p.numero} d'un montant de ${eur(total(p))} (prix fixe, sans TVA).\n\nPour valider, il suffit de nous le renvoyer signé ou de répondre « Bon pour accord » à ce mail. Nous vous envoyons alors la facture d'acompte de ${cfg().acompte} % et nous démarrons.\n\nLe devis est valable jusqu'au ${frDate(addDays(p.date, cfg().validite))}.${sig(p.emetteur)}` };
+  if (p.type === "devis") return { to: c.email, sub: "Votre devis TissaWeb – " + p.numero, body: `${hello}\n\nComme convenu, voici votre devis ${p.numero} d'un montant de ${eur(total(p))} (prix fixe, sans TVA).\n\nPour valider, il suffit de nous le renvoyer signé ou de répondre « Bon pour accord » à ce mail. Nous vous envoyons alors la facture d'acompte de ${cfg().acompte} % et nous démarrons.\n\nLe devis est valable jusqu'au ${frDate(addDays(p.date, cfg().validite))}. Nos conditions générales de vente et le formulaire de rétractation sont joints au devis (aussi sur tissaweb.fr/cgv.html).\n\nSi vous êtes un particulier ou une entreprise de 5 salariés au plus et que vous souhaitez que l'on démarre tout de suite, sans attendre la fin du délai de rétractation de 14 jours, cochez simplement les cases prévues sur le devis.${sig(p.emetteur)}` };
   return { to: c.email, sub: kindLabel(p) + " " + p.numero + " – TissaWeb", body: `${hello}\n\nVous trouverez ci-joint la ${kindLabel(p).toLowerCase()} ${p.numero} d'un montant de ${eur(total(p))}, à régler ${p.echeance && p.echeance > p.date ? "avant le " + frDate(p.echeance) : "à réception"}.${e.iban ? `\n\nPar virement : IBAN ${e.iban}${e.bic ? " · BIC " + e.bic : ""}\nRéférence à indiquer : ${p.numero}` : ""}${e.lien ? "\nOu par carte : " + e.lien : ""}${sig(p.emetteur)}` };
 }
 const PMODELES = [
@@ -883,7 +883,7 @@ const CGV = [
   ["XVIII. DONNÉES PERSONNELLES", "Les données personnelles du Client sont traitées par le Prestataire pour la gestion de la relation commerciale, la facturation et le respect de ses obligations légales, et conservées pour la durée nécessaire à ces finalités (dix ans pour les pièces comptables). Conformément au RGPD, le Client dispose d'un droit d'accès, de rectification, d'effacement, de limitation et d'opposition, qu'il peut exercer à l'adresse contact@tissaweb.fr, ainsi que du droit d'introduire une réclamation auprès de la CNIL. Lorsque le site du Client collecte des données de ses visiteurs, le Client en est le responsable de traitement."],
   ["XIX. CONFIDENTIALITÉ", "Chaque partie s'engage à garder confidentielles les informations non publiques communiquées par l'autre partie, notamment les accès techniques, et à ne les utiliser que pour l'exécution des Prestations."],
   ["XX. RÉFÉRENCES COMMERCIALES", "Sauf refus écrit du Client, le Prestataire peut mentionner le nom du Client et présenter le site réalisé à titre de référence sur ses supports de communication, et apposer une mention discrète « Site réalisé par TissaWeb » en pied de page du site."],
-  ["XXI. DISPOSITIONS PROPRES AUX CONSOMMATEURS", "Le Client consommateur dispose d'un délai de quatorze (14) jours à compter de la conclusion d'un contrat à distance ou hors établissement pour exercer son droit de rétractation, sans motif, par écrit à contact@tissaweb.fr. S'il demande expressément que la Prestation commence avant la fin de ce délai, il reste redevable du montant correspondant au service fourni jusqu'à la communication de sa décision de se rétracter. En cas de litige, le Client consommateur peut recourir gratuitement à un médiateur de la consommation, dont les coordonnées lui sont communiquées sur simple demande."],
+  ["XXI. DROIT DE RÉTRACTATION ET MÉDIATION", "Le Client consommateur dispose d'un délai de quatorze (14) jours à compter de la signature du devis pour se rétracter d'un contrat conclu à distance ou hors établissement, sans motif ni frais (art. L.221-18 C. conso). Ce droit bénéficie également au Client professionnel employant cinq salariés au plus, lorsque le contrat est conclu hors établissement et que son objet n'entre pas dans le champ de son activité principale (art. L.221-3). La rétractation s'exerce par toute déclaration claire adressée à contact@tissaweb.fr ou par courrier, notamment au moyen du formulaire joint au devis. Les sommes versées sont remboursées dans les quatorze (14) jours, par le même moyen de paiement (art. L.221-24). Si le Client a expressément demandé, en cochant la case prévue au devis, que la Prestation commence avant la fin du délai, il reste redevable d'un montant proportionnel au service fourni jusqu'à sa rétractation (art. L.221-25). S'il a en outre reconnu expressément perdre son droit de rétractation, ce droit ne peut plus être exercé une fois la Prestation pleinement exécutée, c'est-à-dire le site livré et mis en ligne (art. L.221-28, 1°). En cas de litige, le Client consommateur peut recourir gratuitement au médiateur de la consommation indiqué sur tissaweb.fr/mentions-legales.html (art. L.612-1). Détails : tissaweb.fr/retractation.html."],
   ["XXII. DROIT APPLICABLE ET ATTRIBUTION DE JURIDICTION", "Les présentes CGV et les relations entre les parties sont soumises au droit français. En cas de différend, les parties rechercheront une solution amiable avant toute action judiciaire. À défaut, et lorsque le Client est un professionnel, compétence exclusive est attribuée aux tribunaux du ressort de Dijon, nonobstant pluralité de défendeurs ou appel en garantie. Le Client consommateur peut saisir, à son choix, la juridiction du lieu où il demeurait au moment de la conclusion du contrat."],
 ];
 function pdfFor(p) {
@@ -1006,10 +1006,25 @@ function pdfFor(p) {
     font("bold", 9); col(INK); doc.text("Bon pour accord", bx + 4, y + 1.5); font("normal", 7.3); col(MUT);
     doc.text(doc.splitTextToSize("Date, nom et signature du client, précédés de la mention « Bon pour accord »", 64), bx + 4, y + 6);
     doc.text("Date :", bx + 4, y + 17); doc.text("Signature :", bx + 4, y + 23);
+    font("italic", 6.6); doc.text(T("Démarrage immédiat : cases en page 2"), bx + 4, y + 29.5);
   }
   // ---- CGV (devis) : page « verso » ----
   if (p.type === "devis") {
     doc.addPage(); page++; let gy = 16;
+    { // Démarrage anticipé : cases NON cochées (art. L.221-25 et L.221-28 1° C. conso)
+      const rw = R - M, items = [
+        "Je demande expressément que TissaWeb commence la réalisation avant la fin du délai de rétractation de 14 jours. Si je me rétracte, je paierai la part déjà réalisée (art. L.221-25 du Code de la consommation).",
+        "Je reconnais qu'une fois mon site entièrement livré et mis en ligne à ma demande, je perds mon droit de rétractation (art. L.221-28, 1° du Code de la consommation).",
+      ];
+      font("normal", 7.2); const il = items.map((x) => doc.splitTextToSize(T(x), rw - 14));
+      const bh = 12 + il.reduce((a, x) => a + x.length * 3.2 + 2.2, 0), ry = gy;
+      draw(INK); doc.setLineWidth(0.4); doc.rect(M, ry - 4, rw, bh, "S");
+      font("bold", 8); col(INK); doc.text(T("DÉMARRAGE AVANT 14 JOURS (facultatif) : particuliers et entreprises de 5 salariés au plus"), M + 3, ry + 0.5);
+      font("normal", 6.8); col(MUT); doc.text(T("Ne cochez que si vous voulez que le travail commence tout de suite. Sans case cochée, nous démarrons après le délai de 14 jours."), M + 3, ry + 4.2);
+      let iy = ry + 9.5; font("normal", 7.2); col([40, 50, 46]);
+      il.forEach((x) => { draw(INK); doc.setLineWidth(0.35); doc.rect(M + 3.5, iy - 2.7, 3.4, 3.4, "S"); doc.text(x, M + 10, iy); iy += x.length * 3.2 + 2.2; });
+      gy = ry - 4 + bh + 9;
+    }
     font("bold", 12); col(INK); doc.text("CONDITIONS GÉNÉRALES DE VENTE", W / 2, gy, { align: "center" });
     font("normal", 7); col(MUT); doc.text(T(`TissaWeb · ${e.nom} EI · ${e.siret ? idLab(e.siret) + " " + idVal(e.siret) : "SIRET en cours d'attribution"} · version applicable au ${frDate(p.date)}`), W / 2, gy + 4.5, { align: "center" });
     draw(INK); doc.setLineWidth(0.4); doc.line(M, gy + 7, R, gy + 7); gy += 12;
@@ -1022,6 +1037,20 @@ function pdfFor(p) {
       gy += 1.8;
     });
     font("normal", 7); col(MUT); doc.text("Lu et approuvé, paraphe du Client :", R - 52, H - 26);
+  }
+  // ---- Formulaire type de rétractation (annexe à l'art. R.221-1 C. conso) ----
+  if (p.type === "devis") {
+    doc.addPage(); page++; let fy = 22;
+    font("bold", 12); col(INK); doc.text(T("FORMULAIRE DE RÉTRACTATION"), W / 2, fy, { align: "center" });
+    font("normal", 7.5); col(MUT); doc.text(T("Veuillez compléter et renvoyer le présent formulaire uniquement si vous souhaitez vous rétracter du contrat."), W / 2, fy + 5, { align: "center" });
+    fy += 16; font("normal", 9.5); col(INK);
+    const fl = (t) => { doc.splitTextToSize(T(t), R - M).forEach((ln) => { doc.text(ln, M, fy); fy += 5; }); fy += 2; };
+    fl(`À l'attention de ${e.nom} EI (TissaWeb), ${String(e.adresse || "").replace(/\n/g, ", ")}, contact@tissaweb.fr :`);
+    fl(`Je vous notifie par la présente ma rétractation du contrat portant sur la prestation de services ci-dessous (devis ${p.numero}) :`);
+    const ligne = (lab) => { doc.text(T(lab), M, fy); draw(LINE); doc.setLineWidth(0.3); doc.line(M + doc.getTextWidth(T(lab)) + 2, fy + 0.8, R, fy + 0.8); fy += 10; };
+    ligne("Prestation :"); ligne("Commandée le :"); ligne("Nom du client :"); ligne("Adresse du client :"); fy += 0; ligne("");
+    ligne("Signature du client (en cas d'envoi papier) :"); ligne("Date :");
+    font("italic", 7.5); col(MUT); doc.text(T("Vous pouvez aussi remplir ce formulaire en ligne : tissaweb.fr/retractation.html"), M, fy + 4);
   }
   const n = doc.getNumberOfPages(); for (let i = 1; i <= n; i++) { doc.setPage(i); footer(i, n); }
   return doc;
