@@ -1,9 +1,30 @@
+# tissaweb.fr : moteurs de recherche et agents IA bienvenus sur les pages publiques
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /merci.html
 Disallow: /demo-plombier.html
 Disallow: /demo-boulangerie.html
 Disallow: /demo-coach.html
 Disallow: /demo-barbier.html
+
+# Agents IA explicitement autorisés (recherche et réponses), mêmes exclusions
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Mistral-User
+Allow: /
 Disallow: /admin/
+Disallow: /merci.html
+Disallow: /demo-plombier.html
+Disallow: /demo-boulangerie.html
+Disallow: /demo-coach.html
+Disallow: /demo-barbier.html
 
 Sitemap: https://tissaweb.fr/sitemap.xml

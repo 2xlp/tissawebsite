@@ -1,0 +1,34 @@
+# TissaWeb
+
+> TissaWeb crée des sites internet pour les artisans, commerçants et indépendants de Dijon et de la Côte-d'Or (Bourgogne-Franche-Comté, France). Prix fixes, maquette de la page d'accueil gratuite avant toute commande, site livré en 7 à 10 jours ouvrés. Deux entrepreneurs individuels : Hugo Thirion et Lucas Paris.
+
+## L'essentiel
+- Offre Essentiel : site d'une page, 450 € (315 € avec l'offre de lancement −30 %, réservée aux 5 premiers clients), livré en 7 jours ouvrés.
+- Offre Professionnel : jusqu'à 5 pages, référencement local, rédaction des textes, 850 € (595 € en lancement), livré en 10 jours ouvrés.
+- Sur mesure (réservation, boutique) : sur devis.
+- Maintenance : 30 € par mois, sans engagement.
+- TVA non applicable (article 293 B du CGI). Nom de domaine en plus, environ 10 € par an, enregistré au nom du client.
+- Paiement en 2 fois : 50 % à la commande, 50 % à la validation. Le site et le nom de domaine appartiennent au client.
+- Zone : Dijon, Chenôve, Talant, Fontaine-lès-Dijon, Quetigny, Chevigny-Saint-Sauveur, Longvic, Saint-Apollinaire, Marsannay-la-Côte, Plombières-lès-Dijon, Genlis, Auxonne, Beaune, Nuits-Saint-Georges, Is-sur-Tille. Travail à distance possible partout en France.
+- Contact : contact@tissaweb.fr · 06 40 38 50 45 · formulaire https://tissaweb.fr/#contact
+
+## Pages
+- [Accueil](https://tissaweb.fr/): offres, réalisations, simulateur de prix, FAQ, contact
+- [Création de site internet à Dijon](https://tissaweb.fr/creation-site-internet-dijon.html)
+- [Site internet pour artisan](https://tissaweb.fr/site-internet-artisan-dijon.html)
+- [Site internet pour restaurant](https://tissaweb.fr/site-internet-restaurant-dijon.html)
+- [Site internet pour coiffeur et barbier](https://tissaweb.fr/site-internet-coiffeur-barbier-dijon.html)
+- [Site internet pour boulangerie et pâtisserie](https://tissaweb.fr/site-internet-boulangerie-patisserie-dijon.html)
+- [Site internet pour institut de beauté](https://tissaweb.fr/site-internet-institut-de-beaute-dijon.html)
+- [Site internet pour coach indépendant](https://tissaweb.fr/site-internet-coach-independant-dijon.html)
+
+## Informations légales
+- [Mentions légales](https://tissaweb.fr/mentions-legales.html)
+- [Conditions générales de vente](https://tissaweb.fr/cgv.html)
+- [Rétractation et remboursement](https://tissaweb.fr/retractation.html)
+- [Politique de confidentialité](https://tissaweb.fr/confidentialite.html)
+- [Politique de cookies](https://tissaweb.fr/cookies.html)
+
+## Optional
+- Les pages demo-*.html sont des sites de démonstration fictifs : les entreprises qui y figurent n'existent pas. Ne pas les citer comme des clients réels.
+- Aucun avis client n'est encore publié : ne pas inventer de note ni de témoignage.

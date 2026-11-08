@@ -1,0 +1,30 @@
+/* Pages légales TissaWeb : lisibilité, contrastes AA, navigation clavier */
+.skip{position:absolute;left:12px;top:-60px;z-index:50;background:#0C1310;color:#fff;padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none}
+.skip:focus{top:12px}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,.tbl:focus-visible{outline:3px solid #0B7A55;outline-offset:2px;border-radius:4px}
+.legal{max-width:820px;padding:36px 0 60px}
+.legal h1{font-size:clamp(1.9rem,4.5vw,2.8rem);margin-bottom:6px}
+.legal h2{font-size:1.35rem;margin:38px 0 10px}
+.legal p,.legal li{color:#33403A}
+.legal ul,.legal ol{padding-left:1.3em;margin:0 0 14px}.legal li{margin-bottom:6px}
+.legal a{color:#0B7A55;text-decoration:underline;text-underline-offset:2px}
+.legal .maj{color:#4D5852;font-size:.92rem}
+.legal .intro{background:#F8F9FA;border:1px solid #8D9195;border-left:4px solid #0B7A55;border-radius:12px;padding:14px 18px;color:#0C1310}
+.legal .crumbs{color:#4D5852}.legal .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:6px;padding:0;margin:0}
+.legal .crumbs li{margin:0;color:#4D5852}.legal .crumbs li+li:before{content:"›";margin-right:6px}
+.legal .crumbs a{color:#0B7A55}
+.tbl{overflow-x:auto;margin:0 0 16px;border:1px solid #8D9195;border-radius:12px;background:#F8F9FA}
+.tbl table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem}
+.tbl caption{text-align:left;font-weight:600;padding:12px 14px 4px;color:#0C1310}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:10px 14px;border-top:1px solid #D6DCE3;color:#33403A}
+.tbl thead th{color:#0C1310;font-size:.85rem;text-transform:uppercase;letter-spacing:.03em}
+.tbl tbody th{color:#0C1310;font-weight:600}
+.retract{background:#F8F9FA;border:1px solid #8D9195;border-radius:14px;padding:20px}
+.retract .field{margin-bottom:14px}.retract label{display:block;font-weight:600;color:#0C1310;margin-bottom:4px}
+.retract input,.retract textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid #8D9195;border-radius:10px;background:#fff;color:#0C1310}
+.retract [aria-invalid=true]{border-color:#B42318;border-width:2px}
+.retract .req{font-weight:400;color:#4D5852}.retract .err{color:#B42318;font-weight:600}
+.legal .etat{font-weight:600;color:#0C1310}
+footer nav a[aria-current]{color:#0C1310;font-weight:600}
+footer{color:#4D5852}footer a{color:#4D5852}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}

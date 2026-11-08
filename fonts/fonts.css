@@ -1,0 +1,5 @@
+/* Polices hébergées sur tissaweb.fr : aucune requête vers Google (pas de transfert d'adresse IP à un tiers). */
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-display:swap;font-weight:200 800;src:url(bricolage-grotesque-latin-opsz-normal.woff2) format("woff2-variations"),url(bricolage-grotesque-latin-opsz-normal.woff2) format("woff2")}
+@font-face{font-family:"Onest";font-style:normal;font-display:swap;font-weight:100 900;src:url(onest-latin-wght-normal.woff2) format("woff2-variations"),url(onest-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:"Schibsted Grotesk";font-style:normal;font-display:swap;font-weight:700;src:url(schibsted-grotesk-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Schibsted Grotesk";font-style:normal;font-display:swap;font-weight:800;src:url(schibsted-grotesk-latin-800-normal.woff2) format("woff2")}
