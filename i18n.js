@@ -13,6 +13,8 @@
   function pick(){
     var q=(location.search.match(/[?&]lang=([a-z]{2})/)||[])[1]; if(q&&D[q])return q;
     var s=stored(); if(s&&D[s])return s;
+    // Robots (Google, Bing...) : toujours en français, sinon Google indexe la version anglaise
+    if(/bot|crawl|spider|slurp|google|bing|lighthouse|headless|facebookexternalhit/i.test(navigator.userAgent||''))return 'fr';
     var nav=(navigator.languages||[navigator.language||'fr']);
     for(var i=0;i<nav.length;i++){var c=String(nav[i]).slice(0,2).toLowerCase(); if(D[c])return c}
     return 'fr';
