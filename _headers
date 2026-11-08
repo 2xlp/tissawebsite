@@ -1,8 +1,21 @@
+# Une seule CSP pour tout le domaine (Netlify additionne les en-têtes des règles qui se recoupent).
+# Généré par headers.py : ne pas éditer la ligne CSP à la main.
 /*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
-  X-Frame-Options: SAMEORIGIN
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=(), browsing-topics=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-0TjwkfC9gr/EcO2p+oq3AGI38JB8FHApZe76XD0XwUA=' 'sha256-1P21/haLtVCtjmSAClkqOZOUqI/dYJcroBGsupIOcXg=' 'sha256-1f+E5dOfZl4XGUuPhOQaR/+w9sdH7TPE+d/587mmFt0=' 'sha256-4XJOh3u23oN1IFInZo6OSYGOkeKn/ZXwq3JlvAwwtdI=' 'sha256-A5r39XxaXwML7zXZEzkyO6i3OgFG0KotNiT2tls2oto=' 'sha256-CTgD/j/sz0X2LpGa/hxA0PEQPoNT6lDIgVCzet5mcF4=' 'sha256-DJKwymr7M38QbTfVnSfPEuhOQ8HAD6bin09S6LsGokY=' 'sha256-FONWfs/FOu/Uo+hTB+AbSyRjPqD3DEqYUJ7qydFI+lg=' 'sha256-Tn08+Wovv6ZrBSlHb5UhI8sISrD3qKQnyvfJ+CTajC0=' 'sha256-V1i10j9XP71zuyWb5vHuvXrFibHV/0eTi4rwwmiRdOo=' 'sha256-XSkFgWmO99bDOeEk4nypCBtC6eQga3EEIYbq8XHLSfg=' 'sha256-YXNgQeryIv4GdyzP6QIsvBOtHuJ/2V/QgbbdqkgWYfA=' 'sha256-iBSoCJIw0asmX9lLTzBKaqYDn5w6r/Eyl7LovQqbhw8=' 'sha256-lt4ZG8jBS17Z4qTdOszorFHhICBdXqmobFpftZ9E/yQ=' 'sha256-nwGrBkUynsDv2yRN4CubPJ9xPjmT4l6t5hNCg8C0Ke4=' 'sha256-qfWX8JZQhpJTwRFL9loT2DmX0mfHQtJBW8wp5QoFgHs=' 'sha256-tD+rMBELJMgi0We9WRNdZaZQirl8A2hHtVPYkcQA5mo=' 'sha256-yuwJSiytO3ICsCxFoSSXO2f4gni15QGHKLrjxbN48ac=' 'unsafe-hashes' 'sha256-9f8ZK5epjuMsYtXFjPqrgJI0L4QOAUYmJdHtT+RSH/c='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.unsplash.com; font-src 'self'; connect-src 'self' https://fhfnwvhhpmvmbqmlhruk.supabase.co wss://fhfnwvhhpmvmbqmlhruk.supabase.co https://api.emailjs.com; manifest-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: same-origin
+  Cache-Control: no-cache
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
 
 /img/*
   Cache-Control: public, max-age=2592000
@@ -10,8 +23,5 @@
 /sig/*
   Cache-Control: public, max-age=2592000
 
-/admin/*
-  X-Robots-Tag: noindex, nofollow
-  X-Frame-Options: DENY
-  Referrer-Policy: same-origin
-  Cache-Control: no-cache
+/admin/vendor/*
+  Cache-Control: public, max-age=604800

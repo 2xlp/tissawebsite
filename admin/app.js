@@ -1490,9 +1490,10 @@ function loadScript(src) { return new Promise((ok, ko) => { const s = document.c
 async function exportExcel(btn) {
   btn.disabled = true; const l = btn.textContent; btn.textContent = "Préparation…";
   try {
-    if (!window.XLSX) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js");
-    const X = window.XLSX, wb = X.utils.book_new();
-    const add = (name, rows) => X.utils.book_append_sheet(wb, X.utils.json_to_sheet(rows.length ? rows : [{ "(vide)": "" }]), name);
+    if (!window.writeXlsxFile) await loadScript("vendor/write-excel-file.min.js");
+    const sheets = [];
+    const cell = (v) => (v == null || v === "" ? null : typeof v === "number" ? v : String(v));
+    const add = (name, rows) => { rows = rows.length ? rows : [{ "(vide)": "" }]; const cols = Object.keys(rows[0]); sheets.push({ sheet: name.slice(0, 31), data: [cols.map((c) => ({ value: c, fontWeight: "bold" })), ...rows.map((r) => cols.map((c) => { const v = cell(r[c]); return v == null ? null : { value: v }; }))], stickyRowsCount: 1 }); };
     add("Clients", D.clients.map((c) => ({ Nom: c.nom, Entreprise: c.entreprise, Email: c.email, Téléphone: c.tel, Adresse: c.adresse, SIREN: c.siren, Activité: c.activite, Notes: c.notes, Créé: sDate(c.created_at) })));
     add("Prospects", D.prospects.map((p) => ({ Commerce: p.entreprise, Activité: p.activite, Statut: (PSTAT[p.statut] || [p.statut])[0], Email: p.email, Téléphone: p.tel, Adresse: p.adresse, "Mails envoyés": p.nb_contacts || 0, "Dernier contact": sDate(p.dernier_contact), "Prochaine relance": sDate(p.prochaine_action), Notes: p.notes })));
     add("Demandes", D.demandes.map((d) => ({ Date: sDate(d.created_at), Nom: d.nom, Email: d.email, Téléphone: d.telephone, Activité: d.activite, Offre: d.offre, Message: d.message, Statut: (DSTAT[d.statut] || [d.statut])[0] })));
@@ -1502,7 +1503,7 @@ async function exportExcel(btn) {
     add("Agenda", D.rdv.map((r) => ({ Date: sDate(r.debut), Heure: hhmm(r.debut), Titre: r.titre, Type: RDV_TYPES[r.type] || r.type, Avec: rdvLink(r), Lieu: r.lieu, Notes: r.notes })));
     add("Notes", D.notes.map((n) => ({ Date: sDate(n.created_at), Auteur: n.auteur, Note: n.texte, Fait: n.fait ? "oui" : "non" })));
     add("Mails", D.messages.map((m) => ({ Date: sDate(m.date), Sens: m.direction === "in" ? "reçu" : "envoyé", De: m.from_email, À: m.to_email, Objet: m.subject })));
-    X.writeFile(wb, `TissaWeb-sauvegarde-${today()}.xlsx`); toast("Sauvegarde téléchargée");
+    await window.writeXlsxFile(sheets).toFile(`TissaWeb-sauvegarde-${today()}.xlsx`); toast("Sauvegarde téléchargée");
   } catch (e) { toast("Export impossible : " + (e.message || e)); }
   btn.disabled = false; btn.textContent = l;
 }

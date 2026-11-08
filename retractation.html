@@ -63,15 +63,7 @@
 document.getElementById("retract").addEventListener("submit",function(e){e.preventDefault();var ids=["r-presta","r-date","r-nom","r-adr"],v={},ko=null;
 ids.forEach(function(i){var el=document.getElementById(i);v[i]=el.value.trim();el.setAttribute("aria-invalid",v[i]?"false":"true");if(!v[i]&&!ko)ko=el;});
 var er=document.getElementById("r-err");if(ko){er.hidden=false;ko.focus();return;}er.hidden=true;
-var b="À l'attention de TissaWeb, 8 rue Docteur Parizot, 21000 Dijon :
-
-Je vous notifie par la présente ma rétractation du contrat portant sur la prestation de services ci-dessous :
-"+v["r-presta"]+"
-Commandée le : "+v["r-date"]+"
-Nom du client : "+v["r-nom"]+"
-Adresse du client : "+v["r-adr"]+"
-
-Date : "+new Date().toLocaleDateString("fr-FR");
+var b="À l'attention de TissaWeb, 8 rue Docteur Parizot, 21000 Dijon :\n\nJe vous notifie par la présente ma rétractation du contrat portant sur la prestation de services ci-dessous :\n"+v["r-presta"]+"\nCommandée le : "+v["r-date"]+"\nNom du client : "+v["r-nom"]+"\nAdresse du client : "+v["r-adr"]+"\n\nDate : "+new Date().toLocaleDateString("fr-FR");
 location.href="mailto:contact@tissaweb.fr?subject="+encodeURIComponent("Rétractation")+"&body="+encodeURIComponent(b);});
 </script>
 
