@@ -57,7 +57,7 @@
     '.t3-cta:hover{background:#08603F}' +
     '.t3-ghost{font:600 15px "Onest",sans-serif;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:13px 18px;cursor:pointer}' +
     '@media (max-width:560px){.t3-full{left:50%;right:auto;width:330px;transform:translateX(-50%);box-shadow:0 0 0 1px rgba(255,255,255,.1)}.t3-brand{display:none}.t3-bar button{padding:7px 12px;font-size:13px}.t3-panel{padding:18px}}'+
-    '@media (max-width:760px){.t3-world{width:88vw}.t3-prop{left:4%;bottom:66%;width:40%;height:70%}.t3-phone{width:30%;right:-4%}.t3-tag{display:none}.t3-cap{bottom:24px}}' +
+    '@media (max-width:760px){.t3-world{width:88vw}.t3-prop{left:30%;bottom:104%;width:40%;height:70%}.t3-phone{width:30%;right:-4%}.t3-tag{display:none}.t3-cap{bottom:24px}}' +
     '@media (prefers-reduced-motion:reduce){.t3-floor{animation:none}.t3-world,.t3-l,.t3-phone,.t3-url{transition:none}}';
 
   /* Mise en scène propre à chaque métier : couleurs, arrivée des pièces, caméra, textes */
