@@ -89,13 +89,13 @@
   };
   function mUrl(t) { return 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">' + M[t].svg + '</svg>') + '")'; }
   var NL = 10;
-  function model(t) { var h = ""; for (var k = 0; k < NL; k++) h += '<i style="--k:' + k + '"></i>'; return '<div class="g-3d"><div class="g-m">' + h + '</div></div>'; }
+  function model(t) { var h = ""; for (var k = 0; k < NL; k++) h += '<i style="--k:' + k + '"></i>'; return '<div class="g-3d" data-m3="' + t + '"><div class="g-m">' + h + '</div></div>'; }
   function modelCss() {
     var c = '.g-3d{position:absolute;inset:0;margin:auto;width:64%;height:72%;perspective:70cqw;pointer-events:none}' +
       '.g-3d::after{content:"";position:absolute;left:22%;right:22%;bottom:-2%;height:9%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.38),transparent);animation:g3dSh 7s ease-in-out infinite}' +
       '.g-m{position:absolute;inset:0;transform-style:preserve-3d;animation:g3dSpin 7s ease-in-out infinite}' +
       '.g-m i{position:absolute;inset:0;transform:translateZ(calc((4.5 - var(--k)) * .5cqw));-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;background:color-mix(in srgb,var(--e) calc(100% - var(--k) * 5%),#000)}' +
-      '.g-m i:first-child{-webkit-mask:none;mask:none;background:var(--img) center/contain no-repeat}' +
+      '.g-m i:not(:first-child){-webkit-mask-image:var(--img);mask-image:var(--img)}.g-m i:first-child{-webkit-mask:none;mask:none;background:var(--img) center/contain no-repeat}' +
       '@keyframes g3dSpin{0%,100%{transform:translateY(0) rotateX(-6deg) rotateY(-36deg)}25%,75%{transform:translateY(-5%) rotateX(2deg) rotateY(0deg)}50%{transform:translateY(0) rotateX(8deg) rotateY(36deg)}}' +
       '@keyframes g3dSh{0%,50%,100%{transform:scale(1);opacity:1}25%,75%{transform:scale(.8);opacity:.6}}' +
       /* métiers avec une liste : le modèle en haut, la liste compacte en bas */
@@ -104,7 +104,7 @@
       '.g-vis:has(.g-list) .g-stamp{bottom:auto;top:2%;right:0}' +
       '@container (max-width:330px){.g-vis .g-list{display:none}.gsite[data-t] .g-vis .g-3d{inset:0;width:74%;height:92%}.g-vis:has(.g-list) .g-stamp{top:auto;bottom:3cqw;right:3cqw}}' +
       '@media (prefers-reduced-motion:reduce){.g-m{animation:none;transform:rotateY(-24deg)}.g-3d::after{animation:none}}';
-    Object.keys(M).forEach(function (t) { c += '.gsite[data-t=' + t + '] .g-3d{--e:' + M[t].e + ';--img:' + mUrl(t) + '}.gsite[data-t=' + t + '] .g-m i{-webkit-mask-image:var(--img);mask-image:var(--img)}'; });
+    Object.keys(M).forEach(function (t) { c += '.g-3d[data-m3=' + t + ']{--e:' + M[t].e + ';--img:' + mUrl(t) + '}'; });
     return c;
   }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
@@ -136,5 +136,5 @@
   }
   function rename(root, nom) { root.querySelectorAll(".g-name").forEach(function (e) { e.textContent = nom; }); }
   function lien(nom, t) { return "https://tissaweb.fr/?pour=" + encodeURIComponent(nom || "") + "&m=" + encodeURIComponent(t || "") + "#essai"; }
-  window.TWEssai = { T: T, render: render, rename: rename, metier: metier, lien: lien, slug: slug, css: css };
+  window.TWEssai = { M: M, model: model, T: T, render: render, rename: rename, metier: metier, lien: lien, slug: slug, css: css };
 })();

@@ -953,7 +953,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
   var input = document.getElementById("slName"), url = document.getElementById("slUrl"), badge = document.getElementById("slBadge"), cta = document.getElementById("slCta"), gcard = document.getElementById("slGoogle");
   var sites = root.querySelectorAll(".sl-screen > div"), chips = root.querySelectorAll("[data-m]");
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var cur = "boulangerie", typed = false;
+  var cur = "boulangerie", typed = false, own = false;
   function name() { return (input.value || "").trim() || T[cur].def; }
   function google() {
     var n = name(), d = T[cur];
@@ -972,12 +972,12 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
   function rename() { E.rename(root, name()); url.textContent = E.slug(name()); google(); }
   function pick(m, rebuild) { cur = T[m] ? m : "boutique"; chips.forEach(function (c) { c.setAttribute("aria-checked", c.dataset.m === cur ? "true" : "false"); }); if (rebuild !== false) build(); }
 
-  chips.forEach(function (c) { c.addEventListener("click", function () { stop(); typed = true; pick(c.dataset.m); }); });
-  input.addEventListener("input", function () { stop(); typed = true; rename(); });
+  chips.forEach(function (c) { c.addEventListener("click", function () { stop(); typed = true; if (!own) { input.value = ""; rename(); } pick(c.dataset.m); }); });
+  input.addEventListener("input", function () { stop(); typed = true; own = true; rename(); });
   input.addEventListener("focus", function () { stop(); if (!typed) { input.value = ""; rename(); } });
 
   document.getElementById("sl3d").addEventListener("click", function () {
-    stop(); typed = true;
+    stop(); typed = true; if (!own) { input.value = ""; rename(); }
     if (!window.TWEssai.cinema) return;
     TWEssai.cinema({ nom: name(), metier: cur, cta: { text: "Je veux ce site pour " + name(), href: "#contact", onClick: function () { cta.click(); setTimeout(function () { document.getElementById("contact").scrollIntoView({ behavior: "smooth" }); }, 520); } } });
   });
@@ -1005,7 +1005,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
   /* lien personnalisé envoyé au prospect : tissaweb.fr/?pour=Nom&m=metier#essai */
   var q = new URLSearchParams(location.search), pour = (q.get("pour") || "").slice(0, 40).trim();
   if (pour) {
-    typed = true; input.value = pour; pick(q.get("m") || E.metier(""), false); build();
+    typed = true; own = true; input.value = pour; pick(q.get("m") || E.metier(""), false); build();
     var hi = document.getElementById("slHello"); hi.hidden = false; hi.textContent = "Bonjour " + pour + ", voici un aperçu préparé pour vous.";
     try { window.twTrack && window.twTrack("essai_lien", cur); } catch (e) {}
     setTimeout(function () { root.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }, 400);
