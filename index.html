@@ -842,12 +842,12 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
         <li><b>En ligne en 7 jours</b>, à prix fixe</li>
       </ul>
       <a href="#contact" class="btn btn-accent btn-lg sl-cta" id="slCta">Je veux ce site pour mon commerce</a>
-      <p class="sl-note">Aperçu généré en direct dans votre navigateur. Votre vrai site est conçu sur-mesure avec vos photos et vos textes.</p>
+      <p class="sl-note"><b>Ceci est un exemple</b>, imaginé par TissaWeb pour vous donner une idée. Votre vrai site sera fait selon <b>vos idées</b> : vos couleurs, vos photos, vos textes. On en parle ensemble avant de commencer.</p>
     </div>
 
     <div class="sl-stage" aria-hidden="true">
       <div class="sl-browser">
-        <div class="sl-bar"><i></i><i></i><i></i><span class="sl-url"><b id="slUrl">boulangerie-martin</b>.fr</span></div>
+        <div class="sl-bar"><i></i><i></i><i></i><span class="sl-url"><b id="slUrl">boulangerie-martin</b>.fr</span><span class="sl-ex">Exemple</span></div>
         <div class="sl-screen"><div></div></div>
       </div>
       <div class="sl-phone">
@@ -883,7 +883,8 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
 .sl-points li{padding-left:26px;position:relative}
 .sl-points li::before{content:"";position:absolute;left:0;top:.45em;width:14px;height:8px;border-left:2.5px solid #3DDC97;border-bottom:2.5px solid #3DDC97;transform:rotate(-45deg)}
 .sl-points b{color:#fff;font-weight:600}
-.sl-note{font-size:.82rem;color:#7D8C85;margin-top:14px;max-width:40ch}
+.sl-note{font-size:.86rem;line-height:1.5;color:#9FB0A8;margin-top:14px;max-width:46ch;padding:10px 12px;border-left:3px solid #3DDC97;background:rgba(61,220,151,.06);border-radius:0 8px 8px 0}.sl-note b{color:#E6EEEA;font-weight:600}@media (max-width:560px){.sl-phone::after{content:"Exemple";position:absolute;top:-12px;left:50%;transform:translateX(-50%);z-index:4;font:700 .7rem/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:#0C1310;background:#F2C14E;padding:6px 10px;border-radius:99px;box-shadow:0 6px 16px -6px rgba(0,0,0,.6)}}
+.sl-ex{margin-left:auto;flex:none;font:700 .66rem/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:#0C1310;background:#F2C14E;padding:4px 8px;border-radius:99px}
 
 .sl-hello{display:inline-block;background:#3DDC97;color:#0C1310;font:700 .95rem var(--body);padding:9px 14px;border-radius:12px;margin:0 0 18px;animation:slHello .8s cubic-bezier(.3,1.4,.5,1) both}
 @keyframes slHello{from{opacity:0;transform:translateY(-8px) scale(.96)}}
@@ -1007,7 +1008,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
   var q = new URLSearchParams(location.search), pour = (q.get("pour") || "").slice(0, 40).trim();
   if (pour) {
     typed = true; own = true; input.value = pour; pick(q.get("m") || E.metier(""), false); build();
-    var hi = document.getElementById("slHello"); hi.hidden = false; hi.textContent = "Bonjour " + pour + ", voici un aperçu préparé pour vous.";
+    var hi = document.getElementById("slHello"); hi.hidden = false; hi.textContent = "Bonjour " + pour + ", voici un exemple préparé pour vous. Votre vrai site sera fait selon vos idées.";
     try { window.twTrack && window.twTrack("essai_lien", cur); } catch (e) {}
     setTimeout(function () { root.scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); }, 400);
     return;

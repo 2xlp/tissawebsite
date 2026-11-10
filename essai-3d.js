@@ -54,7 +54,7 @@
     '.t3-full .gsite{border-radius:0}' +
     '.t3-panel{position:absolute;left:50%;bottom:clamp(16px,4vh,40px);transform:translateX(-50%);width:min(640px,92vw);background:rgba(10,15,13,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:22px 24px;text-align:center;box-shadow:0 40px 80px -30px #000;animation:t3Cap .8s cubic-bezier(.2,.8,.2,1) .4s both}' +
     '.t3-panel h2{font:800 clamp(22px,2.6vw,32px)/1.1 "Schibsted Grotesk",Arial,sans-serif;letter-spacing:-.03em;margin:0 0 8px;color:#fff}' +
-    '.t3-panel p{color:#C9D3CD;margin:0 0 16px;font-size:15px}' +
+    '.t3-panel p{color:#C9D3CD;margin:0 0 16px;font-size:15px}.t3-panel p b{color:#fff;font-weight:600}' +
     '.t3-panel .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}' +
     '.t3-cta{display:inline-flex;align-items:center;justify-content:center;font:700 16px "Onest",sans-serif;color:#fff;background:#0B7A55;border-radius:12px;padding:14px 22px;text-decoration:none;border:0;cursor:pointer;box-shadow:0 14px 30px -12px rgba(11,122,85,.9)}' +
     '.t3-cta:hover{background:#08603F}' +
@@ -112,7 +112,7 @@
       '<div class="t3-phone"><div class="t3-ps"><div class="t3-gs"></div></div></div>' +
       '</div></div>' +
       '<div class="t3-cap" aria-live="polite"><div class="in"><span class="t3-n"></span><h3></h3><p></p></div><div class="t3-dots">' + S.map(function () { return "<i></i>"; }).join("") + '</div></div>' +
-      '<div class="t3-end"><div class="t3-full"><div class="t3-gs"></div></div><div class="t3-panel"><h2></h2><p>Ce site peut être en ligne dans 7 jours, à prix fixe. Avec vos vraies photos et vos vrais textes.</p><div class="row"><a class="t3-cta" data-t3="cta"></a><button type="button" class="t3-ghost" data-t3="replay">Revoir la construction</button></div></div></div>';
+      '<div class="t3-end"><div class="t3-full"><div class="t3-gs"></div></div><div class="t3-panel"><h2></h2><p><b>Ceci est un exemple imaginé par TissaWeb.</b> Votre vrai site sera fait selon vos idées, avec vos photos et vos textes. En ligne en 7 jours, à prix fixe.</p><div class="row"><a class="t3-cta" data-t3="cta"></a><button type="button" class="t3-ghost" data-t3="replay">Revoir la construction</button></div></div></div>';
     el.style.setProperty("--ac", pp.ac); el.style.setProperty("--sky", pp.sky);
     document.body.appendChild(el); document.documentElement.style.overflow = "hidden";
     el.querySelector(".t3-url b").textContent = E.slug(nom);
@@ -180,9 +180,9 @@
     var el = document.createElement("div"); el.className = "tw3d story"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Le site de " + nom + " en 3D");
     el.style.setProperty("--ac", pp.ac); el.style.setProperty("--sky", pp.sky);
     el.innerHTML = '<div class="t3-sky"></div><div class="t3-stage"></div><div class="t3-load">Préparation de la scène…</div>' +
-      '<div class="t3-bar"><span class="t3-brand">Tissa<em>Web</em> · ' + E.T[t].label.toLowerCase() + '</span><div><button type="button" data-t3="skip">Passer</button> <button type="button" data-t3="close" aria-label="Fermer">Fermer</button></div></div>' +
+      '<div class="t3-bar"><span class="t3-brand">Tissa<em>Web</em> · exemple pour ' + E.T[t].label.toLowerCase() + '</span><div><button type="button" data-t3="skip">Passer</button> <button type="button" data-t3="close" aria-label="Fermer">Fermer</button></div></div>' +
       '<div class="t3-cap" aria-live="polite"><div class="in"><span class="t3-n"></span><h3></h3><p></p></div><div class="t3-dots"></div></div>' +
-      '<div class="t3-end"><div class="t3-full"><div class="t3-gs"></div></div><div class="t3-panel"><h2></h2><p>Ce site peut être en ligne dans 7 jours, à prix fixe. Avec vos vraies photos et vos vrais textes.</p><div class="row"><a class="t3-cta" data-t3="cta"></a><button type="button" class="t3-ghost" data-t3="replay">Revoir l’animation</button></div></div></div>';
+      '<div class="t3-end"><div class="t3-full"><div class="t3-gs"></div></div><div class="t3-panel"><h2></h2><p><b>Ceci est un exemple imaginé par TissaWeb.</b> Votre vrai site sera fait selon vos idées, avec vos photos et vos textes. En ligne en 7 jours, à prix fixe.</p><div class="row"><a class="t3-cta" data-t3="cta"></a><button type="button" class="t3-ghost" data-t3="replay">Revoir l’animation</button></div></div></div>';
     document.body.appendChild(el); document.documentElement.style.overflow = "hidden";
     var cap = el.querySelector(".t3-cap .in"), dotsBox = el.querySelector(".t3-dots"), stage = el.querySelector(".t3-stage"), loadEl = el.querySelector(".t3-load");
     var c = opt.cta || {}, cta = el.querySelector("[data-t3=cta]"); cta.textContent = c.text || "Je veux ce site"; cta.href = c.href || "#contact";
