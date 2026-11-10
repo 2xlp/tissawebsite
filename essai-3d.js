@@ -3,6 +3,9 @@
    TWEssai.cinema({ nom, metier, cta: { text, href, onClick } })   (nécessite essai.js) */
 (function () {
   var E = window.TWEssai; if (!E) return;
+  var cs = document.currentScript, BASE = cs && cs.src ? cs.src.replace(/[^\/]*$/, "") : "/", modP = null;
+  function load3d() { if (!modP) { try { modP = (new Function("u", "return import(u)"))(BASE + "metier-3d.js"); } catch (e) { modP = Promise.reject(e); } modP.catch(function () { modP = null; }); } return modP; }
+  E.prefetch3d = function () { load3d().catch(function () {}); };
   var CSS = '.tw3d{position:fixed;inset:0;z-index:9999;background:#070B09;color:#fff;overflow:hidden;font-family:"Onest",system-ui,sans-serif;opacity:0;transition:opacity .5s ease}' +
     '.tw3d.on{opacity:1}' +
     '@property --rx{syntax:"<angle>";inherits:true;initial-value:58deg}@property --ry{syntax:"<angle>";inherits:true;initial-value:0deg}@property --rz{syntax:"<angle>";inherits:true;initial-value:-28deg}@property --s{syntax:"<number>";inherits:true;initial-value:.8}@property --ty{syntax:"<length>";inherits:true;initial-value:0px}' +
@@ -56,6 +59,8 @@
     '.t3-cta{display:inline-flex;align-items:center;justify-content:center;font:700 16px "Onest",sans-serif;color:#fff;background:#0B7A55;border-radius:12px;padding:14px 22px;text-decoration:none;border:0;cursor:pointer;box-shadow:0 14px 30px -12px rgba(11,122,85,.9)}' +
     '.t3-cta:hover{background:#08603F}' +
     '.t3-ghost{font:600 15px "Onest",sans-serif;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:13px 18px;cursor:pointer}' +
+    '.t3-stage{position:absolute;inset:0;transition:opacity .9s ease,transform 1.2s cubic-bezier(.7,0,.3,1),filter .9s ease}.tw3d.dive .t3-stage{opacity:0;transform:scale(1.3);filter:blur(10px)}.tw3d.story .t3-floor{display:none}' +
+    '.t3-load{position:absolute;inset:0;display:grid;place-items:center;font:600 15px "Onest",sans-serif;color:rgba(255,255,255,.6);letter-spacing:.04em;transition:opacity .4s}.t3-load.off{opacity:0;pointer-events:none}' +
     '@media (max-width:560px){.t3-full{left:50%;right:auto;width:330px;transform:translateX(-50%);box-shadow:0 0 0 1px rgba(255,255,255,.1)}.t3-brand{display:none}.t3-bar button{padding:7px 12px;font-size:13px}.t3-panel{padding:18px}}'+
     '@media (max-width:760px){.t3-world{width:88vw}.t3-prop{left:30%;bottom:104%;width:40%;height:70%}.t3-phone{width:30%;right:-4%}.t3-tag{display:none}.t3-cap{bottom:24px}}' +
     '@media (prefers-reduced-motion:reduce){.t3-floor{animation:none}.t3-world,.t3-l,.t3-phone,.t3-url{transition:none}}';
@@ -92,7 +97,7 @@
     ];
   }
 
-  function cinema(opt) {
+  function classic(opt) {
     E.css(); if (!document.getElementById("tw3d-css")) { var st = document.createElement("style"); st.id = "tw3d-css"; st.textContent = CSS; document.head.appendChild(st); }
     var nom = (opt.nom || "").trim() || "Votre commerce", t = E.T[opt.metier] ? opt.metier : "boutique", d = E.T[t];
     var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -158,7 +163,7 @@
       var a = b.dataset.t3;
       if (a === "close") close();
       if (a === "skip") { clearTimeout(timer); Object.keys(L).forEach(function (k) { shown[k] = 1; }); go(S.length - 1); setTimeout(finish, 900); }
-      if (a === "replay") { close(); setTimeout(function () { cinema(opt); }, 520); }
+      if (a === "replay") { close(); setTimeout(function () { classic(opt); }, 520); }
       if (a === "cta") { if (c.onClick) { e.preventDefault(); c.onClick(); } close(); }
     });
     requestAnimationFrame(function () { el.classList.add("on"); });
@@ -166,6 +171,66 @@
     if (reduce) { Object.keys(L).forEach(function (k) { shown[k] = 1; layer(k, 0, 1); }); finish(); return { close: close }; }
     setTimeout(function () { go(0); }, 150);
     return { close: close };
+  }
+
+  /* Nouvelle version : une vraie histoire 3D propre au métier (metier-3d.js), puis le site du client */
+  function story(opt) {
+    E.css(); if (!document.getElementById("tw3d-css")) { var st = document.createElement("style"); st.id = "tw3d-css"; st.textContent = CSS; document.head.appendChild(st); }
+    var nom = (opt.nom || "").trim() || "Votre commerce", t = E.T[opt.metier] ? opt.metier : "boutique", pp = P[t] || P.boutique;
+    var el = document.createElement("div"); el.className = "tw3d story"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Le site de " + nom + " en 3D");
+    el.style.setProperty("--ac", pp.ac); el.style.setProperty("--sky", pp.sky);
+    el.innerHTML = '<div class="t3-sky"></div><div class="t3-stage"></div><div class="t3-load">Préparation de la scène…</div>' +
+      '<div class="t3-bar"><span class="t3-brand">Tissa<em>Web</em> · ' + E.T[t].label.toLowerCase() + '</span><div><button type="button" data-t3="skip">Passer</button> <button type="button" data-t3="close" aria-label="Fermer">Fermer</button></div></div>' +
+      '<div class="t3-cap" aria-live="polite"><div class="in"><span class="t3-n"></span><h3></h3><p></p></div><div class="t3-dots"></div></div>' +
+      '<div class="t3-end"><div class="t3-full"><div class="t3-gs"></div></div><div class="t3-panel"><h2></h2><p>Ce site peut être en ligne dans 7 jours, à prix fixe. Avec vos vraies photos et vos vrais textes.</p><div class="row"><a class="t3-cta" data-t3="cta"></a><button type="button" class="t3-ghost" data-t3="replay">Revoir l’animation</button></div></div></div>';
+    document.body.appendChild(el); document.documentElement.style.overflow = "hidden";
+    var cap = el.querySelector(".t3-cap .in"), dotsBox = el.querySelector(".t3-dots"), stage = el.querySelector(".t3-stage"), loadEl = el.querySelector(".t3-load");
+    var c = opt.cta || {}, cta = el.querySelector("[data-t3=cta]"); cta.textContent = c.text || "Je veux ce site"; cta.href = c.href || "#contact";
+    el.querySelector(".t3-panel h2").textContent = "Voilà le site de " + nom + ".";
+    var player = null, closed = false, done = false, timer = 0, chapters = [];
+    function caption(i) {
+      var ch = chapters[i]; if (!ch) return;
+      cap.classList.remove("in"); void cap.offsetWidth; cap.classList.add("in");
+      cap.querySelector(".t3-n").textContent = "ÉTAPE " + (i + 1) + " / " + chapters.length; cap.querySelector("h3").textContent = ch.cap; cap.querySelector("p").textContent = ch.p;
+      dotsBox.querySelectorAll("i").forEach(function (d, k) { d.classList.toggle("on", k <= i); });
+    }
+    function finish() {
+      if (closed || done) return; done = true; clearTimeout(timer);
+      E.render(el.querySelector(".t3-full .t3-gs"), t, nom);
+      el.classList.add("dive");
+      timer = setTimeout(function () { el.classList.add("done"); if (player) { player.stop(); player = null; } }, 1000);
+      try { window.twTrack && window.twTrack("essai_3d_fin", t); } catch (e) {}
+    }
+    function close() { closed = true; clearTimeout(timer); if (player) { player.stop(); player = null; } el.classList.remove("on"); document.documentElement.style.overflow = ""; document.removeEventListener("keydown", key); setTimeout(function () { el.remove(); }, 500); }
+    function key(e) { if (e.key === "Escape") close(); }
+    document.addEventListener("keydown", key);
+    el.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-t3]"); if (!b) return;
+      var a = b.dataset.t3;
+      if (a === "close") close();
+      if (a === "skip") finish();
+      if (a === "replay") { close(); setTimeout(function () { cinema(opt); }, 520); }
+      if (a === "cta") { if (c.onClick) { e.preventDefault(); c.onClick(); } close(); }
+    });
+    requestAnimationFrame(function () { el.classList.add("on"); });
+    try { window.twTrack && window.twTrack("essai_3d", t); } catch (e) {}
+    load3d().then(function (M) {
+      if (closed) return;
+      if (!M.supported()) throw new Error("webgl");
+      chapters = M.info(t).chapters;
+      dotsBox.innerHTML = chapters.map(function () { return "<i></i>"; }).join("");
+      player = M.play(stage, t, nom, { chapter: caption, end: function () { timer = setTimeout(finish, 300); } });
+      loadEl.classList.add("off");
+    }).catch(function () {
+      if (closed) return;
+      el.remove(); document.documentElement.style.overflow = ""; document.removeEventListener("keydown", key); closed = true;
+      classic(opt);
+    });
+    return { close: close };
+  }
+  function cinema(opt) {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return classic(opt);
+    return story(opt);
   }
   E.cinema = cinema;
 })();

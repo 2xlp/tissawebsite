@@ -10,6 +10,9 @@
 /sig/*
   Cache-Control: public, max-age=2592000
 
+/vendor/*
+  Cache-Control: public, max-age=2592000
+
 /admin/*
   X-Robots-Tag: noindex, nofollow
   X-Frame-Options: DENY

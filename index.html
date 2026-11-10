@@ -976,6 +976,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
   input.addEventListener("input", function () { stop(); typed = true; own = true; rename(); });
   input.addEventListener("focus", function () { stop(); if (!typed) { input.value = ""; rename(); } });
 
+  ["pointerenter", "focus", "touchstart"].forEach(function (ev) { document.getElementById("sl3d").addEventListener(ev, function () { E.prefetch3d && E.prefetch3d(); }, { once: true, passive: true }); });
   document.getElementById("sl3d").addEventListener("click", function () {
     stop(); typed = true; if (!own) { input.value = ""; rename(); }
     if (!window.TWEssai.cinema) return;
