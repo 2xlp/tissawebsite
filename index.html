@@ -970,8 +970,9 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
     requestAnimationFrame(function () { gcard.classList.add("show"); });
     build._b = setTimeout(function () { badge.classList.add("show"); }, reduce ? 0 : 1600);
   }
-  function rename() { E.rename(root, name()); url.textContent = E.slug(name()); google(); }
-  function pick(m, rebuild) { cur = T[m] ? m : "boutique"; chips.forEach(function (c) { c.setAttribute("aria-checked", c.dataset.m === cur ? "true" : "false"); }); if (rebuild !== false) build(); }
+  function tell() { try { document.dispatchEvent(new CustomEvent("tw:essai", { detail: { m: cur, nom: name() } })); } catch (e) {} }
+  function rename() { E.rename(root, name()); url.textContent = E.slug(name()); google(); tell(); }
+  function pick(m, rebuild) { cur = T[m] ? m : "boutique"; chips.forEach(function (c) { c.setAttribute("aria-checked", c.dataset.m === cur ? "true" : "false"); }); if (rebuild !== false) build(); tell(); }
 
   chips.forEach(function (c) { c.addEventListener("click", function () { stop(); typed = true; if (!own) { input.value = ""; rename(); } pick(c.dataset.m); }); });
   input.addEventListener("input", function () { stop(); typed = true; own = true; rename(); });
@@ -1081,6 +1082,150 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
 </section>
 
 <!-- =================== 5. SERVICES =================== -->
+<section class="ba" id="avant-apres" aria-labelledby="baTitle" data-noi18n>
+  <div class="ba-wrap">
+    <p class="ba-kicker">Avant / après</p>
+    <h2 id="baTitle">La différence <em>se voit tout de suite.</em></h2>
+    <p class="ba-sub">Faites glisser pour comparer : un commerce avec seulement une page réseau social, et le même commerce avec son site.</p>
+    <div class="ba-frame" id="baFrame">
+      <div class="ba-after" id="baAfter" aria-hidden="true"></div>
+      <div class="ba-before" id="baBefore" aria-hidden="true">
+        <div class="bb">
+          <div class="bb-social">
+            <div class="bb-cover"></div>
+            <div class="bb-head"><span class="bb-av" id="baAv">B</span><div><b id="baNom1">Boulangerie Martin</b><small>Page · <span id="baMet">Boulangerie</span> · 214 abonnés</small></div></div>
+            <div class="bb-post">
+              <small>Publié il y a 8 mois</small>
+              <p>Fermé lundi 🙏 bonne semaine à tous</p>
+              <div class="bb-img"></div>
+            </div>
+            <ul class="bb-com">
+              <li><i></i><span>Vous êtes ouverts le dimanche&nbsp;?</span></li>
+              <li><i></i><span>C'est quoi vos horaires svp</span></li>
+              <li><i></i><span>Vous avez un numéro&nbsp;??</span></li>
+            </ul>
+          </div>
+          <div class="bb-g">
+            <div class="bb-gq">🔍 <span id="baQ">boulangerie dijon</span></div>
+            <b id="baNom2">Boulangerie Martin</b>
+            <small>★★★★☆ 4,3 · Horaires non renseignés</small>
+            <div class="bb-gbtn"><span>Itinéraire</span><span>Appeler</span><span class="no">Aucun site web</span></div>
+          </div>
+        </div>
+      </div>
+      <span class="ba-lab ba-lab-l">Avant</span><span class="ba-lab ba-lab-r">Après</span>
+      <div class="ba-line" id="baLine"><span class="ba-knob"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <input class="ba-range" id="baRange" type="range" min="0" max="100" value="50" aria-label="Comparer avant et après : faites glisser">
+    </div>
+    <div class="ba-pts">
+      <div><b>Horaires</b><span class="a">Demandés en commentaire</span><span class="p">Toujours à jour sur votre site</span></div>
+      <div><b>Commandes &amp; rendez-vous</b><span class="a">Par message, quand vous y pensez</span><span class="p">En un clic, même la nuit</span></div>
+      <div><b>Sur Google</b><span class="a">« Aucun site web »</span><span class="p">Votre nom, votre lien, vos avis</span></div>
+    </div>
+    <p class="ba-note">Exemple imaginé par TissaWeb. Votre site sera fait selon vos idées.</p>
+  </div>
+<style>
+.ba{background:var(--bg);padding-block:90px 70px}
+.ba-wrap{max-width:1100px;margin:0 auto;padding-inline:20px}
+.ba-kicker{font:700 .78rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+.ba h2{font-size:clamp(1.9rem,4.4vw,3rem);line-height:1.05;letter-spacing:-.02em;margin:0 0 12px}
+.ba h2 em{font-style:normal;color:var(--accent)}
+.ba-sub{color:#5A6661;max-width:56ch;margin:0 0 30px}
+.ba-frame{position:relative;aspect-ratio:16/9.6;border-radius:18px;overflow:hidden;box-shadow:0 40px 80px -40px rgba(12,19,16,.45),0 0 0 1px rgba(12,19,16,.08);background:#fff;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.ba-after,.ba-before{position:absolute;inset:0}
+.ba-after.gsite{border-radius:0!important;box-shadow:none!important}
+.ba-before{clip-path:inset(0 calc(100% - var(--x,50%)) 0 0);background:#E7E4DF}
+.bb{position:absolute;inset:0;display:grid;grid-template-columns:1.25fr 1fr;gap:4%;padding:5% 5%;align-items:center;filter:saturate(.75)}
+.bb-social,.bb-g{background:#fff;border-radius:12px;box-shadow:0 10px 30px -18px rgba(0,0,0,.35);overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:#2A2A2A}
+.bb-social{transform:rotate(-1.6deg)}
+.bb-cover{height:clamp(40px,9vw,92px);background:linear-gradient(135deg,#BDB8B0,#D8D3CB)}
+.bb-head{display:flex;gap:10px;align-items:center;padding:0 14px;margin-top:-18px}
+.bb-av{flex:none;width:clamp(36px,5vw,56px);height:clamp(36px,5vw,56px);border-radius:50%;background:#9C968D;border:3px solid #fff;color:#fff;display:grid;place-items:center;font-weight:700;font-size:1.1rem}
+.bb-head b{display:block;font-size:clamp(.8rem,1.5vw,1.05rem);margin-top:16px}
+.bb-head small,.bb-post small,.bb-g small{color:#8A8A8A;font-size:clamp(.62rem,1.05vw,.78rem)}
+.bb-post{padding:10px 14px 4px}
+.bb-post p{margin:4px 0 8px;font-size:clamp(.72rem,1.25vw,.92rem)}
+.bb-img{height:clamp(30px,7vw,80px);border-radius:6px;background:repeating-linear-gradient(45deg,#D9D5CE 0 8px,#E3E0DA 8px 16px);filter:blur(1.2px)}
+.bb-com{list-style:none;margin:0;padding:6px 14px 14px;display:grid;gap:6px}
+.bb-com li{display:flex;gap:7px;align-items:center;font-size:clamp(.62rem,1.1vw,.82rem)}
+.bb-com i{flex:none;width:18px;height:18px;border-radius:50%;background:#CFCAC2}
+.bb-com span{background:#F0EFED;border-radius:12px;padding:5px 10px}
+.bb-g{padding:14px 16px;transform:rotate(1.2deg)}
+.bb-gq{font-size:clamp(.62rem,1.05vw,.8rem);color:#666;background:#F1F3F4;border-radius:99px;padding:6px 12px;margin-bottom:12px}
+.bb-g b{display:block;font-size:clamp(.82rem,1.5vw,1.1rem);margin-bottom:2px}
+.bb-gbtn{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.bb-gbtn span{font-size:clamp(.6rem,1vw,.78rem);border:1px solid #DADCE0;border-radius:99px;padding:5px 10px;color:#1A5FB4}
+.bb-gbtn .no{color:#B3261E;border-color:#F2B8B5;background:#FDECEA}
+.ba-lab{position:absolute;top:14px;z-index:3;font:700 .74rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase;padding:7px 11px;border-radius:99px;pointer-events:none}
+.ba-lab-l{left:14px;background:rgba(20,20,20,.72);color:#fff}
+.ba-lab-r{right:14px;background:var(--accent);color:#fff}
+.ba-line{position:absolute;top:0;bottom:0;left:var(--x,50%);width:3px;margin-left:-1.5px;background:#fff;z-index:4;pointer-events:none;box-shadow:0 0 0 1px rgba(0,0,0,.08),0 0 24px rgba(0,0,0,.25)}
+.ba-knob{position:absolute;top:50%;left:50%;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;background:#fff;color:#0C1310;display:grid;place-items:center;box-shadow:0 10px 24px -8px rgba(0,0,0,.45);transition:transform .2s}
+.ba-frame:hover .ba-knob,.ba-range:focus-visible~.ba-line .ba-knob{transform:scale(1.08)}
+.ba-range{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;z-index:5;-webkit-appearance:none;appearance:none}
+.ba-range:focus-visible{opacity:0}
+.ba-frame:has(.ba-range:focus-visible){outline:3px solid var(--accent);outline-offset:4px}
+.ba-pts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+.ba-pts div{background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 0 0 1px rgba(12,19,16,.07)}
+.ba-pts b{display:block;font-size:.98rem;margin-bottom:8px}
+.ba-pts span{display:block;font-size:.88rem;line-height:1.4;padding-left:22px;position:relative}
+.ba-pts span+span{margin-top:6px}
+.ba-pts .a{color:#7A6F6A}.ba-pts .a::before{content:"✕";position:absolute;left:0;color:#B3261E;font-weight:700}
+.ba-pts .p{color:#0C1310;font-weight:600}.ba-pts .p::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:800}
+.ba-note{font-size:.8rem;color:#7D8580;margin:14px 0 0}
+@media (max-width:760px){
+  .ba{padding-block:64px 50px}
+  .ba-frame{aspect-ratio:3/4.4}
+  .bb{grid-template-columns:1fr;align-content:center;gap:5%;padding:16% 7% 8%}
+  .bb-g{transform:rotate(1deg)}
+  .ba-pts{grid-template-columns:1fr}
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ba{background:#0F1513}:root:not([data-theme="light"]) .ba-sub{color:#A9B5AF}:root:not([data-theme="light"]) .ba-pts div{background:#151D1A;box-shadow:0 0 0 1px rgba(255,255,255,.07)}:root:not([data-theme="light"]) .ba-pts .p{color:#E6EEEA}}
+:root[data-theme="dark"] .ba{background:#0F1513}:root[data-theme="dark"] .ba-sub{color:#A9B5AF}:root[data-theme="dark"] .ba-pts div{background:#151D1A}:root[data-theme="dark"] .ba-pts .p{color:#E6EEEA}
+</style>
+<script>
+(function () {
+  var E = window.TWEssai, fr = document.getElementById("baFrame"); if (!E || !fr) return;
+  var after = document.getElementById("baAfter"), range = document.getElementById("baRange");
+  var MET = { boulangerie: "Boulangerie", restaurant: "Restaurant", barbier: "Barbier", beaute: "Institut de beauté", artisan: "Plombier", coach: "Coach sportif", boutique: "Boutique" };
+  var cur = { m: "boulangerie", nom: "Boulangerie Martin" }, shown = "";
+  function set(v) { fr.style.setProperty("--x", v + "%"); }
+  function fit() { var w = fr.clientWidth, g = after; if (w < 560) { var sc = w / 330; g.style.right = "auto"; g.style.bottom = "auto"; g.style.width = "330px"; g.style.height = (fr.clientHeight / sc) + "px"; g.style.transform = "scale(" + sc + ")"; g.style.transformOrigin = "0 0"; } else { g.style.cssText = ""; } }
+  window.addEventListener("resize", function () { clearTimeout(tmr); tmr = setTimeout(fit, 150); });
+  function draw() {
+    var key = cur.m + "|" + cur.nom;
+    if (key !== shown) { if (cur.m !== (shown.split("|")[0])) E.render(after, cur.m, cur.nom); else E.rename(after, cur.nom); shown = key; } fit();
+    ["baNom1", "baNom2"].forEach(function (id) { document.getElementById(id).textContent = cur.nom; });
+    document.getElementById("baAv").textContent = (cur.nom.trim()[0] || "?").toUpperCase();
+    document.getElementById("baMet").textContent = MET[cur.m] || "Commerce";
+    document.getElementById("baQ").textContent = (MET[cur.m] || "commerce").toLowerCase() + " dijon";
+  }
+  var tmr = 0;
+  document.addEventListener("tw:essai", function (e) { if (!e.detail) return; cur.m = E.T[e.detail.m] ? e.detail.m : "boutique"; cur.nom = e.detail.nom || "Votre commerce"; clearTimeout(tmr); tmr = setTimeout(draw, 120); });
+  range.addEventListener("input", function () { touched = true; set(range.value); });
+  var touched = false;
+  var ch = document.querySelector('.sl-chips [aria-checked="true"]'), nm = document.getElementById("slName");
+  if (ch && E.T[ch.dataset.m]) cur.m = ch.dataset.m;
+  cur.nom = (nm && nm.value.trim()) || (E.T[cur.m] && E.T[cur.m].def) || cur.nom;
+  draw(); set(50);
+  // petite démonstration du glissement la première fois qu'on voit la section
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (en) {
+      if (!en[0].isIntersecting) return; io.disconnect();
+      var keys = [[0, 50], [700, 22], [1500, 78], [2300, 50]], t0 = performance.now();
+      (function step(now) {
+        if (touched) return; var t = now - t0, i = 0; while (i < keys.length - 1 && t > keys[i + 1][0]) i++;
+        if (i >= keys.length - 1) { set(50); range.value = 50; return; }
+        var a = keys[i], b = keys[i + 1], f = (t - a[0]) / (b[0] - a[0]); f = f < .5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2;
+        var v = a[1] + (b[1] - a[1]) * f; set(v); range.value = v; requestAnimationFrame(step);
+      })(t0);
+    }, { threshold: .55 });
+    io.observe(fr);
+  }
+})();
+</script>
+</section>
+
 <section id="services">
   <div class="wrap">
     <div class="sec-head center reveal">

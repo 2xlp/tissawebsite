@@ -25,14 +25,14 @@
     var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null), n;
     while((n=w.nextNode())){
       var p=n.parentNode; if(!p||/^(SCRIPT|STYLE)$/.test(p.nodeName))continue;
-      if(p.closest&&p.closest('[data-i18n],[data-count],.lang'))continue;
+      if(p.closest&&p.closest('[data-i18n],[data-count],.lang,[data-noi18n]'))continue;
       var k=norm(n.nodeValue); if(!(k in IDX))continue;
       var m=n.nodeValue.match(/^(\s*)[\s\S]*?(\s*)$/);
       nodes.push({n:n,k:k,a:m[1],b:m[2]});
     }
     ['placeholder','aria-label','alt','title'].forEach(function(at){
       document.querySelectorAll('['+at+']').forEach(function(el){
-        if(el.closest('.lang'))return;
+        if(el.closest('.lang,[data-noi18n]'))return;
         var k=norm(el.getAttribute(at)); if(k in IDX)attrs.push({el:el,at:at,k:k});
       });
     });
