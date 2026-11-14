@@ -2202,13 +2202,13 @@ addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{p
 .g3s main h2{text-shadow:0 1px 0 rgba(12,19,16,.10),0 2px 0 rgba(12,19,16,.09),0 3px 0 rgba(12,19,16,.08),0 4px 0 rgba(12,19,16,.07),0 5px 0 rgba(12,19,16,.06),0 12px 22px rgba(12,19,16,.16)}
 .g3s .hero h1,.g3s .sl h2{text-shadow:0 1px 0 #0a3d2b,0 2px 0 #093626,0 3px 0 #082f21,0 4px 0 #07291d,0 5px 0 #062218,0 6px 0 #051c14,0 18px 30px rgba(0,0,0,.6)}
 /* les sections bougent en relief avec la souris ou le téléphone, les cartes flottent au-dessus */
-@media (prefers-reduced-motion:no-preference){
+@media (prefers-reduced-motion:no-preference) and (pointer:fine){
   .g3s main section > .wrap{transform:perspective(1600px) rotateX(calc(var(--gy,0) * -3deg)) rotateY(calc(var(--gx,0) * 4deg));transform-style:preserve-3d;transition:transform .35s ease-out}
   .g3s main section > .wrap > *,.g3s main section > .wrap > * > *{transform-style:preserve-3d}
   .g3s #services .card,.g3s .why,.g3s #tarifs .plan,.g3s #engagements .trust,.g3s .avis-card{translate:0 0 34px;box-shadow:0 34px 60px -36px rgba(12,19,16,.5)}
 }
 /* tarifs : la carte du milieu sort de la page */
-.g3s #tarifs .plan.featured,.g3s #tarifs .plan.pop{translate:0 0 70px}
+@media (pointer:fine){.g3s #tarifs .plan.featured,.g3s #tarifs .plan.pop{translate:0 0 70px}}
 </style>
 <script>
 (function () {
@@ -2217,7 +2217,8 @@ addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(u)}},{p
     m.innerHTML = '<span class="cb">' + ["f", "b", "l", "r", "t", "d"].map(function (k) { return '<i class="' + k + '">' + svg + '</i>'; }).join("") + '</span>';
   });
   var R = document.documentElement; R.classList.add("g3s");
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  /* iPhone/Android : pas de 3D sur toute la page (Safari iOS plantait, mémoire GPU) */
+  if (matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches) return;
   var tx = 0, ty = 0, x = 0, y = 0, raf = 0;
   function loop() { x += (tx - x) * .1; y += (ty - y) * .1; R.style.setProperty("--gx", x.toFixed(3)); R.style.setProperty("--gy", y.toFixed(3)); raf = Math.abs(tx - x) + Math.abs(ty - y) > .002 ? requestAnimationFrame(loop) : 0; }
   function set(a, b) { tx = Math.max(-1, Math.min(1, a)); ty = Math.max(-1, Math.min(1, b)); if (!raf) raf = requestAnimationFrame(loop); }
