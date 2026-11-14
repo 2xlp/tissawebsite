@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Forno Rosso · Démo pizzeria TissaWeb</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/fonts/demos.css">
+<style>
+/* Démo pizzeria : plan de travail du pizzaiolo, ingrédients autour de la pizza, on compose en cliquant. */
+:root{--bg:#120E0B;--bg2:#1B1511;--card:#211A15;--line:rgba(255,236,214,.12);--txt:#F6EDE2;--mut:#A99C8E;--rouge:#D9452B;--or:#E7B04A;--vert:#4E9A52}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:"Manrope",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.serif{font-family:"DM Serif Display",Georgia,serif;font-weight:400}
+.wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+/* nav */
+nav{position:absolute;top:0;left:0;right:0;z-index:20}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:76px}
+.logo{font-family:"DM Serif Display";font-size:26px;letter-spacing:.3px}
+.logo i{color:var(--rouge);font-style:italic}
+nav ul{display:flex;gap:28px;list-style:none;font-weight:600;font-size:14px;color:var(--mut)}
+nav ul a:hover{color:var(--txt)}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;transition:.2s}
+.pill:hover{background:rgba(255,255,255,.09)}
+.pill.plein{background:var(--rouge);border-color:var(--rouge);color:#fff}
+.pill.plein:hover{background:#E85A40}
+/* plan de travail */
+.atelier{position:relative;height:100svh;min-height:680px;overflow:hidden;
+  background:radial-gradient(ellipse 60% 55% at 50% 52%,#3A2A1E 0%,#21180F 45%,var(--bg) 80%)}
+.atelier::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 52%,transparent 30%,rgba(0,0,0,.55) 100%)}
+.titre{position:absolute;top:96px;left:0;right:0;text-align:center;z-index:5;pointer-events:none}
+.titre small{display:block;letter-spacing:5px;text-transform:uppercase;font-size:11px;font-weight:700;color:var(--or);margin-bottom:8px}
+.titre h1{font-family:"DM Serif Display";font-weight:400;font-size:clamp(30px,4.2vw,52px);line-height:1.05}
+.titre h1 em{color:var(--rouge)}
+.centre{position:absolute;left:50%;top:54%;width:min(36vw,330px);aspect-ratio:1;transform:translate(-50%,-50%);z-index:3}
+.pelle{position:absolute;left:50%;top:50%;width:150%;transform:translate(-50%,-50%) rotate(-28deg);opacity:.95;filter:drop-shadow(0 30px 40px rgba(0,0,0,.6))}
+#pizza{position:relative;width:100%;height:100%;filter:drop-shadow(0 22px 30px rgba(0,0,0,.55))}
+#pizza .tourne{transform-origin:200px 200px;animation:tourne 90s linear infinite}
+@keyframes tourne{to{transform:rotate(360deg)}}
+.top-g>*{transform-box:fill-box;transform-origin:center;animation:pose .45s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes pose{from{opacity:0;transform:scale(1.8) translateY(-14px)}to{opacity:1;transform:none}}
+/* ingrédients */
+.ing{position:absolute;z-index:4;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;color:var(--txt);cursor:pointer;transform:translate(-50%,-50%);font:inherit;-webkit-tap-highlight-color:transparent}
+.ing .obj{width:78px;height:78px;transition:transform .35s cubic-bezier(.3,1.4,.5,1),filter .3s;filter:drop-shadow(0 12px 14px rgba(0,0,0,.55));animation:flotte 5s ease-in-out infinite;animation-delay:var(--d)}
+@keyframes flotte{50%{translate:0 -6px}}
+.ing:hover .obj,.ing:focus-visible .obj{transform:scale(1.14) rotate(-4deg)}
+.ing .lab{font-size:11.5px;font-weight:700;letter-spacing:.3px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:rgba(18,14,11,.7);backdrop-filter:blur(6px);white-space:nowrap;transition:.25s}
+.ing.on .lab{background:var(--txt);color:var(--bg);border-color:var(--txt)}
+.ing.on .lab::before{content:"✓ "}
+.ing.on .obj{filter:drop-shadow(0 0 18px rgba(231,176,74,.45)) drop-shadow(0 12px 14px rgba(0,0,0,.55))}
+.vol{position:fixed;z-index:30;width:60px;height:60px;pointer-events:none;transition:transform .55s cubic-bezier(.5,0,.3,1),opacity .55s}
+/* résultat */
+.resultat{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:14px;padding:10px 10px 10px 20px;border-radius:999px;border:1px solid var(--line);background:rgba(27,21,17,.85);backdrop-filter:blur(10px);max-width:calc(100vw - 28px);transition:.3s}
+.resultat .txt{font-size:13px;color:var(--mut);line-height:1.3}
+.resultat .txt b{display:block;color:var(--txt);font-size:15px}
+.resultat .txt b span{color:var(--or)}
+.resultat button{border:0;background:rgba(255,255,255,.08);color:var(--txt);border-radius:999px;padding:9px 14px;font:700 12px "Manrope";cursor:pointer}
+.resultat .pill.plein{padding:10px 16px;white-space:nowrap}
+/* sections */
+section{padding:110px 0;border-top:1px solid var(--line)}
+.kick{letter-spacing:5px;text-transform:uppercase;font-size:11px;font-weight:700;color:var(--or)}
+h2{font-family:"DM Serif Display";font-weight:400;font-size:clamp(34px,4.5vw,54px);line-height:1.05;margin:10px 0 18px}
+.lead{color:var(--mut);font-size:17px;line-height:1.6;max-width:560px}
+.carte{display:grid;grid-template-columns:repeat(2,1fr);gap:0 56px;margin-top:46px}
+.pz{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:20px 0;border-bottom:1px dashed var(--line);transition:.25s}
+.pz.match{background:linear-gradient(90deg,rgba(231,176,74,.12),transparent);padding-left:14px;border-radius:8px}
+.pz h3{font-family:"DM Serif Display";font-weight:400;font-size:23px}
+.pz .prix{font-weight:800;font-size:17px;color:var(--or)}
+.pz p{grid-column:1/-1;color:var(--mut);font-size:14px;line-height:1.5}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.four{aspect-ratio:4/3;border-radius:18px;background:radial-gradient(circle at 50% 75%,#FF8A3A 0%,#D9452B 18%,#5A1F12 42%,#1E1410 70%);position:relative;overflow:hidden;border:1px solid var(--line)}
+.four::before{content:"";position:absolute;left:12%;right:12%;top:18%;bottom:30%;border-radius:50% 50% 8px 8px;border:10px solid #3B2B21;border-bottom:0;box-shadow:inset 0 0 60px rgba(0,0,0,.6)}
+.four .flamme{position:absolute;bottom:32%;width:26px;height:50px;border-radius:50% 50% 40% 40%;background:linear-gradient(#FFD36B,#FF6A2B);filter:blur(1px);animation:fl 1.2s ease-in-out infinite alternate;opacity:.9}
+@keyframes fl{to{transform:scaleY(1.25) translateY(-4px);opacity:.7}}
+.chiffres{display:flex;gap:34px;margin-top:30px}
+.chiffres b{font-family:"DM Serif Display";font-size:40px;font-weight:400;color:var(--txt);display:block}
+.chiffres span{color:var(--mut);font-size:13px}
+.infos{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.info{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
+.info h4{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--or);margin-bottom:14px}
+.info p{line-height:1.7;color:var(--mut)}
+.info p b{color:var(--txt)}
+.info .gros{font-family:"DM Serif Display";font-size:30px;color:var(--txt)}
+footer{padding:40px 0 110px;color:var(--mut);font-size:13px;text-align:center;border-top:1px solid var(--line)}
+/* mobile */
+@media(max-width:820px){
+  nav ul{display:none}
+  .atelier{min-height:600px}
+  .titre{top:84px}
+  .centre{width:44vw;top:52%}
+  .ing .obj{width:44px;height:44px}
+  .ing .lab{font-size:9.5px;padding:3px 7px}
+  .ing{gap:5px}
+  .carte,.duo,.infos{grid-template-columns:1fr}
+  .resultat{bottom:76px;padding-left:16px;gap:8px}
+  .resultat .txt b{font-size:13px}
+  .resultat{width:calc(100vw - 28px);justify-content:space-between}.resultat .txt{font-size:12px}.resultat #voir{display:none}
+  section{padding:80px 0}
+}
+@media(prefers-reduced-motion:reduce){#pizza .tourne,.ing .obj,.four .flamme{animation:none}.top-g>*{animation:none}}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a href="#" class="logo">Forno <i>Rosso</i></a>
+  <ul><li><a href="#carte">La carte</a></li><li><a href="#four">Le four</a></li><li><a href="#infos">Infos</a></li></ul>
+  <a class="pill plein" href="tel:0380000000">Commander</a>
+</div></nav>
+
+<header class="atelier" id="atelier">
+  <div class="titre"><small>Pizzeria au feu de bois · Dijon</small><h1 class="serif">Composez votre <em>pizza</em></h1></div>
+
+  <div class="centre">
+    <svg class="pelle" viewBox="0 0 600 200" aria-hidden="true"><defs><linearGradient id="bois" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#B9844F"/><stop offset="1" stop-color="#7D5430"/></linearGradient></defs>
+      <rect x="380" y="86" width="220" height="28" rx="14" fill="url(#bois)"/><ellipse cx="200" cy="100" rx="200" ry="100" fill="url(#bois)"/>
+      <path d="M40 70c80-10 240-10 320 0M30 110c90 8 250 8 340 0M60 145c70 6 210 6 280 0" stroke="#6A4626" stroke-width="2" opacity=".35" fill="none"/></svg>
+    <svg id="pizza" viewBox="0 0 400 400" role="img" aria-label="Votre pizza">
+      <defs>
+        <radialGradient id="pate" cx=".5" cy=".45" r=".55"><stop offset=".78" stop-color="#E9C084"/><stop offset=".93" stop-color="#C98B47"/><stop offset="1" stop-color="#9A5F2A"/></radialGradient>
+        <radialGradient id="tom" cx=".5" cy=".45"><stop offset="0" stop-color="#E0492C"/><stop offset="1" stop-color="#A92A18"/></radialGradient>
+        <radialGradient id="cre" cx=".5" cy=".45"><stop offset="0" stop-color="#FFF7E8"/><stop offset="1" stop-color="#EBD8B8"/></radialGradient>
+      </defs>
+      <g class="tourne">
+        <circle cx="200" cy="200" r="182" fill="url(#pate)"/>
+        <g fill="#8C5222" opacity=".5"><circle cx="70" cy="140" r="5"/><circle cx="330" cy="120" r="4"/><circle cx="300" cy="330" r="6"/><circle cx="90" cy="300" r="4"/><circle cx="210" cy="30" r="5"/></g>
+        <circle id="base" cx="200" cy="200" r="152" fill="#F0D9B0" opacity=".9"/>
+        <g id="tops"></g>
+      </g>
+    </svg>
+  </div>
+
+  <div id="ings"></div>
+
+  <div class="resultat" aria-live="polite">
+    <div class="txt" id="res"><b>Touchez un ingrédient</b>il file sur la pâte</div>
+    <button id="vider" hidden>Vider</button>
+    <a class="pill plein" href="#carte" id="voir" hidden>Voir sur la carte</a>
+  </div>
+</header>
+
+<section id="carte"><div class="wrap">
+  <span class="kick">La carte</span>
+  <h2>Nos pizzas, pâte maturée 48 h</h2>
+  <p class="lead">Farine italienne, tomates San Marzano, mozzarella fior di latte. Cuites en 90 secondes dans notre four à bois.</p>
+  <div class="carte" id="liste"></div>
+</div></section>
+
+<section id="four"><div class="wrap duo">
+  <div class="four" aria-hidden="true"><span class="flamme" style="left:38%"></span><span class="flamme" style="left:48%;animation-delay:.3s"></span><span class="flamme" style="left:58%;animation-delay:.6s"></span></div>
+  <div>
+    <span class="kick">Le four</span>
+    <h2>450 °C, du bois de hêtre, et rien d'autre.</h2>
+    <p class="lead">Une pâte qui gonfle en quelques secondes, des bords légèrement fumés, un cœur fondant. Comme à Naples, mais à deux pas de chez vous.</p>
+    <div class="chiffres"><div><b>48 h</b><span>de maturation</span></div><div><b>90 s</b><span>de cuisson</span></div><div><b>4,8★</b><span>sur Google</span></div></div>
+  </div>
+</div></section>
+
+<section id="infos"><div class="wrap">
+  <span class="kick">Infos pratiques</span>
+  <h2>Sur place ou à emporter</h2>
+  <div class="infos">
+    <div class="info"><h4>Horaires</h4><p><b>Mar – Sam</b> 11h45 – 14h<br><b>Mar – Dim</b> 18h30 – 22h<br>Fermé le lundi</p></div>
+    <div class="info"><h4>Commander</h4><p class="gros">03 80 00 00 00</p><p>Prête en 15 minutes.</p></div>
+    <div class="info"><h4>Adresse</h4><p><b>12 rue Imaginaire</b><br>21000 Dijon</p></div>
+  </div>
+</div></section>
+
+<footer>Forno Rosso est une pizzeria imaginaire · Site de démonstration réalisé par <a href="/" style="color:var(--txt);text-decoration:underline">TissaWeb</a></footer>
+
+<script>
+(function(){
+// ---------- ingrédients : icône (objet autour) + garniture (sur la pizza)
+const I={
+ tomate:{n:"Sauce tomate",base:1,ico:'<circle cx="40" cy="44" r="26" fill="#D9452B"/><ellipse cx="32" cy="36" rx="7" ry="4" fill="#fff" opacity=".25"/><path d="M40 18l-6 4 6 1 6-1zM40 18l-2-8" stroke="#3E7D38" stroke-width="4" stroke-linecap="round" fill="#4E9A52"/>'},
+ creme:{n:"Crème",base:1,ico:'<path d="M18 30h44l-5 32a6 6 0 0 1-6 5H29a6 6 0 0 1-6-5z" fill="#EDE3D3"/><ellipse cx="40" cy="30" rx="22" ry="6" fill="#FFFBF2"/><path d="M62 34c8 0 8 12 0 12" stroke="#EDE3D3" stroke-width="4" fill="none"/>'},
+ mozza:{n:"Mozzarella",ico:'<circle cx="40" cy="44" r="24" fill="#FBF7EE"/><path d="M22 36c6-6 22-10 34-2" stroke="#E5DCCB" stroke-width="3" fill="none"/><ellipse cx="33" cy="36" rx="6" ry="3" fill="#fff"/>'},
+ jambon:{n:"Jambon",ico:'<path d="M14 46c0-16 18-26 32-22s22 14 18 28-26 18-38 12-12-10-12-18z" fill="#E98A8F"/><path d="M20 48c6 10 26 14 38 2" stroke="#F8D4D2" stroke-width="4" fill="none"/>'},
+ champi:{n:"Champignons",ico:'<path d="M14 42c0-16 12-24 26-24s26 8 26 24z" fill="#C79C73"/><rect x="31" y="40" width="18" height="24" rx="6" fill="#F1E3CC"/><circle cx="30" cy="30" r="3" fill="#E7CFAF"/><circle cx="48" cy="28" r="2.5" fill="#E7CFAF"/>'},
+ olives:{n:"Olives",ico:'<ellipse cx="30" cy="46" rx="13" ry="16" fill="#1C1A17"/><ellipse cx="50" cy="40" rx="13" ry="16" fill="#2A2621"/><ellipse cx="46" cy="34" rx="3" ry="5" fill="#fff" opacity=".25"/><path d="M50 24l6-10" stroke="#4E6B35" stroke-width="3"/>'},
+ basilic:{n:"Basilic",ico:'<path d="M40 64c-18-6-22-28-6-40 4 14 12 24 6 40z" fill="#3E8A43"/><path d="M42 62c16-4 24-22 12-36-6 12-14 20-12 36z" fill="#58A85C"/><path d="M40 64V30" stroke="#2D6A31" stroke-width="2"/>'},
+ chorizo:{n:"Chorizo",ico:'<rect x="12" y="32" width="40" height="22" rx="11" fill="#A5321F"/><circle cx="58" cy="44" r="13" fill="#C9432C"/><g fill="#F3B49E"><circle cx="54" cy="40" r="2"/><circle cx="61" cy="47" r="2"/><circle cx="57" cy="50" r="1.6"/><circle cx="25" cy="40" r="1.6"/><circle cx="36" cy="46" r="1.6"/></g>'},
+ poivron:{n:"Poivrons",ico:'<path d="M24 34c-6 10-4 28 8 32 4 2 8-2 8-2s4 4 8 2c12-4 14-22 8-32-4-6-12-6-16-2-4-4-12-4-16 2z" fill="#3F8E3C"/><path d="M40 30v-12" stroke="#2C5E28" stroke-width="5" stroke-linecap="round"/><path d="M30 40c-2 8 0 16 4 20" stroke="#6CB867" stroke-width="3" fill="none"/>'},
+ oignon:{n:"Oignons",ico:'<path d="M40 16c-4 8-22 14-22 32a22 22 0 0 0 44 0c0-18-18-24-22-32z" fill="#8E3F74"/><path d="M40 22c-2 10-12 16-12 28s5 18 12 18M40 22c2 10 12 16 12 28s-5 18-12 18" stroke="#C47AAE" stroke-width="2" fill="none"/>'},
+ chevre:{n:"Chèvre",ico:'<rect x="10" y="34" width="44" height="22" rx="11" fill="#F4F0E6"/><circle cx="58" cy="45" r="13" fill="#FFFDF7" stroke="#E2DACA" stroke-width="2"/><path d="M14 40h34" stroke="#E2DACA" stroke-width="2"/>'},
+ miel:{n:"Miel",ico:'<rect x="22" y="28" width="36" height="38" rx="8" fill="#E7A93A"/><rect x="20" y="20" width="40" height="10" rx="3" fill="#8A5A2B"/><rect x="28" y="40" width="24" height="14" rx="3" fill="#FFF3D6"/><path d="M58 40c4 4 4 10 0 14" stroke="#F4C664" stroke-width="3" fill="none"/>'}
+};
+// garnitures dessinées sur la pizza (coordonnées 0..400, centre 200)
+function rnd(s){return function(){s=(s*9301+49297)%233280;return s/233280}}
+function pos(n,seed,rmax){const r=rnd(seed),a=[];for(let i=0;i<n;i++){const t=r()*6.283,d=Math.sqrt(r())*(rmax||128);a.push([200+Math.cos(t)*d,200+Math.sin(t)*d,r()*360])}return a}
+const G={
+ mozza:()=>pos(9,7).map(([x,y])=>`<path d="M${x-16} ${y}c0-14 12-18 20-14s14 2 12 14-14 16-22 12-10-6-10-12z" fill="#FFFBF1" opacity=".96"/>`).join(""),
+ jambon:()=>pos(8,11).map(([x,y,a])=>`<rect x="${x-13}" y="${y-10}" width="26" height="20" rx="4" fill="#E68A8E" transform="rotate(${a} ${x} ${y})"/>`).join(""),
+ champi:()=>pos(8,23).map(([x,y,a])=>`<g transform="rotate(${a} ${x} ${y})"><path d="M${x-12} ${y}a12 10 0 0 1 24 0z" fill="#C9A17A"/><rect x="${x-4}" y="${y}" width="8" height="10" rx="3" fill="#E8D4B4"/></g>`).join(""),
+ olives:()=>pos(10,31).map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7" fill="none" stroke="#1C1A17" stroke-width="5"/>`).join(""),
+ basilic:()=>pos(6,41,110).map(([x,y,a])=>`<path d="M${x} ${y+12}c-12-4-12-20 0-26 6 10 6 18 0 26z" fill="#3F8E43" transform="rotate(${a} ${x} ${y})"/>`).join(""),
+ chorizo:()=>pos(9,53).map(([x,y])=>`<circle cx="${x}" cy="${y}" r="12" fill="#B83A25"/><circle cx="${x-3}" cy="${y-3}" r="2" fill="#F0A58E"/><circle cx="${x+4}" cy="${y+3}" r="1.6" fill="#F0A58E"/>`).join(""),
+ poivron:()=>pos(9,61).map(([x,y,a])=>`<path d="M${x-14} ${y}q14-10 28 0" stroke="#3F8E3C" stroke-width="6" fill="none" stroke-linecap="round" transform="rotate(${a} ${x} ${y})"/>`).join(""),
+ oignon:()=>pos(8,71).map(([x,y,a])=>`<path d="M${x-12} ${y}a12 12 0 0 1 24 0" stroke="#A04A86" stroke-width="3.5" fill="none" transform="rotate(${a} ${x} ${y})"/>`).join(""),
+ chevre:()=>pos(7,83,118).map(([x,y])=>`<circle cx="${x}" cy="${y}" r="15" fill="#FFFDF6" stroke="#E7DECB" stroke-width="3"/>`).join(""),
+ miel:()=>`<path d="M90 160c40-30 70 30 110 0s70 30 110 0M80 230c40-30 80 30 120 0s80 30 120 0" stroke="#E7A93A" stroke-width="5" fill="none" stroke-linecap="round" opacity=".9"/>`
+};
+// carte
+const C=[
+ ["Margherita",9.5,"Tomate, mozzarella, basilic, huile d'olive.",["tomate","mozza","basilic"]],
+ ["Regina",12,"Tomate, mozzarella, jambon, champignons, olives.",["tomate","mozza","jambon","champi","olives"]],
+ ["Diavola",13,"Tomate, mozzarella, chorizo, poivrons, oignons.",["tomate","mozza","chorizo","poivron","oignon"]],
+ ["Ortolana",12,"Tomate, mozzarella, poivrons, champignons, oignons, olives.",["tomate","mozza","poivron","champi","oignon","olives"]],
+ ["Chèvre-miel",13,"Crème, mozzarella, chèvre, miel, basilic.",["creme","mozza","chevre","miel","basilic"]],
+ ["Bianca",12.5,"Crème, mozzarella, jambon, champignons, oignons.",["creme","mozza","jambon","champi","oignon"]],
+ ["Calabrese",13.5,"Tomate, mozzarella, chorizo, olives, oignons, basilic.",["tomate","mozza","chorizo","olives","oignon","basilic"]],
+ ["Capra",13,"Tomate, mozzarella, chèvre, jambon, olives.",["tomate","mozza","chevre","jambon","olives"]]
+];
+const eur=n=>n.toFixed(2).replace(".",",")+" €";
+const liste=document.getElementById("liste");
+liste.innerHTML=C.map((p,i)=>`<div class="pz" id="pz${i}"><h3>${p[0]}</h3><span class="prix">${eur(p[1])}</span><p>${p[2]}</p></div>`).join("");
+
+// placer les ingrédients en ellipse autour de la pizza
+const box=document.getElementById("ings"),keys=Object.keys(I),sel=new Set();
+keys.forEach((k,i)=>{
+  const b=document.createElement("button");b.className="ing";b.dataset.k=k;b.style.setProperty("--d",(-i*.4)+"s");
+  b.setAttribute("aria-pressed","false");
+  b.innerHTML=`<svg class="obj" viewBox="0 0 80 80" aria-hidden="true">${I[k].ico}</svg><span class="lab">${I[k].n}</span>`;
+  b.onclick=()=>toggle(k,b);box.appendChild(b);
+});
+function place(){
+  const at=document.getElementById("atelier"),W=innerWidth,H=at.offsetHeight,m=W<820;
+  const t0=document.querySelector(".titre").getBoundingClientRect().bottom-at.getBoundingClientRect().top+(m?14:24);
+  const b0=H-(m?140:96),cy=(t0+b0)/2,ry=(b0-t0)/2-(m?38:46),rx=m?W*.385:Math.min(W*.36,470);
+  const c=document.querySelector(".centre");c.style.top=cy+"px";c.style.width=Math.min(m?W*.44:Math.min(W*.36,330),(b0-t0)*(m?.42:.55))+"px";
+  [...box.children].forEach((b,i)=>{const a=-Math.PI/2+i*2*Math.PI/keys.length+Math.PI/keys.length;
+    b.style.left=(W/2+Math.cos(a)*rx)+"px";b.style.top=(cy+Math.sin(a)*ry)+"px"});
+}
+place();addEventListener("resize",place);
+
+const tops=document.getElementById("tops"),base=document.getElementById("base");
+function render(){
+  base.setAttribute("fill",sel.has("tomate")?"url(#tom)":sel.has("creme")?"url(#cre)":"#F0D9B0");
+  const order=["mozza","chevre","jambon","chorizo","champi","poivron","oignon","olives","basilic","miel"];
+  const old=new Set([...tops.children].map(g=>g.dataset.k));
+  tops.innerHTML="";
+  order.filter(k=>sel.has(k)).forEach(k=>{const g=document.createElementNS("http://www.w3.org/2000/svg","g");
+    g.dataset.k=k;if(!old.has(k))g.setAttribute("class","top-g");g.innerHTML=G[k]();tops.appendChild(g)});
+  match();
+}
+function vole(b){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const o=b.querySelector(".obj").getBoundingClientRect(),p=document.getElementById("pizza").getBoundingClientRect();
+  const v=document.createElementNS("http://www.w3.org/2000/svg","svg");v.setAttribute("viewBox","0 0 80 80");v.setAttribute("class","vol");
+  v.innerHTML=I[b.dataset.k].ico;v.style.left=o.left+"px";v.style.top=o.top+"px";document.body.appendChild(v);
+  requestAnimationFrame(()=>{v.style.transform=`translate(${p.left+p.width/2-o.left-30}px,${p.top+p.height/2-o.top-30}px) scale(.4)`;v.style.opacity="0"});
+  setTimeout(()=>v.remove(),600);
+}
+function toggle(k,b){
+  if(sel.has(k)){sel.delete(k)}else{
+    if(I[k].base){keys.filter(x=>I[x].base).forEach(x=>sel.delete(x))}
+    sel.add(k);vole(b);
+  }
+  document.querySelectorAll(".ing").forEach(x=>{const on=sel.has(x.dataset.k);x.classList.toggle("on",on);x.setAttribute("aria-pressed",on)});
+  setTimeout(render,sel.has(k)?380:0);
+}
+function match(){
+  const res=document.getElementById("res"),vider=document.getElementById("vider"),voir=document.getElementById("voir");
+  document.querySelectorAll(".pz").forEach(e=>e.classList.remove("match"));
+  vider.hidden=voir.hidden=sel.size===0;
+  if(!sel.size){res.innerHTML="<b>Touchez un ingrédient</b>il file sur la pâte";return}
+  let best=-1,bi=0;C.forEach((p,i)=>{const s=new Set(p[3]);let inter=0;sel.forEach(k=>s.has(k)&&inter++);
+    const j=inter/(s.size+sel.size-inter);if(j>best){best=j;bi=i}});
+  const p=C[bi];document.getElementById("pz"+bi).classList.add("match");
+  const n=sel.size+" ingrédient"+(sel.size>1?"s":"");
+  res.innerHTML=best>=.99?`<b>C'est notre <span>${p[0]}</span> !</b>${eur(p[1])} · ${n}`:
+    best>.45?`<b>Proche de notre <span>${p[0]}</span></b>${n} · on l'adapte pour vous`:`<b>Votre création</b>${n} · demandez-la au téléphone`;
+}
+document.getElementById("vider").onclick=()=>{sel.clear();document.querySelectorAll(".ing").forEach(x=>{x.classList.remove("on");x.setAttribute("aria-pressed","false")});render()};
+// petite démo auto à l'arrivée
+setTimeout(()=>{if(sel.size)return;["tomate","mozza","basilic"].forEach((k,i)=>setTimeout(()=>{if(!sel.has(k))toggle(k,document.querySelector(`.ing[data-k="${k}"]`))},i*650))},1200);
+})();
+</script>
+
+<style>
+.tw-demo-cta{position:fixed;left:16px;bottom:16px;z-index:999;display:flex;align-items:center;gap:10px;padding:9px 16px 9px 9px;border-radius:999px;background:#0C1310;color:#fff;font:600 14px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none;box-shadow:0 14px 34px -12px rgba(0,0,0,.55);transition:transform .2s,box-shadow .2s;max-width:calc(100vw - 32px)}
+.tw-demo-cta:hover{transform:translateY(-2px)}
+.tw-demo-cta i{flex:none;width:30px;height:30px;border-radius:50%;background:#0B7A55;display:grid;place-items:center;font-style:normal}
+.tw-demo-cta small{display:block;font-weight:500;color:#9FAAA4;font-size:11px}
+.tw-demo-cta b{color:#3DDC97}
+@media (max-width:640px){.tw-demo-cta{bottom:calc(12px + env(safe-area-inset-bottom,0px));left:12px;font-size:13px}}
+</style>
+<a class="tw-demo-cta" href="index.html#contact"><i><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M3 5h14"/><path d="M10 5v12"/></svg></i><span><small>Site de démonstration TissaWeb</small>Je veux le même <b>→</b></span></a>
+<script src="/consent.js" defer></script>
+</body>
+</html>
