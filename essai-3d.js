@@ -4,7 +4,7 @@
 (function () {
   var E = window.TWEssai; if (!E) return;
   var cs = document.currentScript, BASE = cs && cs.src ? cs.src.replace(/[^\/]*$/, "") : "/", modP = null;
-  function load3d() { if (!modP) { try { modP = (new Function("u", "return import(u)"))(BASE + "metier-3d.js"); } catch (e) { modP = Promise.reject(e); } modP.catch(function () { modP = null; }); } return modP; }
+  function load3d() { if (!modP) { try { modP = import(BASE + "metier-3d.js"); } catch (e) { modP = Promise.reject(e); } modP.catch(function () { modP = null; }); } return modP; }
   E.prefetch3d = function () { load3d().catch(function () {}); };
   var CSS = '.tw3d{position:fixed;inset:0;z-index:9999;background:#070B09;color:#fff;overflow:hidden;font-family:"Onest",system-ui,sans-serif;opacity:0;transition:opacity .5s ease}' +
     '.tw3d.on{opacity:1}' +

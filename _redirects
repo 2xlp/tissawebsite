@@ -1,0 +1,4 @@
+# Domaine unique en HTTPS (Netlify force déjà http → https)
+https://www.tissaweb.fr/*  https://tissaweb.fr/:splat  301!
+http://www.tissaweb.fr/*   https://tissaweb.fr/:splat  301!
+http://tissaweb.fr/*       https://tissaweb.fr/:splat  301!

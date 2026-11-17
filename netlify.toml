@@ -1,0 +1,4 @@
+# Build : recalcule la CSP (empreintes des scripts en ligne) avant chaque mise en ligne.
+[build]
+  publish = "."
+  command = "python3 tools/csp.py"
