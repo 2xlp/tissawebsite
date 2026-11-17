@@ -1555,7 +1555,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
     </div>
 
     <div class="form-card reveal">
-      <!-- Formulaire EmailJS (via Brevo) : notif sur contact@tissaweb.fr + confirmation au client -->
+      <!-- Formulaire : enregistré dans Supabase, mails (notif contact@ + accusé client) envoyés par la fonction tw-demande -->
       <form id="contactForm" method="POST" novalidate aria-describedby="f-rgpd">
         <div class="hp" aria-hidden="true"><label for="f-hp">Ne pas remplir</label><input type="text" id="f-hp" name="_honey" tabindex="-1" autocomplete="off"></div>
         <div class="row">
@@ -1678,12 +1678,11 @@ document.querySelectorAll('[data-offre]').forEach(function(b){
   });
 });
 
-/* ===== Formulaire : envoi via EmailJS (seulement sur le site en ligne) ===== */
+/* ===== Formulaire : enregistré dans Supabase (les mails partent ensuite de la base, fonction tw-demande) ===== */
 (function(){
   var form=document.getElementById('contactForm'), msg=document.getElementById('formMsg');
   var btn=form.querySelector('button[type=submit]');
   var live=/tissaweb\.fr$|netlify\.app$/.test(location.hostname);
-  var EJ={service:'service_s8c76cw',template:'template_lx7b9jv',key:'fHf3F6BeArTaIoFA-'};
   function v(id){return (document.getElementById(id).value||'').trim()}
   function show(t,err){msg.textContent=t;msg.hidden=false;msg.style.color=err?'#B42318':''}
   form.addEventListener('submit',function(e){
@@ -1691,26 +1690,12 @@ document.querySelectorAll('[data-offre]').forEach(function(b){
     if(!form.checkValidity()){form.reportValidity();return}
     if(v('f-hp')){location.href='merci.html'+langQ();return}
     if(!live){show(T("Aperçu : une fois le site en ligne, cette demande sera envoyée à contact@tissaweb.fr."));return}
-    var params={
-      nom:v('f-nom'), email:v('f-mail'),
-      telephone:v('f-tel')||'Non renseigné',
-      activite:v('f-act'), offre:v('f-offre'),
-      message:(v('f-msg')||'Pas de message.')+((window.TW_I18N&&TW_I18N.lang()!=='fr')?'\n\n[Langue du site : '+TW_I18N.lang().toUpperCase()+']':''),
-      date:new Date().toLocaleString('fr-FR',{dateStyle:'long',timeStyle:'short',timeZone:'Europe/Paris'})
-    };
     btn.disabled=true; var label=btn.textContent; btn.textContent=T('Envoi en cours…');
-    // 1. mail de notification (EmailJS)  2. enregistrement dans l'appli TissaWeb Admin (Supabase)
-    var mail=fetch('https://api.emailjs.com/api/v1.0/email/send',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({service_id:EJ.service,template_id:EJ.template,user_id:EJ.key,template_params:params})
-    }).then(function(r){if(!r.ok)throw new Error(r.status)});
     var SB=window.TW_CONFIG&&TW_CONFIG.url&&!/XXXX/.test(TW_CONFIG.url)?TW_CONFIG:null, base;
     if(SB){var h={'apikey':SB.key,'Content-Type':'application/json','Prefer':'return=minimal'};if(!/^sb_/.test(SB.key))h.Authorization='Bearer '+SB.key;
       base=fetch(SB.url+'/rest/v1/demandes',{method:'POST',headers:h,body:JSON.stringify({nom:v('f-nom'),email:v('f-mail'),telephone:v('f-tel')||null,activite:v('f-act')||null,offre:v('f-offre')||null,message:v('f-msg')||null,langue:window.TW_I18N?TW_I18N.lang():'fr'})}).then(function(r){if(!r.ok)throw new Error(r.status)});}
     else base=Promise.reject(new Error('no-db'));
-    function ok(x){return x.then(function(){return true},function(){return false})}
-    Promise.all([ok(mail),ok(base)]).then(function(r){
-      if(!r[0]&&!r[1]) throw new Error('send');
+    base.then(function(){
       location.href='merci.html'+langQ();
     }).catch(function(){
       btn.disabled=false; btn.textContent=label;
