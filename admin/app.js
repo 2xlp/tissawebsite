@@ -430,6 +430,9 @@ function celebrate(msg, small) {
   let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
   const loop = () => { x += (tx - x) * .12; y += (ty - y) * .12; R.style.setProperty("--gx", x.toFixed(3)); R.style.setProperty("--gy", y.toFixed(3)); raf = Math.abs(tx - x) + Math.abs(ty - y) > .002 ? requestAnimationFrame(loop) : 0; };
   const set = (a, b) => { tx = Math.max(-1, Math.min(1, a)); ty = Math.max(-1, Math.min(1, b)); if (!raf) raf = requestAnimationFrame(loop); };
+  /* Téléphone / tablette : pas de relief global ni de capteur (Safari iOS plante sur les longues listes en 3D) */
+  const touch = matchMedia("(hover: none), (pointer: coarse)").matches;
+  if (touch) { R.classList.add("lite3d"); window.TW3D = { need: () => false, ask: () => {} }; return; }
   R.classList.add("g3d");
   if (reduce) { R.style.setProperty("--gx", ".35"); R.style.setProperty("--gy", "-.25"); return; }
   if (matchMedia("(pointer: fine)").matches) document.addEventListener("pointermove", (e) => set(e.clientX / innerWidth * 2 - 1, e.clientY / innerHeight * 2 - 1), { passive: true });

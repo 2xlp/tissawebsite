@@ -571,3 +571,12 @@ code{background:var(--bg);padding:1px 6px;border-radius:5px;font-size:.85em}
 .tri-b.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .tri-b:hover{transform:translateY(-2px)}
 .tri-card{margin-bottom:16px}.tri-card .tri{margin:12px 0 0}
+
+/* ===== Mobile allégé : Safari iOS plante sur les grandes pages en 3D ===== */
+.lite3d .main{perspective:none}
+.lite3d .main.enter > *{animation:twFade .35s ease-out both!important}
+@keyframes twFade{from{opacity:0;transform:translateY(12px)}}
+.lite3d .main > *,.lite3d .kpi,.lite3d .pilot > *,.lite3d .pc,.lite3d .cockpit,.lite3d .grid2 > .card{transform-style:flat!important;will-change:auto}
+.lite3d .b3-plate{animation:none}
+.lite3d .sheet > section{animation:twFade .3s ease-out both!important}
+.lite3d .t3d{will-change:auto}
