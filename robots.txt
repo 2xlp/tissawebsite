@@ -9,6 +9,7 @@ Disallow: /demo-coach.html
 Disallow: /demo-barbier.html
 Disallow: /demo-pizzeria.html
 Disallow: /maquette-lega-pizz.html
+Disallow: /maquette-lega-pizz-2.html
 
 # Agents IA explicitement autorisés (recherche et réponses), mêmes exclusions
 User-agent: GPTBot
@@ -30,5 +31,6 @@ Disallow: /demo-coach.html
 Disallow: /demo-barbier.html
 Disallow: /demo-pizzeria.html
 Disallow: /maquette-lega-pizz.html
+Disallow: /maquette-lega-pizz-2.html
 
 Sitemap: https://tissaweb.fr/sitemap.xml
