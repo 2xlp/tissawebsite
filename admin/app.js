@@ -32,7 +32,7 @@ let sb = null;
 const DEF_CFG = {
   emetteurs: {
     hugo: { nom: "Hugo Thirion", siret: "13178802800010", adresse: "8 rue Docteur Parizot\n21000 Dijon", email: "contact@tissaweb.fr", tel: "06 40 38 50 45", iban: "", bic: "", lien: "", acre: true, periodicite: "trimestrielle" },
-    lucas: { nom: "Lucas Paris", siret: "131829095", adresse: "6 rue Catherine Sauvage\n21800 Chevigny-Saint-Sauveur", email: "contact@tissaweb.fr", tel: "", iban: "", bic: "", lien: "", acre: true, periodicite: "trimestrielle" }
+    lucas: { nom: "Lucas Paris", siret: "131829095", adresse: "6 rue Catherine Sauvage\n21800 Chevigny-Saint-Sauveur", email: "contact@tissaweb.fr", tel: "06 63 18 96 15", iban: "", bic: "", lien: "", acre: true, periodicite: "trimestrielle" }
   },
   validite: 30, delai: 15, acompte: 50, relance_prospect: 5
 };
