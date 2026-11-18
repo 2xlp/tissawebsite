@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Hoshi Kaiten · Sushis sur tapis à Dijon</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--papier:#F3EBDD;--papier2:#EADFCB;--encre:#1D2333;--mut:#6B6A72;--verm:#D64933;--indigo:#26365C;--bois:#B4834F;--line:rgba(29,35,51,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--papier);color:var(--encre);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:clip;
+  background-image:radial-gradient(rgba(29,35,51,.05) 1px,transparent 1px);background-size:5px 5px}
+a{color:inherit;text-decoration:none}
+.dela{font-family:"Dela Gothic One",system-ui,sans-serif;font-weight:400}
+.wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+button{font:inherit;cursor:pointer}
+
+/* ===== HERO ===== */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;overflow:clip}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;max-width:1160px;margin:0 auto;width:100%;position:relative;z-index:5}
+.logo{display:flex;align-items:center;gap:10px;font-family:"Dela Gothic One";font-size:20px}
+.logo .etoile{width:34px;height:34px;border-radius:50%;background:var(--verm);display:grid;place-items:center;color:var(--papier);font-size:17px}
+nav ul{display:flex;gap:26px;list-style:none;font-weight:700;font-size:14px}
+nav ul a{opacity:.7}nav ul a:hover{opacity:1}
+.btn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--encre);padding:10px 18px;border-radius:6px;font-weight:900;font-size:14px;transition:.15s;box-shadow:3px 3px 0 var(--encre);background:var(--papier)}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--encre)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--encre)}
+.btn.rouge{background:var(--verm);color:#fff}
+
+/* noren */
+.noren{position:relative;width:min(560px,92vw);margin:4px auto 0;height:150px;z-index:2}
+.noren .tringle{position:absolute;left:-14px;right:-14px;top:0;height:12px;border-radius:6px;background:linear-gradient(#C99A63,#8D6237);box-shadow:0 4px 8px rgba(0,0,0,.18)}
+.noren .pans{position:absolute;left:0;right:0;top:8px;bottom:0;display:flex;gap:6px}
+.noren .pan{flex:1;background:var(--indigo);border-radius:0 0 4px 4px;transform-origin:top center;transition:transform .5s cubic-bezier(.3,1.6,.5,1);position:relative;overflow:hidden;
+  background-image:linear-gradient(90deg,rgba(255,255,255,.04),transparent 40%,rgba(0,0,0,.12))}
+.noren:hover .pan:nth-child(1){transform:rotate(4deg)}.noren:hover .pan:nth-child(2){transform:rotate(2deg)}.noren:hover .pan:nth-child(3){transform:rotate(-2deg)}.noren:hover .pan:nth-child(4){transform:rotate(-4deg)}
+.noren .pan span{position:absolute;top:0;bottom:0;width:400%;display:flex;align-items:center;justify-content:center}
+.noren .pan:nth-child(1) span{left:0}.noren .pan:nth-child(2) span{left:-100%}.noren .pan:nth-child(3) span{left:-200%}.noren .pan:nth-child(4) span{left:-300%}
+.noren .embleme{width:96px;height:96px;border-radius:50%;background:var(--papier);display:grid;place-items:center;color:var(--verm);font-size:50px;font-family:"Zen Kaku Gothic New";font-weight:900;margin-top:10px}
+.noren .pan:nth-child(odd) .embleme{color:var(--verm)}
+
+.accroche{text-align:center;margin-top:22px;padding:0 20px;position:relative;z-index:2}
+.accroche small{display:inline-block;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;background:var(--encre);color:var(--papier);padding:5px 12px;border-radius:3px}
+.accroche h1{font-family:"Dela Gothic One";font-weight:400;font-size:clamp(34px,5.4vw,66px);line-height:1.05;margin-top:14px;letter-spacing:-.5px}
+.accroche h1 em{font-style:normal;color:var(--verm)}
+.accroche p{margin-top:10px;color:var(--mut);font-size:16px}
+
+/* tapis */
+.tapis{position:relative;margin-top:auto;height:178px;z-index:3;overflow:clip}
+.tapis::before{content:"";position:absolute;left:0;right:0;top:20px;height:138px;background:#2B2F38;
+  background-image:repeating-linear-gradient(90deg,transparent 0 38px,rgba(255,255,255,.07) 38px 40px);box-shadow:inset 0 6px 10px rgba(0,0,0,.45)}
+.tapis::after{content:"";position:absolute;left:0;right:0;top:12px;height:154px;border-top:9px solid #C9CDD3;border-bottom:9px solid #A9AEB6;pointer-events:none}
+.defile{position:absolute;top:20px;left:0;height:138px;display:flex;align-items:center;animation:tourne 46s linear infinite;will-change:transform}
+@media(hover:hover){.tapis:hover .defile{animation-play-state:paused}}
+@keyframes tourne{to{transform:translateX(-50%)}}
+.assiette{flex:none;width:150px;height:138px;display:grid;place-items:center;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent}
+.assiette svg{width:116px;height:116px;filter:drop-shadow(0 7px 6px rgba(0,0,0,.45));transition:transform .25s cubic-bezier(.3,1.5,.5,1),opacity .4s}
+.assiette:hover svg,.assiette:focus-visible svg{transform:translateY(-8px) scale(1.07)}
+.assiette.prise svg{opacity:0;transform:scale(.6)}
+.assiette.prise{pointer-events:none}
+.etiq{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:900;background:var(--papier);color:var(--encre);padding:2px 8px;border-radius:3px;white-space:nowrap;opacity:0;transition:.2s;pointer-events:none}
+.assiette{position:relative}
+.assiette:hover .etiq{opacity:1}
+.vol{position:fixed;z-index:50;width:116px;height:116px;pointer-events:none;transition:transform .6s cubic-bezier(.5,-.2,.3,1),opacity .6s}
+
+/* comptoir / plateau */
+.comptoir{position:relative;z-index:4;background:linear-gradient(#C2915C,#9B6B3C);border-top:4px solid #DDB27D;padding:16px 0 18px}
+.comptoir .wrap{display:flex;align-items:center;gap:20px}
+.pile{position:relative;width:70px;height:62px;flex:none}
+.pile i{position:absolute;left:4px;width:62px;height:18px;border-radius:50%;border-bottom:4px solid rgba(0,0,0,.28);box-shadow:0 1px 0 rgba(255,255,255,.4) inset;transition:bottom .3s}
+.pile .vide{position:absolute;left:4px;bottom:4px;width:62px;height:18px;border-radius:50%;border:2px dashed rgba(255,255,255,.55)}
+.compte{flex:1;color:#fff;line-height:1.3}
+.compte b{display:block;font-family:"Dela Gothic One";font-weight:400;font-size:20px}
+.compte span{font-size:14px;opacity:.85}
+.legende{display:flex;gap:12px;color:#fff;font-size:12px;font-weight:700}
+.legende span{display:flex;align-items:center;gap:5px}
+.legende i{width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,0,0,.2)}
+.comptoir .vider{background:none;border:2px solid rgba(255,255,255,.7);color:#fff;border-radius:6px;padding:8px 12px;font-weight:700;font-size:13px}
+
+/* ===== SECTIONS ===== */
+section{padding:100px 0}
+.kick{display:inline-block;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--verm)}
+h2{font-family:"Dela Gothic One";font-weight:400;font-size:clamp(30px,4.2vw,50px);line-height:1.1;margin:8px 0 14px}
+.lead{color:var(--mut);font-size:17px;line-height:1.65;max-width:600px}
+
+/* mur de planchettes */
+.mur{margin-top:44px;padding:34px 22px 30px;background:#3A2A1E;border-radius:10px;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 2px,transparent 2px 22px);position:relative}
+.mur .ligne{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.fuda{position:relative;width:72px;height:290px;background:linear-gradient(90deg,#E9D4AE,#F6E7C8 50%,#E2C89C);border-radius:3px;box-shadow:0 8px 14px rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;padding:14px 0 10px;transition:transform .25s;transform-origin:top center}
+.fuda::before{content:"";position:absolute;top:-16px;left:50%;width:2px;height:16px;background:#C9B08A}
+.fuda:hover{transform:rotate(-2deg) translateY(-3px)}
+.fuda .nom{writing-mode:vertical-rl;font-family:"Dela Gothic One";font-size:17px;letter-spacing:2px;flex:1;color:#2A2018}
+.fuda .px{font-weight:900;font-size:13px;color:var(--verm);margin-top:8px}
+.fuda .rond{width:20px;height:20px;border-radius:50%;margin-top:6px;border:2px solid rgba(0,0,0,.18)}
+.fuda.hl{animation:hl 1.2s ease}
+@keyframes hl{30%{transform:translateY(-12px) rotate(-3deg);box-shadow:0 0 0 4px var(--verm),0 16px 20px rgba(0,0,0,.4)}}
+.hors{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+.plat{border:2px solid var(--encre);border-radius:8px;padding:20px;background:var(--papier);box-shadow:4px 4px 0 var(--encre)}
+.plat h3{font-family:"Dela Gothic One";font-weight:400;font-size:20px;display:flex;justify-content:space-between;gap:10px}
+.plat h3 span{color:var(--verm)}
+.plat p{color:var(--mut);font-size:14px;line-height:1.5;margin-top:6px}
+
+/* étapes */
+.etapes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.etape{background:var(--papier2);border-radius:10px;padding:28px;position:relative;overflow:hidden}
+.etape .num{position:absolute;right:-6px;top:-18px;font-size:120px;font-weight:900;color:rgba(214,73,51,.13);line-height:1}
+.etape h3{font-family:"Dela Gothic One";font-weight:400;font-size:21px;margin-bottom:8px;position:relative}
+.etape p{color:var(--mut);line-height:1.6;position:relative}
+
+/* infos */
+.bande{background:var(--indigo);color:var(--papier)}
+.bande .lead{color:rgba(243,235,221,.7)}
+.bande .kick{color:#F2A08F}
+.infos{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.info{border:1px solid rgba(243,235,221,.2);border-radius:10px;padding:26px}
+.info h4{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#F2A08F;margin-bottom:12px}
+.info p{line-height:1.75;color:rgba(243,235,221,.75)}
+.info b{color:var(--papier)}
+.info .gros{font-family:"Dela Gothic One";font-size:26px;color:var(--papier)}
+footer{background:var(--indigo);color:rgba(243,235,221,.55);text-align:center;font-size:13px;padding:24px 0 34px;border-top:1px solid rgba(243,235,221,.15)}
+
+@media(max-width:820px){
+  nav ul{display:none}
+  .noren{height:118px}.noren .embleme{width:74px;height:74px;font-size:38px}
+  .accroche p{font-size:14px}
+  .tapis{height:142px}.tapis::before{height:106px}.tapis::after{height:122px}
+  .defile{height:106px}.assiette{width:112px;height:106px}.assiette svg{width:88px;height:88px}
+  .legende{display:none}
+  .mur{padding:30px 12px 24px;overflow-x:auto}.mur .ligne{flex-wrap:nowrap;justify-content:flex-start}
+  .fuda{width:70px;height:250px;flex:none}.fuda .nom{font-size:16px}
+  .hors,.etapes,.infos{grid-template-columns:1fr}
+  section{padding:76px 0}
+}
+@media(prefers-reduced-motion:reduce){.defile{animation-duration:160s}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <nav>
+    <a href="#" class="logo"><span class="etoile">星</span>Hoshi Kaiten</a>
+    <ul><li><a href="#carte">La carte</a></li><li><a href="#comment">Comment ça marche</a></li><li><a href="#infos">Infos</a></li></ul>
+    <a class="btn rouge" href="#infos">Réserver</a>
+  </nav>
+
+  <div class="noren" aria-hidden="true">
+    <div class="tringle"></div>
+    <div class="pans">
+      <div class="pan"><span><div class="embleme">星</div></span></div>
+      <div class="pan"><span><div class="embleme">星</div></span></div>
+      <div class="pan"><span><div class="embleme">星</div></span></div>
+      <div class="pan"><span><div class="embleme">星</div></span></div>
+    </div>
+  </div>
+
+  <div class="accroche">
+    <small>Sushis sur tapis · Dijon</small>
+    <h1>Servez-vous,<br><em>ça tourne.</em></h1>
+    <p>Attrapez une assiette sur le tapis, elle file sur votre plateau.</p>
+  </div>
+
+  <div class="tapis" id="tapis"><div class="defile" id="defile"></div></div>
+
+  <div class="comptoir">
+    <div class="wrap">
+      <div class="pile" id="pile"><span class="vide"></span></div>
+      <div class="compte" id="compte" aria-live="polite"><b>Plateau vide</b><span>Touchez une assiette qui passe</span></div>
+      <div class="legende" id="legende"></div>
+      <button class="vider" id="vider" hidden>Vider</button>
+    </div>
+  </div>
+</header>
+
+<section id="carte"><div class="wrap">
+  <span class="kick">La carte</span>
+  <h2>La couleur de l'assiette<br>donne le prix.</h2>
+  <p class="lead">Une quarantaine de pièces passent sur le tapis, préparées à la minute derrière le comptoir. Les plats chauds se commandent directement au chef.</p>
+  <div class="mur"><div class="ligne" id="mur"></div></div>
+  <div class="hors">
+    <div class="plat"><h3>Ramen shoyu <span>13,50 €</span></h3><p>Bouillon mijoté 12 h, porc chashu, œuf mariné, nori.</p></div>
+    <div class="plat"><h3>Chirashi saumon <span>15 €</span></h3><p>Bol de riz vinaigré, saumon, avocat, sésame, gingembre.</p></div>
+    <div class="plat"><h3>Plateau 24 pièces <span>29 €</span></h3><p>À emporter, à commander la veille par téléphone.</p></div>
+  </div>
+</div></section>
+
+<section id="comment" style="padding-top:0"><div class="wrap">
+  <span class="kick">Première fois ?</span>
+  <h2>Comment ça marche</h2>
+  <div class="etapes">
+    <div class="etape"><span class="num">一</span><h3>Installez-vous au comptoir</h3><p>18 places autour du tapis, plus 4 tables pour les groupes. Thé vert offert, à volonté.</p></div>
+    <div class="etape"><span class="num">二</span><h3>Servez-vous</h3><p>Une assiette vous fait envie ? Prenez-la. Vous cherchez autre chose ? Demandez au chef, il vous le prépare.</p></div>
+    <div class="etape"><span class="num">三</span><h3>On compte les assiettes</h3><p>À la fin, on additionne les couleurs. Pas de surprise sur l'addition.</p></div>
+  </div>
+</div></section>
+
+<section id="infos" class="bande"><div class="wrap">
+  <span class="kick">Infos pratiques</span>
+  <h2>Le tapis tourne du mardi au samedi</h2>
+  <p class="lead">Sans réservation au comptoir, sur réservation pour les tables.</p>
+  <div class="infos">
+    <div class="info"><h4>Horaires</h4><p><b>Mar. → sam.</b><br>11h45 – 14h30<br>18h45 – 22h30</p></div>
+    <div class="info"><h4>Réserver</h4><p class="gros">03 80 00 00 00</p><p>Tables, groupes et plateaux à emporter.</p></div>
+    <div class="info"><h4>Adresse</h4><p><b>7 rue des Lanternes</b><br>21000 Dijon</p></div>
+  </div>
+</div></section>
+<footer>Hoshi Kaiten est un restaurant fictif · Maquette de démonstration réalisée par TissaWeb</footer>
+
+<script>
+(function(){
+// assiettes : couleur = prix
+const A={blanc:{p:2.5,f:"#F6F3EC",r:"#D9D3C7",n:"Blanche"},bleu:{p:3.5,f:"#3567B5",r:"#22488A",n:"Bleue"},rouge:{p:4.5,f:"#D64933",r:"#A93322",n:"Rouge"},noir:{p:6,f:"#26282E",r:"#C9A45C",n:"Noire"}};
+const riz=(x,y,w,h,a)=>`<rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="#FBF8F1" stroke="#E6DFD2" stroke-width="1.2" transform="rotate(${a||0} ${x} ${y})"/>`;
+const D={
+ saumon:{n:"Nigiri saumon",a:"bleu",d:[[-1,-9],[1,9]].map(([s,dy])=>`<g transform="rotate(-25 50 50)">${riz(50,50+dy,40,15)}<rect x="27" y="${44+dy}" width="46" height="13" rx="5" fill="#F28A4E"/><path d="M33 ${46+dy}l4 9M42 ${46+dy}l4 9M51 ${46+dy}l4 9M60 ${46+dy}l4 9" stroke="#FFD2B3" stroke-width="2"/></g>`).join("")},
+ thon:{n:"Nigiri thon",a:"rouge",d:[[0,-9],[0,9]].map(([s,dy])=>`<g transform="rotate(20 50 50)">${riz(50,50+dy,40,15)}<rect x="27" y="${44+dy}" width="46" height="13" rx="5" fill="#B5263A"/><path d="M34 ${48+dy}h30" stroke="#D9566A" stroke-width="2"/></g>`).join("")},
+ maki:{n:"Maki concombre",a:"blanc",d:[[38,40],[62,42],[50,62]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="12" fill="#1E2A22"/><circle cx="${x}" cy="${y}" r="9" fill="#FBF8F1"/><circle cx="${x}" cy="${y}" r="4" fill="#7DBA5A"/>`).join("")},
+ california:{n:"California",a:"bleu",d:[[38,42],[62,40],[50,62]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="12.5" fill="#FBF8F1" stroke="#E6DFD2"/><g fill="#2A2A2A"><circle cx="${x-7}" cy="${y-4}" r="1"/><circle cx="${x+6}" cy="${y-6}" r="1"/><circle cx="${x+8}" cy="${y+5}" r="1"/><circle cx="${x-5}" cy="${y+8}" r="1"/></g><circle cx="${x}" cy="${y}" r="6" fill="#1E2A22"/><circle cx="${x-1.5}" cy="${y}" r="2.6" fill="#9CCB6B"/><circle cx="${x+2}" cy="${y+1}" r="2.4" fill="#F28A4E"/>`).join("")},
+ gyoza:{n:"Gyozas",a:"bleu",d:[[34,-20],[50,0],[66,20]].map(([x,a])=>`<g transform="rotate(${a} ${x} 52)"><path d="M${x-9} 34q-6 18 0 36q20-18 0-36z" fill="#E8C98E"/><path d="M${x-9} 34q-5 18 0 36" stroke="#B8823F" stroke-width="5" fill="none"/><path d="M${x-3} 40l5-2M${x} 48l6-1M${x} 56l6 1M${x-3} 64l5 2" stroke="#C9A468" stroke-width="2"/></g>`).join("")},
+ edamame:{n:"Edamame",a:"blanc",d:[[-30,38,42],[10,56,40],[40,48,60],[-60,60,58]].map(([a,x,y])=>`<g transform="rotate(${a} ${x} ${y})"><rect x="${x-17}" y="${y-6}" width="34" height="12" rx="6" fill="#6FAE4C"/><circle cx="${x-8}" cy="${y}" r="3.5" fill="#8DCB63"/><circle cx="${x}" cy="${y}" r="3.5" fill="#8DCB63"/><circle cx="${x+8}" cy="${y}" r="3.5" fill="#8DCB63"/></g>`).join("")},
+ bao:{n:"Bao porc",a:"rouge",d:`<path d="M24 54c0-16 12-26 26-26s26 10 26 26z" fill="#FBF6EC" stroke="#E3D9C8" stroke-width="1.5"/><path d="M27 54h46l-4 6H31z" fill="#7A3E1F"/><path d="M30 52q6-5 12 0t12 0 12 0" stroke="#7DBA5A" stroke-width="3" fill="none"/><path d="M24 58c4 10 14 14 26 14s22-4 26-14z" fill="#F3EADB" stroke="#E3D9C8" stroke-width="1.5"/>`},
+ karaage:{n:"Karaagé",a:"rouge",d:[[40,42,11],[58,40,10],[48,58,12],[64,58,8]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#C8873A"/><circle cx="${x-3}" cy="${y-3}" r="${r*.4}" fill="#E0A85A"/>`).join("")+`<path d="M28 62a10 10 0 0 0 14 6z" fill="#F4D545"/>`},
+ tamago:{n:"Tamago",a:"blanc",d:`<g transform="rotate(-15 50 50)">${riz(50,56,42,16)}<rect x="27" y="38" width="46" height="18" rx="3" fill="#F4CF4A"/><path d="M30 44h40M30 50h40" stroke="#E2B330" stroke-width="1.5"/><rect x="45" y="34" width="10" height="34" fill="#1E2A22"/></g>`},
+ tempura:{n:"Tempura crevette",a:"noir",d:[[-10,42],[14,58]].map(([a,y])=>`<g transform="rotate(${a} 50 ${y})"><path d="M26 ${y}c0-8 34-10 44-4 4 2 4 6 0 8-10 6-44 4-44-4z" fill="#E6B45A"/><g fill="#F2CF84"><circle cx="34" cy="${y-3}" r="3"/><circle cx="46" cy="${y-4}" r="3"/><circle cx="58" cy="${y-2}" r="3"/></g><path d="M70 ${y}l9-6v12z" fill="#E2502E"/></g>`).join("")},
+ mochi:{n:"Mochi",a:"bleu",d:`<circle cx="40" cy="50" r="15" fill="#B8D99A"/><circle cx="36" cy="45" r="4" fill="#fff" opacity=".4"/><circle cx="60" cy="52" r="15" fill="#F4B8C4"/><circle cx="56" cy="47" r="4" fill="#fff" opacity=".4"/>`},
+ onigiri:{n:"Onigiri",a:"blanc",d:`<path d="M50 24c6 0 26 30 26 38s-8 10-26 10-26-2-26-10 20-38 26-38z" fill="#FBF8F1" stroke="#E6DFD2" stroke-width="1.5"/><rect x="38" y="56" width="24" height="17" rx="2" fill="#1E2A22"/>`},
+ unagi:{n:"Nigiri anguille",a:"noir",d:[0,1].map(i=>`<g transform="rotate(${i?18:-18} 50 50) translate(0 ${i?10:-10})">${riz(50,52,40,15)}<rect x="27" y="44" width="46" height="13" rx="5" fill="#7A3E1F"/><path d="M30 50h40" stroke="#B5652E" stroke-width="2.5"/><rect x="47" y="42" width="6" height="18" fill="#1E2A22"/></g>`).join("")}
+};
+const keys=Object.keys(D);
+const svgAssiette=k=>{const d=D[k],a=A[d.a];return`<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47" fill="${a.r}"/><circle cx="50" cy="50" r="43" fill="${a.f}"/><circle cx="50" cy="50" r="33" fill="none" stroke="${a.r}" stroke-width="1.5" opacity=".6"/>${d.d}</svg>`};
+const eur=n=>n.toFixed(2).replace(".",",")+" €";
+
+// tapis : deux copies pour la boucle
+const ordre=["saumon","edamame","thon","maki","gyoza","tempura","california","onigiri","bao","mochi","tamago","karaage","unagi"];
+const defile=document.getElementById("defile");
+const html=ordre.map(k=>`<button class="assiette" data-k="${k}" aria-label="${D[k].n}, assiette ${A[D[k].a].n.toLowerCase()} ${eur(A[D[k].a].p)}">${svgAssiette(k)}<span class="etiq">${D[k].n} · ${eur(A[D[k].a].p)}</span></button>`).join("");
+defile.innerHTML=html+html;
+
+// légende + mur de planchettes
+document.getElementById("legende").innerHTML=Object.values(A).map(a=>`<span><i style="background:${a.f}"></i>${eur(a.p)}</span>`).join("");
+const tri=[...keys].sort((x,y)=>A[D[x].a].p-A[D[y].a].p);
+document.getElementById("mur").innerHTML=tri.map(k=>`<div class="fuda" id="f-${k}"><span class="nom">${D[k].n}</span><span class="px">${eur(A[D[k].a].p)}</span><span class="rond" style="background:${A[D[k].a].f}"></span></div>`).join("");
+
+// plateau
+const pris=[];
+const pile=document.getElementById("pile"),compte=document.getElementById("compte"),vider=document.getElementById("vider");
+function maj(){
+  pile.innerHTML=pris.length?pris.slice(-8).map((k,i)=>{const a=A[D[k].a];return`<i style="bottom:${4+i*5}px;background:${a.f};border-bottom-color:${a.r}"></i>`}).join(""):'<span class="vide"></span>';
+  vider.hidden=!pris.length;
+  if(!pris.length){compte.innerHTML="<b>Plateau vide</b><span>Touchez une assiette qui passe</span>";return}
+  const t=pris.reduce((s,k)=>s+A[D[k].a].p,0),der=D[pris[pris.length-1]].n;
+  compte.innerHTML=`<b>${pris.length} assiette${pris.length>1?"s":""} · ${eur(t)}</b><span>Dernière : ${der}</span>`;
+}
+defile.addEventListener("click",e=>{
+  const b=e.target.closest(".assiette");if(!b||b.classList.contains("prise"))return;
+  const k=b.dataset.k,o=b.querySelector("svg").getBoundingClientRect(),p=pile.getBoundingClientRect();
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
+    const v=document.createElement("div");v.className="vol";v.innerHTML=svgAssiette(k);
+    v.style.left=o.left+"px";v.style.top=o.top+"px";v.style.width=o.width+"px";v.style.height=o.height+"px";document.body.appendChild(v);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{v.style.transform=`translate(${p.left+p.width/2-o.left-o.width/2}px,${p.top+p.height/2-o.top-o.height/2}px) scale(.45)`;v.style.opacity=".2"}));
+    setTimeout(()=>v.remove(),620);
+  }
+  b.classList.add("prise");
+  setTimeout(()=>{pris.push(k);maj();const f=document.getElementById("f-"+k);f.classList.remove("hl");void f.offsetWidth;f.classList.add("hl")},450);
+  setTimeout(()=>b.classList.remove("prise"),9000); // le chef en remet une
+});
+vider.onclick=()=>{pris.length=0;maj()};
+maj();
+})();
+</script>
+</body>
+</html>
