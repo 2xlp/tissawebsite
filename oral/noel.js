@@ -30,9 +30,9 @@
   a.addEventListener('play',lab);a.addEventListener('pause',lab);
   lab();document.body.appendChild(b);
   // Démarre au premier clic / touche (les navigateurs bloquent la lecture automatique)
-  const go=()=>{if(a.paused&&!b.dataset.muted)a.play().catch(()=>{});};
+  const go=(e)=>{if(e&&e.target&&e.target.closest&&e.target.closest('#music'))return;if(a.paused&&!b.dataset.muted)a.play().catch(()=>{});};
   b.addEventListener('click',()=>{b.dataset.muted=a.paused?'1':''});
-  addEventListener('pointerdown',go,{once:true});addEventListener('keydown',go,{once:true});
+  const first=(e)=>{if(e.target&&e.target.closest&&e.target.closest('#music'))return;removeEventListener('pointerdown',first);removeEventListener('keydown',first);go(e)};addEventListener('pointerdown',first);addEventListener('keydown',first);
   // Menu « Aller à » : accès direct à n'importe quelle diapo
   const steps=[...document.querySelectorAll('.step')];
   const nm=(s,i)=>(window.TWN&&TWN[i])||(s.dataset.id==='accueil'?'Accueil':((s.querySelector('.k')||{}).textContent||s.dataset.id).trim());
