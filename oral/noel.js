@@ -23,12 +23,20 @@
       requestAnimationFrame(loop)})(t0);
   }
   // Musique : fichier musique.mp3 dans le même dossier
-  const a=new Audio();a.preload='none';a.src='musique.mp3';a.loop=true;a.volume=.45;
+  const a=new Audio();a.preload='none';a.src='musique.mp3?v=suno1';a.loop=true;
   const b=document.createElement('button');b.id='music';b.type='button';
   const lab=()=>{b.innerHTML=`<span class="eq" aria-hidden="true"><b></b><b></b><b></b></span>${a.paused?'Musique':'Couper'}`;b.classList.toggle('on',!a.paused);b.setAttribute('aria-pressed',String(!a.paused))};
   b.addEventListener('click',e=>{e.stopPropagation();if(a.paused)a.play().catch(()=>{b.textContent='Musique indisponible'});else a.pause();lab()});
   a.addEventListener('play',lab);a.addEventListener('pause',lab);
-  lab();document.body.appendChild(b);
+  lab();
+  const wrap=document.createElement('div');wrap.id='musicbox';
+  const vol=document.createElement('input');vol.type='range';vol.min='0';vol.max='100';vol.id='vol';vol.setAttribute('aria-label','Volume de la musique');
+  let v=45;try{const s=localStorage.getItem('tw-oral-vol');if(s!==null)v=+s}catch(e){}
+  vol.value=v;a.volume=v/100;vol.style.setProperty('--v',v+'%');
+  vol.addEventListener('input',()=>{a.volume=vol.value/100;vol.style.setProperty('--v',vol.value+'%');try{localStorage.setItem('tw-oral-vol',vol.value)}catch(e){}});
+  ['pointerdown','click','touchstart'].forEach(t=>wrap.addEventListener(t,e=>e.stopPropagation()));
+  vol.addEventListener('keydown',e=>e.stopPropagation());
+  wrap.appendChild(vol);wrap.appendChild(b);document.body.appendChild(wrap);
   // Démarre au premier clic / touche (les navigateurs bloquent la lecture automatique)
   const go=(e)=>{if(e&&e.target&&e.target.closest&&e.target.closest('#music'))return;if(a.paused&&!b.dataset.muted)a.play().catch(()=>{});};
   b.addEventListener('click',()=>{b.dataset.muted=a.paused?'1':''});
