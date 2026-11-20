@@ -44,3 +44,23 @@
 .fx-r span{font-size:18px}.fx-r b{color:#fff;font-weight:600}.fx-r small{display:block;color:var(--mute);font-size:12px}.fx-r em{font-style:normal;font-weight:700;white-space:nowrap}
 .fx-t{display:flex;align-items:baseline;gap:10px;margin-top:10px;padding:10px 12px;border-radius:12px;background:#C8102E;color:#fff}
 .fx-t span{flex:1;font-weight:600}.fx-t b{font:800 22px Sora,sans-serif}.fx-t small{opacity:.85}
+/* Progression des abonnés */
+.pg-wrap{display:grid;grid-template-columns:400px minmax(0,1fr);gap:24px;align-items:start}
+.pg-funnel{display:flex;flex-direction:column;align-items:center;gap:5px}
+.pg-funnel div{width:var(--w);display:flex;align-items:center;gap:10px;padding:7px 14px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:13px;line-height:1.2}
+.pg-funnel b{font:800 21px Sora,sans-serif;color:#fff;min-width:44px}.pg-funnel span{color:var(--mute)}
+.pg-funnel .hot{background:#C8102E;border-color:#FF5A6A}.pg-funnel .hot span{color:#fff}
+.pg-hyp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.pg-hyp span{background:rgba(255,255,255,.05);border-radius:10px;padding:7px 10px;font-size:13px;color:var(--mute)}
+.pg-hyp b{display:block;color:#FFD36B;font:800 18px Sora,sans-serif}.pg-hyp small{display:block;font-size:11.5px}
+.pg-sc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pg-sc div{background:rgba(255,255,255,.05);border-radius:10px;padding:7px 8px;font-size:11.5px;line-height:1.25;color:var(--mute)}
+.pg-sc small{display:block;font-weight:700;color:#F4FBFF;font-size:12px}.pg-sc b{display:block;font:800 17px Sora,sans-serif;color:#fff}
+.pg-sc .real{background:rgba(255,211,107,.14);outline:1px solid rgba(255,211,107,.5)}
+table.pg-t{width:100%;border-collapse:collapse;font-size:13px}
+.pg-t th{text-align:left;font-size:11.5px;color:var(--mute);font-weight:600;padding:3px 6px;border-bottom:1px solid rgba(255,255,255,.12)}
+.pg-t td{padding:3.5px 6px;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap}
+.pg-t td b{color:#fff}.pg-t .pos{color:#FFD36B;font-weight:700}.pg-t .neg{color:#FF8A72}
+.pg-t .why{white-space:normal;color:var(--mute);font-size:12px}
+.pg-t tfoot td{border-top:2px solid rgba(255,211,107,.5);border-bottom:0;font-weight:700;padding-top:6px}
+.pg-t td,.pg-t th{text-align:left!important}.pg-t td:nth-child(n+2):nth-child(-n+5),.pg-t th:nth-child(n+2):nth-child(-n+5){text-align:right!important}

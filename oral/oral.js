@@ -16,7 +16,7 @@ document.getElementById('donut').innerHTML=out;
 document.getElementById('lines').innerHTML=CH.map(([n,v,d,c])=>`<div><i style="background:${c}"></i><span>${n}<small>${d}</small></span><em>${v} €/an</em></div>`).join('');}
 {const h=document.querySelector('.title3d');h.innerHTML=[...h.textContent].map((ch,i)=>`<span style="--i:${i}">${ch}</span>`).join('')}
 
-const names=["Accueil", "Sommaire", "Notre histoire", "Fiche d'identité", "Offre et tarifs", "L'application", "Modèle économique", "Facteurs clés de succès", "Nos avantages", "Nos concurrents", "Pourquoi nous", "Substitution", "Questions du jury", "L'équipe", "Chiffres", "Charges", "Charges de chacun", "Scénarios", "Chronogramme", "Vision 3 · 5 · 10 ans", "Longueur d'avance", "Merci"];window.TWN=names;
+const names=["Accueil", "Sommaire", "Notre histoire", "Fiche d'identité", "Offre et tarifs", "L'application", "Modèle économique", "Facteurs clés de succès", "Nos avantages", "Nos concurrents", "Pourquoi nous", "Substitution", "Questions du jury", "L'équipe", "Chiffres", "Charges", "Charges de chacun", "Scénarios", "Progression des abonnés", "Chronogramme", "Vision 3 · 5 · 10 ans", "Longueur d'avance", "Merci"];window.TWN=names;
 document.getElementById('tiles').innerHTML=names.slice(2).map((t,i)=>`<button class="card tile" data-go="${i+2}"><b>${String(i+1).padStart(2,'0')}</b>${t}</button>`).join('');
 
 const P=steps.map((_,i)=>({x:Math.round(Math.sin(i*0.75)*2300),y:Math.round(Math.cos(i*1.3)*220),z:-i*2100,ry:+(-Math.sin(i*0.75)*30).toFixed(1)}));
@@ -89,7 +89,7 @@ addEventListener('keydown',e=>{if(over&&['ArrowRight','ArrowDown','ArrowLeft','A
 const view=document.getElementById('view');
 document.getElementById('view');
 const ACC={mint:['#FF5A6A','#C8102E'],cyan:['#45D6F5','#0A6E8C'],gold:['#FFC15A','#9A5A06'],coral:['#FF8A72','#A83526'],lime:['#FFD36B','#9A5A06']};
-const ORDER=['mint', 'cyan', 'mint', 'cyan', 'gold', 'cyan', 'mint', 'cyan', 'lime', 'coral', 'gold', 'cyan', 'lime', 'cyan', 'mint', 'coral', 'gold', 'gold', 'cyan', 'lime', 'coral', 'mint'];
+const ORDER=["mint", "cyan", "mint", "cyan", "gold", "cyan", "mint", "cyan", "lime", "coral", "gold", "cyan", "lime", "cyan", "mint", "coral", "gold", "gold", "coral", "cyan", "lime", "coral", "mint"];
 steps.forEach((st,i)=>{const [m,g]=ACC[ORDER[i]||'mint'];st.style.setProperty('--m',m);st.style.setProperty('--g',g)});
 const cv=document.getElementById('stars'),cx=cv.getContext('2d');let W=0,H=0,DPR=Math.min(1.5,devicePixelRatio||1);
 function rs(){W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;cx.setTransform(DPR,0,0,DPR,0,0)}rs();addEventListener('resize',rs);
