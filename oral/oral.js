@@ -9,14 +9,14 @@ document.getElementById('adv').innerHTML=tileRow(adv);
 document.getElementById('adv2').innerHTML=tileRow(adv2);
 
 const steps=[...document.querySelectorAll('.step')];
-const CH=[['Fichiers prospects (Scrap.io)',390,'formule de base, ~35 $/mois','#45D6F5'],['Base de données Supabase Pro',280,'25 $/mois dès les premiers clients','#3DDC97'],['Marketing : cartes, salons, démos',200,'estimation','#FFC15A'],['Assurance RC Pro',180,'~100 à 250 €/an','#FF8A72'],['IA pour personnaliser les mails',120,'estimation, ~10 €/mois','#B9F26B'],['Mails pro OVH',26,'1,82 € HT/mois/compte','#9FB3FF'],['Noms de domaine',20,'tissaweb.fr + .cloud','#FF6FB5'],['Médiateur de la consommation',10,'~30 € pour 3 ans','#FFFFFF']];
+const CH=[['Fichiers prospects (Scrap.io)',390,'formule de base, ~35 $/mois','#45D6F5'],['Base de données Supabase Pro',280,'25 $/mois dès les premiers clients','#FF5A6A'],['Marketing : cartes, salons, démos',200,'estimation','#FFC15A'],['Assurance RC Pro',180,'~100 à 250 €/an','#FF8A72'],['IA pour personnaliser les mails',120,'estimation, ~10 €/mois','#FFD36B'],['Mails pro OVH',26,'1,82 € HT/mois/compte','#9FB3FF'],['Noms de domaine',20,'tissaweb.fr + .cloud','#FF6FB5'],['Médiateur de la consommation',10,'~30 € pour 3 ans','#FFFFFF']];
 {const tot=CH.reduce((a,c)=>a+c[1],0),R=125,L=2*Math.PI*R;let off=0,i=0,out=`<circle cx="165" cy="165" r="${R}" stroke="rgba(255,255,255,.06)"/>`;
 for(const [n,v,,c] of CH){const len=v/tot*L;out+=`<circle class="seg" cx="165" cy="165" r="${R}" stroke="${c}" stroke-dasharray="${Math.max(0,len-3).toFixed(1)} ${L.toFixed(1)}" stroke-dashoffset="${(-off).toFixed(1)}" style="--dl:${400+i*120}ms"/>`;off+=len;i++}
 document.getElementById('donut').innerHTML=out;
 document.getElementById('lines').innerHTML=CH.map(([n,v,d,c])=>`<div><i style="background:${c}"></i><span>${n}<small>${d}</small></span><em>${v} €/an</em></div>`).join('');}
 {const h=document.querySelector('.title3d');h.innerHTML=[...h.textContent].map((ch,i)=>`<span style="--i:${i}">${ch}</span>`).join('')}
 
-const names=["Accueil","Sommaire","Notre histoire","Fiche d'identité","Offre et tarifs","L'application","Modèle économique","Facteurs clés de succès","Nos avantages","Nos concurrents","Pourquoi nous","Substitution","Questions du jury","L'équipe","Chiffres","Charges","Scénarios","Chronogramme","Vision 3 · 5 · 10 ans","Longueur d'avance","Merci"];
+const names=["Accueil", "Sommaire", "Notre histoire", "Fiche d'identité", "Offre et tarifs", "L'application", "Modèle économique", "Facteurs clés de succès", "Nos avantages", "Nos concurrents", "Pourquoi nous", "Substitution", "Questions du jury", "L'équipe", "Chiffres", "Charges", "Charges de chacun", "Scénarios", "Chronogramme", "Vision 3 · 5 · 10 ans", "Longueur d'avance", "Merci"];window.TWN=names;
 document.getElementById('tiles').innerHTML=names.slice(2).map((t,i)=>`<button class="card tile" data-go="${i+2}"><b>${String(i+1).padStart(2,'0')}</b>${t}</button>`).join('');
 
 const P=steps.map((_,i)=>({x:Math.round(Math.sin(i*0.75)*2300),y:Math.round(Math.cos(i*1.3)*220),z:-i*2100,ry:+(-Math.sin(i*0.75)*30).toFixed(1)}));
@@ -76,7 +76,7 @@ function overview(){
   else{const k=front<0?cur:front;canvas.style.transition='';go(k)}}
 function snapTo(a){REL().style.transition='transform .6s cubic-bezier(.2,.8,.2,1)';ang=a;applyRing();setTimeout(()=>{if(over&&!drag)REL().style.transition='none'},620);ringHold=performance.now()+3500}
 let goLock=0,goPend=null,goT=null,merciT=[];
-function go(i){const now=performance.now(),cd=(flat||over)?220:520;if(now<goLock){goPend=i;clearTimeout(goT);goT=setTimeout(()=>{const k=goPend;goPend=null;goLock=0;go(k)},goLock-now);return}goLock=now+cd;merciT.forEach(clearTimeout);merciT=[];canvas.style.transition='';const was=cur;cur=Math.max(0,Math.min(steps.length-1,i));over=false;if(was!==cur)flyFx();if(steps[cur].dataset.id==='merci'&&!RM&&was!==cur)merciT.push(setTimeout(()=>{for(let k=0;k<3;k++)merciT.push(setTimeout(()=>burst(innerWidth*(.25+k*.25),innerHeight*.35,IOS?40:80,['#3DDC97','#45D6F5','#FFC15A','#FF8A72','#B9F26B','#fff'],9),k*250))},1200));if(was!==cur){const st=steps[cur];clearTimeout(cuT);cuT=setTimeout(()=>{if(steps[cur]===st)countUp(st)},flat?100:900)}try{history.replaceState(null,'','#'+steps[cur].dataset.id)}catch(e){}camera()}
+function go(i){const now=performance.now(),cd=(flat||over)?220:520;if(now<goLock){goPend=i;clearTimeout(goT);goT=setTimeout(()=>{const k=goPend;goPend=null;goLock=0;go(k)},goLock-now);return}goLock=now+cd;merciT.forEach(clearTimeout);merciT=[];canvas.style.transition='';const was=cur;cur=Math.max(0,Math.min(steps.length-1,i));over=false;if(was!==cur)flyFx();if(steps[cur].dataset.id==='merci'&&!RM&&was!==cur)merciT.push(setTimeout(()=>{for(let k=0;k<3;k++)merciT.push(setTimeout(()=>burst(innerWidth*(.25+k*.25),innerHeight*.35,IOS?40:80,['#FF5A6A','#45D6F5','#FFC15A','#FF8A72','#FFD36B','#fff'],9),k*250))},1200));if(was!==cur){const st=steps[cur];clearTimeout(cuT);cuT=setTimeout(()=>{if(steps[cur]===st)countUp(st)},flat?100:900)}try{history.replaceState(null,'','#'+steps[cur].dataset.id)}catch(e){}camera()}
 
 document.getElementById('next').onclick=()=>go(cur+1);
 document.getElementById('prev').onclick=()=>go(cur-1);
@@ -88,8 +88,8 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-go]');if(t
 addEventListener('keydown',e=>{if(over&&['ArrowRight','ArrowDown','ArrowLeft','ArrowUp','Enter',' '].includes(e.key)){e.preventDefault();if(e.key==='Enter'||e.key===' ')go(front);else snapTo((Math.round(ang/RSTEP)+(['ArrowRight','ArrowDown'].includes(e.key)?1:-1))*RSTEP);return}if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(cur-1)}else if(e.key==='o'||e.key==='O'||e.key==='Escape')thr(overview)();else if(e.key==='Home')go(0)});
 const view=document.getElementById('view');
 document.getElementById('view');
-const ACC={mint:['#3DDC97','#0B7A55'],cyan:['#45D6F5','#0A6E8C'],gold:['#FFC15A','#9A5A06'],coral:['#FF8A72','#A83526'],lime:['#B9F26B','#4A7A10']};
-const ORDER=['mint','cyan','mint','cyan','gold','cyan','mint','cyan','lime','coral','gold','cyan','lime','cyan','mint','coral','gold','cyan','lime','coral','mint'];
+const ACC={mint:['#FF5A6A','#C8102E'],cyan:['#45D6F5','#0A6E8C'],gold:['#FFC15A','#9A5A06'],coral:['#FF8A72','#A83526'],lime:['#FFD36B','#9A5A06']};
+const ORDER=['mint', 'cyan', 'mint', 'cyan', 'gold', 'cyan', 'mint', 'cyan', 'lime', 'coral', 'gold', 'cyan', 'lime', 'cyan', 'mint', 'coral', 'gold', 'gold', 'cyan', 'lime', 'coral', 'mint'];
 steps.forEach((st,i)=>{const [m,g]=ACC[ORDER[i]||'mint'];st.style.setProperty('--m',m);st.style.setProperty('--g',g)});
 const cv=document.getElementById('stars'),cx=cv.getContext('2d');let W=0,H=0,DPR=Math.min(1.5,devicePixelRatio||1);
 function rs(){W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;cx.setTransform(DPR,0,0,DPR,0,0)}rs();addEventListener('resize',rs);
@@ -115,7 +115,7 @@ const fxc=document.getElementById('fx'),fx=fxc.getContext('2d');let parts=[];
 function fxSize(){fxc.width=innerWidth*DPR;fxc.height=innerHeight*DPR;fx.setTransform(DPR,0,0,DPR,0,0)}fxSize();addEventListener('resize',fxSize);
 function burst(x,y,n,cols,spd){n=Math.min(n,Math.max(0,(IOS?160:350)-parts.length));for(let k=0;k<n;k++){const a=Math.random()*Math.PI*2,v=(spd||5)*(0.4+Math.random());parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-(spd?2:0),life:1,c:cols[k%cols.length],s:2+Math.random()*4,g:spd?.12:0})}if(!fxRun){fxRun=true;requestAnimationFrame(fxLoop)}}
 let fxRun=false;function fxLoop(){fx.clearRect(0,0,innerWidth,innerHeight);parts=parts.filter(p=>p.life>0);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.vx*=.98;p.life-=.016;fx.globalAlpha=Math.max(0,p.life);fx.fillStyle=p.c;fx.fillRect(p.x,p.y,p.s,p.s)}fx.globalAlpha=1;if(parts.length)requestAnimationFrame(fxLoop);else fxRun=false}
-let lastB=0;view.addEventListener('pointerdown',e=>{const t=performance.now();if(t-lastB<120)return;lastB=t;if(!RM)burst(e.clientX,e.clientY,IOS?14:24,[getComputedStyle(steps[cur]).getPropertyValue('--m')||'#3DDC97','#ffffff'],4)});
+let lastB=0;view.addEventListener('pointerdown',e=>{const t=performance.now();if(t-lastB<120)return;lastB=t;if(!RM)burst(e.clientX,e.clientY,IOS?14:24,[getComputedStyle(steps[cur]).getPropertyValue('--m')||'#FF5A6A','#ffffff'],4)});
 let flyT;function flyFx(){view.classList.add('fly');target=.5;clearTimeout(flyT);flyT=setTimeout(()=>{view.classList.remove('fly');target=.03},1300)}
 let sx=null,sy=null;
 view.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;if(over){drag={x:e.clientX,a:ang};moved=false;REL().style.transition='none'}});

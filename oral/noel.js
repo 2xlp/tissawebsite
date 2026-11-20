@@ -6,9 +6,7 @@
   const C=['#FF5A6A','#FFD36B','#3DDC97','#6FB7FF'];
   L.innerHTML=Array.from({length:14},(_,i)=>`<i style="--c:${C[i%4]};--d:${(i%4)*.4}s"></i>`).join('');
   document.body.appendChild(L);
-  // Bonnet sur le cube + bandeau
-  const sc=document.querySelector('[data-id="accueil"] .scene');
-  if(sc){sc.style.position='relative';sc.insertAdjacentHTML('beforeend',`<svg class="noel-hat" viewBox="0 0 120 100" aria-hidden="true"><path d="M14 78 C30 30 70 6 104 22 C92 34 86 52 92 78 Z" fill="#D7193A"/><path d="M14 78 C30 30 70 6 104 22 C96 30 90 40 88 52 C70 40 40 50 14 78Z" fill="#FF4058" opacity=".55"/><rect x="6" y="72" width="94" height="20" rx="10" fill="#fff"/><circle cx="106" cy="22" r="12" fill="#fff"/></svg>`);}
+  // Bandeau
   const k=document.querySelector('[data-id="accueil"] .k');
   if(k)k.insertAdjacentHTML('beforebegin','<div class="noel-ribbon">🎄 Édition de Noël</div>');
   // Neige
@@ -35,4 +33,21 @@
   const go=()=>{if(a.paused&&!b.dataset.muted)a.play().catch(()=>{});};
   b.addEventListener('click',()=>{b.dataset.muted=a.paused?'1':''});
   addEventListener('pointerdown',go,{once:true});addEventListener('keydown',go,{once:true});
+  // Menu « Aller à » : accès direct à n'importe quelle diapo
+  const steps=[...document.querySelectorAll('.step')];
+  const nm=(s,i)=>(window.TWN&&TWN[i])||(s.dataset.id==='accueil'?'Accueil':((s.querySelector('.k')||{}).textContent||s.dataset.id).trim());
+  const nav=document.querySelector('.ctl');
+  const mb=document.createElement('button');mb.id='gomenu';mb.type='button';mb.setAttribute('aria-haspopup','true');mb.setAttribute('aria-expanded','false');
+  mb.innerHTML='☰ <span>Aller à</span>';
+  nav.insertBefore(mb,document.getElementById('pg'));
+  const pop=document.createElement('div');pop.id='gopop';pop.hidden=true;pop.setAttribute('role','menu');
+  pop.innerHTML='<b>Aller à la diapo</b><div>'+steps.map((s,i)=>`<button type="button" role="menuitem" data-go="${i}"><em>${String(i+1).padStart(2,'0')}</em>${nm(s,i)}</button>`).join('')+'</div>';
+  document.body.appendChild(pop);
+  const close=()=>{pop.hidden=true;mb.setAttribute('aria-expanded','false')};
+  mb.addEventListener('click',e=>{e.stopPropagation();const open=pop.hidden;pop.hidden=!open;mb.setAttribute('aria-expanded',String(open));
+    if(open){const c=(parseInt((document.getElementById('pg').textContent||'1'),10)||1)-1;pop.querySelectorAll('button').forEach((x,i)=>x.classList.toggle('cur',i===c));const cb=pop.querySelectorAll('button')[c];if(cb)cb.scrollIntoView({block:'center'});}});
+  pop.addEventListener('click',e=>{if(e.target.closest('[data-go]'))setTimeout(close,0)});
+  ['pointerdown','touchstart','wheel'].forEach(t=>pop.addEventListener(t,e=>e.stopPropagation(),{passive:true}));
+  document.addEventListener('click',e=>{if(!pop.hidden&&!e.target.closest('#gopop,#gomenu'))close()});
+  addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 })();

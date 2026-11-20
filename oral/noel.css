@@ -1,6 +1,6 @@
 /* ===== Mode Noël ===== */
-:root{--m:#FF5A6A;--g:#1FA971;--gold:#FFD36B;--line:rgba(255,120,130,.28)}
-#view{background:radial-gradient(90% 60% at 50% -10%,rgba(255,90,106,.14),transparent 60%),radial-gradient(60% 50% at 85% 110%,rgba(31,169,113,.18),transparent 60%),linear-gradient(180deg,#060814 0%,#0b1024 55%,#101830 100%)!important}
+:root{--m:#FF5A6A;--g:#C8102E;--gold:#FFD36B;--line:rgba(255,120,130,.28)}
+#view{background:radial-gradient(90% 60% at 50% -10%,rgba(255,90,106,.14),transparent 60%),radial-gradient(60% 50% at 85% 110%,rgba(255,211,107,.18),transparent 60%),linear-gradient(180deg,#060814 0%,#0b1024 55%,#101830 100%)!important}
 .title3d span{background:linear-gradient(180deg,#fff 20%,#ffe1e4 55%,#FF5A6A)!important;-webkit-background-clip:text!important;background-clip:text!important;filter:drop-shadow(0 0 18px rgba(255,90,106,.45))!important}
 .step.on h2.anim{background:linear-gradient(90deg,#fff 0%,#fff 30%,#FFD36B 50%,#fff 70%,#fff 100%)!important;background-size:250% 100%!important;-webkit-background-clip:text!important;background-clip:text!important}
 #snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
@@ -19,3 +19,28 @@
 @media (max-width:700px){#music{bottom:84px;right:10px;padding:8px 12px;font-size:13px}.lights{height:26px}.lights i:nth-child(n+9){display:none}}
 @media (prefers-reduced-motion:reduce){.lights i{animation:none}}
 .hint{top:40px!important}
+/* Sapin à la place du cube */
+.scene.tree{perspective:none}
+.scene.tree svg{width:300px;height:360px;filter:drop-shadow(0 20px 40px rgba(200,16,46,.45));animation:treeFloat 6s ease-in-out infinite}
+.scene.tree .star{transform-origin:150px 40px;animation:starPulse 2.4s ease-in-out infinite}
+.scene.tree .balls circle{animation:blink 2s ease-in-out infinite}.scene.tree .balls circle:nth-child(2n){animation-delay:.7s}.scene.tree .balls circle:nth-child(3n){animation-delay:1.3s}
+@keyframes treeFloat{50%{transform:translateY(-10px)}}
+@keyframes starPulse{50%{transform:scale(1.15) rotate(8deg);filter:drop-shadow(0 0 12px #FFD36B)}}
+/* Menu « Aller à » */
+#gomenu{display:inline-flex;align-items:center;gap:6px}
+#gopop{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);z-index:70;width:min(560px,calc(100vw - 24px));max-height:min(62vh,520px);display:flex;flex-direction:column;background:rgba(14,18,36,.97);border:1px solid rgba(255,211,107,.35);border-radius:18px;box-shadow:0 30px 80px -20px rgba(0,0,0,.8);padding:14px;backdrop-filter:blur(10px)}
+#gopop[hidden]{display:none}
+#gopop>b{font:700 14px Sora,Inter,sans-serif;color:#FFD36B;padding:2px 6px 10px}
+#gopop>div{overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;overscroll-behavior:contain}
+#gopop button{all:unset;box-sizing:border-box;display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.05);color:#F4FBFF;font:500 14px Inter,sans-serif;cursor:pointer}
+#gopop button em{font-style:normal;font:700 12px Sora,sans-serif;color:#FF5A6A;min-width:20px}
+#gopop button:hover,#gopop button:focus-visible{background:rgba(255,90,106,.22);outline:none}
+#gopop button.cur{background:#C8102E}#gopop button.cur em{color:#fff}
+@media (max-width:700px){#gomenu span{display:none}#gopop{bottom:132px}#gopop>div{grid-template-columns:1fr}}
+@media (max-width:700px){#fs{display:none}}
+/* Charges de chacun */
+.fx-c{padding:16px 18px}
+.fx-r{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:15px}
+.fx-r span{font-size:18px}.fx-r b{color:#fff;font-weight:600}.fx-r small{display:block;color:var(--mute);font-size:12px}.fx-r em{font-style:normal;font-weight:700;white-space:nowrap}
+.fx-t{display:flex;align-items:baseline;gap:10px;margin-top:10px;padding:10px 12px;border-radius:12px;background:#C8102E;color:#fff}
+.fx-t span{flex:1;font-weight:600}.fx-t b{font:800 22px Sora,sans-serif}.fx-t small{opacity:.85}
