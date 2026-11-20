@@ -1,0 +1,36 @@
+/* Slide « L'application » : maquette de la future appli */
+.ap{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:26px;align-items:stretch;height:452px}
+.ap-win{display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:#0b141c;border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 60px -30px rgba(0,0,0,.8);font-size:13px}
+.ap-top{display:flex;align-items:center;gap:6px;padding:9px 12px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08)}
+.ap-top i{width:10px;height:10px;border-radius:50%;background:#FF5F57}.ap-top i:nth-child(2){background:#FEBC2E}.ap-top i:nth-child(3){background:#28C840}
+.ap-top span{margin-left:10px;color:var(--mute);font-size:12px}
+.ap-body{flex:1;display:grid;grid-template-columns:120px minmax(0,1fr);min-height:0}
+.ap-nav{padding:12px 8px;border-right:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:4px}
+.ap-nav b{font:800 14px Sora,sans-serif;color:#fff;padding:2px 8px 10px}
+.ap-nav span{padding:6px 8px;border-radius:8px;color:var(--mute)}
+.ap-nav span.on{background:rgba(61,220,151,.14);color:#3DDC97;font-weight:600}
+.ap-main{padding:12px 14px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.ap-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ap-kpis div{background:rgba(255,255,255,.05);border-radius:10px;padding:7px 9px}
+.ap-kpis b{display:block;font:800 19px Sora,sans-serif;color:#fff}.ap-kpis small{color:var(--mute);font-size:11px}
+.ap-list{display:flex;flex-direction:column;gap:5px}
+.ap-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:6px 10px;border-radius:9px;background:rgba(255,255,255,.035)}
+.ap-row b{color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ap-row small{color:var(--mute)}
+.ap-chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.c-new{background:rgba(165,188,196,.15);color:#C9D8E2}.c-sent{background:rgba(69,214,245,.15);color:#45D6F5}.c-rel{background:rgba(255,193,90,.16);color:#FFC15A}.c-ok{background:rgba(61,220,151,.18);color:#3DDC97}
+.ap-mail{background:#fff;color:#1b2530;border-radius:10px;padding:9px 12px;font-size:12px;line-height:1.45;position:relative}
+.ap-mail .ai{position:absolute;top:-9px;right:10px;background:linear-gradient(90deg,#7B5CFF,#45D6F5);color:#fff;font-weight:700;font-size:10.5px;padding:2px 8px;border-radius:99px}
+.ap-mail b{display:block;margin-bottom:2px}
+.ap-toast{position:absolute;right:-16px;top:-30px;width:240px;display:flex;gap:10px;align-items:center;background:#0B7A55;color:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 18px 40px -14px rgba(0,0,0,.7),0 0 0 1px rgba(61,220,151,.6);font-size:12.5px;line-height:1.35;transform:translateZ(40px)}
+.ap-toast i{font-style:normal;font-size:22px}
+.step.on .ap-toast{animation:apPop .7s cubic-bezier(.3,1.4,.4,1) 1.2s both}
+@keyframes apPop{from{opacity:0;transform:translateY(-16px) scale(.85)}}
+.ap-wrap{position:relative}
+.ap-flow{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.ap-step{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 14px;position:relative}
+.ap-step .dot{width:36px;height:36px;font-size:16px}
+.ap-step h3{font-size:17px;margin:0 0 2px}.ap-step p{margin:0;font-size:13.5px;color:var(--mute);line-height:1.35}
+.ap-step+.ap-step:before{content:"";position:absolute;left:31px;top:-11px;width:2px;height:11px;background:var(--m)}
+.ap-step.last{background:var(--g);border-color:var(--m)}.ap-step.last p{color:#e6fff4}
+.step.on .ap-step{animation:rise .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*.15s + .3s)}
+.step.on .ap-row{animation:rise .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*.1s + .4s)}

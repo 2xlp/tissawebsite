@@ -1,0 +1,21 @@
+/* ===== Mode Noël ===== */
+:root{--m:#FF5A6A;--g:#1FA971;--gold:#FFD36B;--line:rgba(255,120,130,.28)}
+#view{background:radial-gradient(90% 60% at 50% -10%,rgba(255,90,106,.14),transparent 60%),radial-gradient(60% 50% at 85% 110%,rgba(31,169,113,.18),transparent 60%),linear-gradient(180deg,#060814 0%,#0b1024 55%,#101830 100%)!important}
+.title3d span{background:linear-gradient(180deg,#fff 20%,#ffe1e4 55%,#FF5A6A)!important;-webkit-background-clip:text!important;background-clip:text!important;filter:drop-shadow(0 0 18px rgba(255,90,106,.45))!important}
+.step.on h2.anim{background:linear-gradient(90deg,#fff 0%,#fff 30%,#FFD36B 50%,#fff 70%,#fff 100%)!important;background-size:250% 100%!important;-webkit-background-clip:text!important;background-clip:text!important}
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+.lights{position:fixed;left:0;right:0;top:0;height:34px;z-index:41;pointer-events:none;display:flex;justify-content:space-around;padding:0 2vw;
+  background:radial-gradient(60% 18px at 50% -6px,transparent 96%,rgba(255,255,255,.18) 97%,transparent 100%) 0 0/9vw 34px repeat-x}
+.lights i{width:10px;height:16px;margin-top:12px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:var(--c);box-shadow:0 0 12px 3px var(--c);animation:blink 1.6s ease-in-out infinite;animation-delay:var(--d)}
+@keyframes blink{50%{opacity:.25;box-shadow:0 0 2px 0 var(--c)}}
+.noel-hat{position:absolute;left:50%;top:-34px;width:110px;transform:translateX(-30%) rotate(18deg) translateZ(80px);pointer-events:none;filter:drop-shadow(0 8px 10px rgba(0,0,0,.4))}
+.noel-ribbon{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;padding:6px 14px;border-radius:999px;background:linear-gradient(90deg,#C8102E,#FF5A6A);color:#fff;font:700 15px Sora,Inter,sans-serif;box-shadow:0 8px 24px -8px rgba(255,90,106,.7)}
+#music{position:fixed;right:16px;bottom:16px;z-index:60;display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid rgba(255,211,107,.5);background:rgba(16,24,48,.85);color:#FFD36B;font:600 15px Inter,sans-serif;cursor:pointer;backdrop-filter:blur(6px)}
+#music.on{background:#FFD36B;color:#101830}
+#music .eq{display:inline-flex;gap:2px;align-items:flex-end;height:14px}
+#music .eq b{width:3px;height:40%;background:currentColor;border-radius:2px}
+#music.on .eq b{animation:eq .8s ease-in-out infinite}#music.on .eq b:nth-child(2){animation-delay:.2s}#music.on .eq b:nth-child(3){animation-delay:.4s}
+@keyframes eq{50%{height:100%}}
+@media (max-width:700px){#music{bottom:84px;right:10px;padding:8px 12px;font-size:13px}.lights{height:26px}.lights i:nth-child(n+9){display:none}}
+@media (prefers-reduced-motion:reduce){.lights i{animation:none}}
+.hint{top:40px!important}
