@@ -365,20 +365,26 @@
     $("#pw-ess").href = lienPay(FL.links && FL.links.essentiel);
     $("#pw-pro").href = lienPay(FL.links && FL.links.pro);
     $("#pw-ess").closest(".pw-card").hidden = why === "envoi" || tier() === "essentiel";
-    $("#pw-err").hidden = true; $("#pw-restore-box").hidden = true;
+    $("#pw-err").hidden = true; $("#pw-restore-box").hidden = true; $("#pw-code-box").hidden = true;
     $("#paywall").hidden = false;
   }
   $$("[data-close-pw]").forEach(function (b) { b.addEventListener("click", function () { $("#paywall").hidden = true; }); });
-  $("#pw-restore").addEventListener("click", function () { $("#pw-restore-box").hidden = false; $("#pw-mail").value = (S.profil && S.profil.email) || ""; $("#pw-mail").focus(); });
+  $("#pw-restore").addEventListener("click", function () { $("#pw-restore-box").hidden = false; $("#pw-code-box").hidden = true; $("#pw-mail").value = (S.profil && S.profil.email) || ""; $("#pw-mail").focus(); });
   $("#pw-restore-go").addEventListener("click", async function () {
     var b = this; b.disabled = true; $("#pw-err").hidden = true;
     try { var d = await api("restaurer", { email: $("#pw-mail").value.trim() }); S.pass = { tier: d.tier, email: d.email, v: d.jeton }; save(); majPass(); $("#paywall").hidden = true; toast("Pass " + (d.tier === "pro" ? "Pro" : "Essentiel") + " récupéré ✓"); }
     catch (e) { $("#pw-err").textContent = e.message; $("#pw-err").hidden = false; } finally { b.disabled = false; }
   });
+  $("#pw-code").addEventListener("click", function () { $("#pw-code-box").hidden = false; $("#pw-restore-box").hidden = true; $("#pw-code-in").focus(); });
+  $("#pw-code-go").addEventListener("click", async function () {
+    var b = this; b.disabled = true; $("#pw-err").hidden = true;
+    try { var d = await api("code_pass", { code: $("#pw-code-in").value.trim() }); S.pass = { tier: d.tier, email: d.email, v: d.jeton, invite: true }; save(); majPass(); $("#paywall").hidden = true; toast("Code activé : tout est débloqué ✓"); }
+    catch (e) { $("#pw-err").textContent = e.message; $("#pw-err").hidden = false; } finally { b.disabled = false; }
+  });
   function majPass() {
     var b = $("#pass-btn"); if (!b) return;
     b.hidden = !FL.pay;
-    if (FL.pay) { $("#free").hidden = true; var t = tier(); b.textContent = t === "pro" ? "Pass Pro ✓" : t === "essentiel" ? "Pass Essentiel ✓" : "Débloquer le Pass"; b.classList.toggle("on", !!t); }
+    if (FL.pay) { $("#free").hidden = true; var t = tier(); b.textContent = S.pass && S.pass.invite ? "Accès offert ✓" : t === "pro" ? "Pass Pro ✓" : t === "essentiel" ? "Pass Essentiel ✓" : "Débloquer le Pass"; b.classList.toggle("on", !!t); }
     if (galFait) galerie();
     if (cur) majAuto();
   }
@@ -494,7 +500,7 @@
       save(); closeSheet(); renderList(); badge();
       toast(m === "lba" ? "Candidature envoyée ! Le recruteur te répondra par mail." : "Candidature envoyée" + (s.via === "gmail" ? " depuis ton Gmail" : "") + " !" + (s.relanceAuto ? " Relance auto dans 7 jours." : ""));
     } catch (e) {
-      if (e.status === 402) { paywall("envoi"); return; }
+      if (e.status === 402) { if (S.pass && S.pass.invite) { delete S.pass; save(); majPass(); } paywall("envoi"); return; }
       if (/reconnecte ton gmail/i.test(e.message)) { delete S.gmail; save(); majGmail(); }
       else if (e.status === 401 || /vérifie à nouveau/i.test(e.message)) { if (gmailOk()) delete S.gmail; else delete S.jeton; save(); majGmail(); }
       toast(e.message);
