@@ -1,5 +1,5 @@
 /* TissaWeb — appli alternance.
-   Profil, textes et suivi : gardés uniquement dans ce navigateur (localStorage, clé tw-alt).
+   Profil, textes et suivi : dans ce navigateur (localStorage, clé tw-alt) + sauvegarde dans le compte (alt_comptes, actions compte / compte_save).
    Serveur (fonction tw-alternance) : reçoit seulement secteur + ville + mot-clé pour la recherche.
    Si la rédaction IA est activée côté serveur, le profil est envoyé pour écrire le texte (rien n'est stocké). */
 (function () {
@@ -13,7 +13,8 @@
   /* ---------- état ---------- */
   var S = { profil: null, suivi: {}, masques: {}, zone: "ville" };
   try { var saved = JSON.parse(localStorage.getItem(KEY) || "null"); if (saved) S = Object.assign(S, saved); } catch (e) {}
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function store() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function save() { S.maj = Date.now(); store(); if (S.compte) { clearTimeout(save.t); save.t = setTimeout(pousse, 2500); } }
   var R = { data: null, page: 1, items: [], taille: "tout", loading: false };
   var IA = false, FL = {}, infoP = null;
   function keyOf(x) { return x.siret || x.id || x.siren; }
@@ -712,10 +713,101 @@
   }
 
   $("#reset").addEventListener("click", function () {
-    if (!confirm("Effacer ton profil, ton CV, tes textes et ton suivi de cet appareil ?")) return;
-    try { localStorage.removeItem(KEY); } catch (e) {}
-    CV.fichiers.del("cv").then(function () { location.reload(); });
+    if (!confirm(S.compte ? "Supprimer ton compte et toutes tes données (profil, CV, textes, suivi) ? C'est définitif." : "Effacer ton profil, ton CV, tes textes et ton suivi de cet appareil ?")) return;
+    var fin = function () { try { localStorage.removeItem(KEY); } catch (e) {} CV.fichiers.del("cv").finally(function () { location.reload(); }); };
+    if (S.compte) api("compte_suppr", { cjeton: S.compte.cj }).then(fin, function (e) { toast(e.message); }); else fin();
   });
+
+  /* ---------- compte (sauvegarde sur le serveur) ---------- */
+  function donnees() { var d = JSON.parse(JSON.stringify(S)); delete d.compte; delete d.pass; delete d.maj; return d; }
+  function localVide() { return !S.profil && !Object.keys(S.suivi || {}).length && !S.cvMode; }
+  function appliquePass(p) {
+    if (!p || !p.v) return;
+    if (S.pass && S.pass.v === p.v) return;
+    S.pass = { tier: p.tier, email: p.email, v: p.v, invite: !!p.invite }; store(); majPass();
+  }
+  function syncTxt(t) { var el = $("#cp-sync"); if (el) el.textContent = t; }
+  async function pousse() {
+    if (!S.compte) return;
+    syncTxt("Sauvegarde…");
+    try {
+      var d = await api("compte_save", { cjeton: S.compte.cj, data: donnees(), pass: S.pass && S.pass.v });
+      S.maj = Date.parse(d.maj) || S.maj; store(); appliquePass(d.pass); syncTxt("Tout est sauvegardé ✓");
+    } catch (e) { if (e.status === 401) deconnexion(true); else syncTxt("Pas de connexion : sauvegarde au prochain changement"); }
+  }
+  // arrivée d'un compte (connexion ou ouverture de l'appli) : on garde la version la plus récente
+  function recoit(d, nouveau) {
+    S.compte = { email: d.email, cj: d.cjeton || S.compte.cj, google: !!d.google };
+    var serveur = d.maj ? Date.parse(d.maj) : 0;
+    if (d.data && (localVide() || serveur > (S.maj || 0) + 1000)) {
+      var garde = { compte: S.compte, pass: S.pass };
+      S = Object.assign({ profil: null, suivi: {}, masques: {}, zone: "ville" }, d.data, garde, { maj: serveur });
+      appliquePass(d.pass); store();
+      sessionStorage.setItem("tw-alt-toast", nouveau ? "Content de te revoir ! Tes données sont récupérées ✓" : "");
+      location.replace(location.pathname + location.hash); return true;
+    }
+    store(); appliquePass(d.pass); majCompte();
+    if (nouveau || !d.data || (S.maj || 0) > serveur + 1000) pousse();
+    return false;
+  }
+  function deconnexion(expire) {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    CV.fichiers.del("cv").finally(function () {
+      if (expire) sessionStorage.setItem("tw-alt-toast", "Ta session a expiré, reconnecte-toi");
+      location.replace(location.pathname);
+    });
+  }
+  var cpMode = "new";
+  function majCompte() {
+    var on = !!S.compte;
+    $("#acc-btn").hidden = !on;
+    $("#cp-out").hidden = on; $("#cp-on").hidden = !on;
+    $("#cp-x").hidden = !on;
+    $("#cp-t").textContent = on ? "Ton compte" : cpMode === "login" ? "Content de te revoir" : "Crée ton compte, c'est gratuit";
+    $("#cp-sub").hidden = on;
+    if (on) { $("#cp-email").textContent = S.compte.email; $("#cp-av").textContent = S.compte.email.charAt(0).toUpperCase(); }
+  }
+  function ouvreCompte() { $("#cp-err").hidden = true; majCompte(); $("#compte").hidden = false; document.body.style.overflow = "hidden"; }
+  function fermeCompte() { if (!S.compte) return; $("#compte").hidden = true; document.body.style.overflow = ""; }
+  $$("[data-close-cp]").forEach(function (b) { b.addEventListener("click", fermeCompte); });
+  $("#acc-btn").addEventListener("click", ouvreCompte);
+  $$("[data-cpm]").forEach(function (b) { b.addEventListener("click", function () {
+    cpMode = b.dataset.cpm;
+    $$("[data-cpm]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    $("#cp-go").textContent = cpMode === "login" ? "Se connecter" : "Créer mon compte";
+    $("#cp-hint").hidden = cpMode === "login"; $("#cp-oubli").hidden = cpMode !== "login";
+    $("#cp-mdp").autocomplete = cpMode === "login" ? "current-password" : "new-password";
+    $("#cp-err").hidden = true; majCompte();
+  }); });
+  $("#cp-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var b = $("#cp-go"); b.disabled = true; $("#cp-err").hidden = true;
+    try {
+      var d = await api(cpMode === "login" ? "connexion" : "inscription", { email: $("#cp-mail").value.trim(), mdp: $("#cp-mdp").value, nom: S.profil ? ((S.profil.prenom || "") + " " + (S.profil.nom || "")).trim() : "" });
+      if (!recoit(d, true)) { $("#compte").hidden = true; document.body.style.overflow = ""; toast(cpMode === "login" ? "Connecté ✓" : "Compte créé ✓ Tout est sauvegardé"); }
+    } catch (err) { $("#cp-err").textContent = err.message; $("#cp-err").hidden = false; }
+    finally { b.disabled = false; }
+  });
+  $("#cp-google").addEventListener("click", async function () {
+    await getInfo();
+    if (!FL.gclient) { $("#cp-err").textContent = "Connexion Google indisponible pour le moment, utilise ton adresse mail"; $("#cp-err").hidden = false; return; }
+    var st = "L" + Array.from(crypto.getRandomValues(new Uint8Array(16)), function (x) { return x.toString(16).padStart(2, "0"); }).join("");
+    try { sessionStorage.setItem("tw-alt-gstate", st); } catch (e) {}
+    location.href = "https://accounts.google.com/o/oauth2/v2/auth?" + new URLSearchParams({ client_id: FL.gclient, redirect_uri: GREDIR, response_type: "code", scope: "openid email profile", state: st, prompt: "select_account" }).toString();
+  });
+  $("#cp-logout").addEventListener("click", function () {
+    if (!confirm("Te déconnecter ? Tes données restent sauvegardées dans ton compte et seront retirées de cet appareil.")) return;
+    deconnexion(false);
+  });
+  function demarreCompte() {
+    var t = sessionStorage.getItem("tw-alt-toast"); if (t) { sessionStorage.removeItem("tw-alt-toast"); setTimeout(function () { toast(t); }, 500); }
+    var g = sessionStorage.getItem("tw-alt-login");
+    if (g) { sessionStorage.removeItem("tw-alt-login"); try { if (recoit(JSON.parse(g), true)) return; toast("Connecté avec Google ✓"); } catch (e) {} }
+    majCompte();
+    if (!S.compte) { ouvreCompte(); return; }
+    api("compte", { cjeton: S.compte.cj, pass: S.pass && S.pass.v }).then(function (d) { recoit(d, false); })
+      .catch(function (e) { if (e.status === 401) deconnexion(true); });
+  }
 
   /* ---------- démarrage ---------- */
   fillForm(); badge();
@@ -723,6 +815,7 @@
   if (location.hash === "#cv" && !S.profil) toast("Remplis d'abord ton profil, ensuite on fait ton CV");
   tab(start);
   getInfo();
+  demarreCompte();
 
   /* ---------- appli installable ---------- */
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("/alternance/sw.js", { scope: "/alternance/" }).catch(function () {});

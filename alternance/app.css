@@ -321,3 +321,23 @@ fieldset{border-color:var(--line);box-shadow:var(--shadow)}
 .pw-small::before{content:"🔒 ";}
 #pw-code-box,#pw-restore-box{padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
 .toast{background:#15162E;border:1px solid rgba(185,174,255,.25)}
+
+/* Compte */
+.pill-acc{appearance:none;cursor:pointer;background:rgba(255,255,255,.06);color:#E4E0FF;min-height:34px}
+.cp-in{max-width:480px}
+#compte .sheet-head h3{font:400 italic 27px/1.1 var(--serif);letter-spacing:0}
+#compte .sheet-sub{margin-top:6px;line-height:1.45;color:#B9BBD3}
+.cp-google{min-height:52px;font-size:16px;box-shadow:var(--shadow)}
+.cp-or{display:flex;align-items:center;gap:12px;margin:2px 0;color:var(--muted);font-size:13px}
+.cp-or::before,.cp-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.cp-seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:12px;background:#ECEBF3}
+.cp-seg button{appearance:none;border:0;border-radius:9px;min-height:40px;background:transparent;font:650 14px var(--body);color:var(--muted);cursor:pointer}
+.cp-seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 2px 8px -3px rgba(40,30,120,.25)}
+.cp-form{display:grid;gap:14px}
+.cp-form .btn{min-height:52px;margin-top:2px}
+.cp-small{text-align:center}
+.cp-small::before{content:none}
+.cp-card{display:flex;align-items:center;gap:14px;padding:16px;border-radius:16px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow)}
+.cp-card b{display:block;font:700 16px var(--display);word-break:break-all}
+.cp-card small{color:var(--muted);font-size:13.5px}
+.cp-av{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;font:700 18px var(--display)}

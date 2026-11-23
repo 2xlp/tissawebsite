@@ -31,6 +31,7 @@
     <button class="pill pill-btn" id="install" hidden>Installer l'appli</button>
     <span class="pill" id="free">Gratuit</span>
     <button class="pill pill-btn pill-pass" id="pass-btn" hidden>Pass</button>
+    <button class="pill pill-acc" id="acc-btn" hidden>Mon compte</button>
   </div>
 </header>
 
@@ -42,7 +43,7 @@
       <p class="lead">TissAlternance trouve les entreprises qui emploient autour de chez toi, crée ton CV, écrit ta lettre de motivation à leur nom et te dit quand relancer. Toi, tu relis et tu envoies.</p>
       <div class="hero-cta">
         <a class="btn btn-accent" href="#app" data-go="profil">Commencer, c'est 2 minutes</a>
-        <span class="hero-note">Gratuit · tes infos restent sur ton téléphone.</span>
+        <span class="hero-note">Gratuit · tout est sauvegardé dans ton compte.</span>
       </div>
     </div>
     <div class="hero-vis" aria-hidden="true">
@@ -71,7 +72,7 @@
   <section class="view" id="v-profil" role="tabpanel" aria-labelledby="t-profil">
     <div class="vhead">
       <h2>Ton profil</h2>
-      <p>Il sert à écrire ton CV et tes candidatures. Rien n'est envoyé sur nos serveurs : tout reste sur ton appareil.</p>
+      <p>Il sert à écrire ton CV et tes candidatures. Il est sauvegardé dans ton compte : tu le retrouves sur tous tes appareils.</p>
     </div>
     <form id="f-profil" class="form" novalidate>
       <fieldset>
@@ -346,6 +347,32 @@
   </div>
 </div>
 
+<div class="sheet" id="compte" role="dialog" aria-modal="true" aria-labelledby="cp-t" hidden>
+  <div class="sheet-bg" data-close-cp></div>
+  <div class="sheet-in cp-in">
+    <div class="sheet-head"><div><p class="sheet-k">Ton compte TissAlternance</p><h3 id="cp-t">Crée ton compte, c'est gratuit</h3><p class="sheet-sub" id="cp-sub">Ton profil, ton CV, ton suivi et ton Pass sont sauvegardés : tu les retrouves sur tous tes appareils, même si tu réinstalles l'appli.</p></div><button class="x" id="cp-x" data-close-cp aria-label="Fermer" hidden>×</button></div>
+    <div class="sheet-body">
+      <div id="cp-out">
+        <button type="button" class="btn btn-wide gm-btn cp-google" id="cp-google"><span class="gm-g" aria-hidden="true">G</span>Continuer avec Google</button>
+        <p class="cp-or"><span>ou avec ton adresse mail</span></p>
+        <div class="cp-seg" role="group" aria-label="Type de connexion"><button type="button" data-cpm="new" aria-pressed="true">Créer un compte</button><button type="button" data-cpm="login" aria-pressed="false">J'ai déjà un compte</button></div>
+        <form id="cp-form" class="cp-form" novalidate>
+          <label>Adresse mail<input id="cp-mail" type="email" autocomplete="email" inputmode="email" required></label>
+          <label>Mot de passe <span class="opt" id="cp-hint">8 caractères minimum</span><input id="cp-mdp" type="password" autocomplete="new-password" minlength="8" required></label>
+          <button class="btn btn-accent btn-wide" id="cp-go" type="submit">Créer mon compte</button>
+        </form>
+        <p class="pw-small cp-small" id="cp-oubli" hidden>Mot de passe oublié ? Écris à <a href="mailto:contact@tissaweb.fr">contact@tissaweb.fr</a></p>
+        <p class="pw-small cp-small">En créant un compte, tu acceptes que tes données de l'appli soient sauvegardées chez nous (<a href="/confidentialite.html#alternance">Confidentialité</a>).</p>
+      </div>
+      <div id="cp-on" hidden>
+        <div class="cp-card"><span class="cp-av" id="cp-av">?</span><div><b id="cp-email"></b><small id="cp-sync">Tout est sauvegardé ✓</small></div></div>
+        <button type="button" class="btn btn-ghost btn-wide" id="cp-logout">Se déconnecter de cet appareil</button>
+      </div>
+      <p class="err" id="cp-err" role="alert" hidden></p>
+    </div>
+  </div>
+</div>
+
 <div class="sheet" id="paywall" role="dialog" aria-modal="true" aria-labelledby="pw-t" hidden>
   <div class="sheet-bg" data-close-pw></div>
   <div class="sheet-in">
@@ -386,7 +413,7 @@
 
 <footer class="foot">
   <div class="wrap">
-    <p><b>Comment ça marche :</b> les entreprises viennent de services publics : La bonne alternance (offres et entreprises qui recrutent des alternants) et l'annuaire des entreprises de l'État (données Sirene de l'Insee). Ton profil, ton CV, tes textes et ton suivi sont gardés uniquement sur ton appareil ; nos serveurs reçoivent seulement le secteur et la ville de ta recherche, sauf si tu demandes à l'appli d'envoyer une candidature pour toi (détails dans la page Confidentialité).</p>
+    <p><b>Comment ça marche :</b> les entreprises viennent de services publics : La bonne alternance (offres et entreprises qui recrutent des alternants) et l'annuaire des entreprises de l'État (données Sirene de l'Insee). Ton profil, ton CV, tes textes et ton suivi sont sauvegardés dans ton compte pour que tu les retrouves partout ; ils ne sont jamais revendus ni partagés (détails dans la page Confidentialité).</p>
     <p class="foot-l">TissAlternance, une appli gratuite créée à Dijon par <a href="/">TissaWeb</a> · <a href="/mentions-legales.html">Mentions légales</a> · <a href="/confidentialite.html#alternance">Confidentialité</a> · <button class="linklike" id="reset">Effacer mes données</button></p>
   </div>
 </footer>
