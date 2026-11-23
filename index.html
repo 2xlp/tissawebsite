@@ -90,7 +90,8 @@ section{padding-block:112px}
 .topnote b{font-weight:700}
 .topnote .tn-new{display:inline-block;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.18);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .topnote a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
-@media (max-width:640px){.topnote{font-size:13px}.topnote .tn-why{display:none}}
+.topnote .tn-why-m{display:none}
+@media (max-width:640px){.topnote{font-size:13px}.topnote .tn-why{display:none}.topnote .tn-why-m{display:inline}}
 .site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(235,238,241,.9);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
 .nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding-block:14px;position:relative}
 .logo{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.35rem;letter-spacing:-.035em;justify-self:start}
@@ -760,7 +761,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
 </head>
 <body>
 <a class="skip" href="#main-content">Aller au contenu</a>
-<div class="topnote" role="note"><div class="wrap"><span class="tn-new">Nouveau</span><span><b>TissAlternance</b>, notre appli gratuite qui aide les étudiants à décrocher une alternance dans les commerces de Dijon.<span class="tn-why"> Pourquoi ? Pour que vous receviez des candidatures d'alternants sérieuses et près de chez vous, et pour vous montrer qu'on crée aussi des outils sur mesure.</span></span><a href="#appli-alternance">En savoir plus →</a></div></div>
+<div class="topnote" role="note"><div class="wrap"><span class="tn-new">Nouveau</span><span><b>TissAlternance</b>, notre appli gratuite qui aide les étudiants à décrocher une alternance dans les commerces de Dijon.<span class="tn-why-m"> Pour vous : des candidatures d'alternants sérieuses, près de chez vous.</span><span class="tn-why"> Pourquoi ? Pour que vous receviez des candidatures d'alternants sérieuses et près de chez vous, et pour vous montrer qu'on crée aussi des outils sur mesure.</span></span><a href="#appli-alternance">En savoir plus →</a></div></div>
 <!-- =================== 1. HEADER =================== -->
 <header class="site-header">
   <div class="wrap nav">
