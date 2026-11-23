@@ -197,3 +197,11 @@ label.btn{display:inline-flex;position:relative}
 @media (min-width:980px){.gal{flex-wrap:wrap;overflow:visible;margin:0 0 18px;padding:4px 0 6px}.tpl{width:160px}}
 @media (max-width:979px){.cv-side{order:-1}}
 #cv-voir-haut{margin-top:4px}
+
+.src{margin-bottom:10px}
+.tag.hot{background:#0B7A55;color:#fff}
+.desc{font-size:13.5px;color:var(--ink-2);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.auto{display:grid;gap:10px;padding:14px;border-radius:14px;background:#fff;border:2px solid var(--accent)}
+.auto-t{margin:0;font:700 15px var(--display);color:var(--accent)}
+.auto-i{margin:0;font-size:14px;color:var(--ink-2)}
+#vf-step2{display:grid}

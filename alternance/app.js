@@ -15,7 +15,9 @@
   try { var saved = JSON.parse(localStorage.getItem(KEY) || "null"); if (saved) S = Object.assign(S, saved); } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
   var R = { data: null, page: 1, items: [], taille: "tout", loading: false };
-  var IA = false;
+  var IA = false, FL = {}, infoP = null;
+  function keyOf(x) { return x.siret || x.id || x.siren; }
+  function getInfo() { return infoP || (infoP = api("info").then(function (d) { FL = d || {}; IA = !!FL.ia; majSource(); return FL; }).catch(function () { return FL; })); }
 
   /* ---------- outils ---------- */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -87,19 +89,28 @@
     b.addEventListener("click", function () { R.taille = b.dataset.taille; $$("[data-taille]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); renderList(); });
   });
   $("#r-more").addEventListener("click", function () { search(R.page + 1); });
+  function source() { return FL.lba && S.source !== "sirene" ? "lba" : "sirene"; }
+  function majSource() {
+    $("#src-chips").hidden = !FL.lba;
+    $$("[data-source]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.source === source())); });
+    $("#tip-src").innerHTML = source() === "lba" ? "<b>Entreprises qui recrutent en alternance</b> (service public La bonne alternance) : offres publiées et entreprises qui embauchent souvent des alternants." : "<b>Astuce :</b> les PME répondent plus souvent aux candidatures spontanées. Les grands groupes passent plutôt par leur site carrières.";
+  }
+  $$("[data-source]").forEach(function (b) { b.addEventListener("click", function () { S.source = b.dataset.source; save(); majSource(); search(1); }); });
 
   async function search(page) {
     var p = S.profil; if (!p) { tab("profil"); return; }
     R.loading = true;
+    await getInfo();
     var list = $("#r-list");
     if (page === 1) { R.items = []; list.innerHTML = '<div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div>'; $("#r-resume").textContent = "Recherche en cours…"; }
     $("#r-more").disabled = true;
     try {
-      var d = await api("search", { secteur: p.secteur, ville: p.ville, q: p.secteur === "autre" ? p.q : "", zone: S.zone, page: page });
+      var d = await api("search", { source: source(), secteur: p.secteur, ville: p.ville, q: p.secteur === "autre" ? p.q : "", zone: S.zone, page: page });
       R.data = d; R.page = d.page;
-      var seen = {}; R.items.forEach(function (x) { seen[x.siret || x.siren] = 1; });
-      d.results.forEach(function (x) { if (!seen[x.siret || x.siren]) R.items.push(x); });
-      $("#r-resume").innerHTML = "<b>" + d.total.toLocaleString("fr-FR") + "</b> entreprise" + (d.total > 1 ? "s" : "") + " en " + esc(low1(d.secteur)) + (S.zone === "dep" ? " dans le département " + esc(d.commune.dep) : " à " + esc(d.commune.nom)) + ", classées de la plus proche à la plus loin.";
+      var seen = {}; R.items.forEach(function (x) { seen[keyOf(x)] = 1; });
+      d.results.forEach(function (x) { if (!seen[keyOf(x)]) R.items.push(x); });
+      var nOff = d.results.filter(function (x) { return x.type === "offre"; }).length;
+      $("#r-resume").innerHTML = d.source === "lba" ? "<b>" + d.total + "</b> entreprise" + (d.total > 1 ? "s" : "") + " qui recrute" + (d.total > 1 ? "nt" : "") + " en alternance" + (nOff ? " (dont <b>" + nOff + "</b> offre" + (nOff > 1 ? "s" : "") + " publiée" + (nOff > 1 ? "s" : "") + ")" : "") + (S.zone === "dep" ? " autour de " : " près de ") + esc(d.commune.nom) + ", les offres d'abord." : "<b>" + d.total.toLocaleString("fr-FR") + "</b> entreprise" + (d.total > 1 ? "s" : "") + " en " + esc(low1(d.secteur)) + (S.zone === "dep" ? " dans le département " + esc(d.commune.dep) : " à " + esc(d.commune.nom)) + ", classées de la plus proche à la plus loin.";
       $("#r-more").hidden = d.page >= d.pages;
       renderList();
     } catch (e) {
@@ -110,17 +121,22 @@
   }
 
   function cardHtml(x, mode) {
-    var id = x.siret || x.siren, s = S.suivi[id];
+    var id = keyOf(x), s = S.suivi[id];
     var court = nomCourt(x.nom);
     var tags = [];
+    if (x.type === "offre") tags.push('<span class="tag hot">Offre d\'alternance</span>');
+    if (x.type === "recrute") tags.push('<span class="tag g">Recrute des alternants</span>');
+    if (x.debut) tags.push('<span class="tag">Début ' + esc(new Date(x.debut).toLocaleDateString("fr-FR", { month: "short", year: "numeric" })) + "</span>");
+    if (x.duree) tags.push('<span class="tag">' + esc(x.duree) + "</span>");
     if (x.km != null) tags.push('<span class="tag">' + (x.km < 1 ? "moins de 1 km" : String(x.km).replace(".", ",") + " km") + "</span>");
     if (x.effectif) tags.push('<span class="tag">' + esc(x.effectif) + "</span>");
-    if (!x.groupe) tags.push('<span class="tag g">PME</span>');
+    if (!x.groupe && x.type !== "recrute") tags.push('<span class="tag g">PME</span>');
     if (s && mode !== "suivi") tags.push('<span class="tag g">' + esc(LABELS[s.statut] || "Postulé") + "</span>");
     return '<article class="card' + (s ? " done" : "") + '" data-id="' + esc(id) + '">' +
-      "<div><h3>" + esc(court) + "</h3>" + (court !== x.nom ? '<p class="full">' + esc(x.nom) + "</p>" : "") + "</div>" +
+      (x.titre ? "<div><h3>" + esc(x.titre) + '</h3><p class="full"><b>' + esc(court) + "</b></p></div>" : "<div><h3>" + esc(court) + "</h3>" + (court !== x.nom ? '<p class="full">' + esc(x.nom) + "</p>" : "") + "</div>") +
       '<div class="meta"><span class="tag">' + esc(x.activite) + "</span>" + tags.join("") + "</div>" +
       '<p class="addr">' + esc(x.adresse) + "</p>" +
+      (x.description && mode !== "suivi" ? '<p class="desc">' + esc(x.description) + "</p>" : "") +
       (x.dirigeant ? '<p class="who">Dirigeant : <b>' + esc(x.dirigeant.nom) + "</b>" + (x.dirigeant.qualite ? ", " + esc(low1(x.dirigeant.qualite)) : "") + "</p>" : "") +
       (mode === "suivi" ? suiviBloc(id, s) :
         '<div class="card-act"><button class="btn btn-accent" data-open="' + esc(id) + '">' + (s ? "Revoir ma candidature" : "Préparer ma candidature") + '</button><button class="btn btn-ghost" data-hide="' + esc(id) + '" aria-label="Masquer ' + esc(court) + '">Masquer</button></div>') +
@@ -129,7 +145,7 @@
   function renderList() {
     var list = $("#r-list");
     var items = R.items.filter(function (x) {
-      if (S.masques[x.siret || x.siren]) return false;
+      if (S.masques[keyOf(x)]) return false;
       if (R.taille === "petit") return !x.groupe;
       if (R.taille === "groupe") return x.groupe;
       return true;
@@ -143,7 +159,7 @@
     if (h) { S.masques[h.dataset.hide] = 1; save(); renderList(); toast("Entreprise masquée"); }
   });
   function findItem(id) {
-    for (var i = 0; i < R.items.length; i++) if ((R.items[i].siret || R.items[i].siren) === id) return R.items[i];
+    for (var i = 0; i < R.items.length; i++) if (keyOf(R.items[i]) === id) return R.items[i];
     return S.suivi[id] && S.suivi[id].e;
   }
 
@@ -178,7 +194,8 @@
       "Je me permets de vous adresser ma candidature pour un contrat en alternance en tant que " + p.metier + ", dans le cadre de ma formation " + p.formation + ecoleTxt(p) + ", à partir de " + p.debut + ". " + (act ? "Votre activité (" + act + ") m'intéresse particulièrement" : "Votre entreprise m'intéresse particulièrement") + ", et j'aimerais apprendre le métier au sein de " + n + ".",
       t.etudiant + " en " + p.formation + ecoleTxt(p) + ", je souhaite rejoindre " + n + " pour mon alternance" + (p.duree ? " de " + p.duree : "") + " à partir de " + p.debut + ", sur un poste de " + p.metier + ". Une entreprise comme la vôtre" + (v ? ", implantée à " + v + "," : "") + " est l'endroit idéal pour apprendre sur le terrain.",
     ];
-    var parts = [ouverture(x), "", intros[hash(x.siren) % intros.length]];
+    if (x.type === "offre" && x.titre) intros = ["Je vous adresse ma candidature pour votre offre d'alternance « " + x.titre + " ». Actuellement " + t.inscrit + " en " + p.formation + ecoleTxt(p) + ", je suis disponible à partir de " + p.debut + " et ce poste correspond exactement à ce que je souhaite apprendre."];
+    var parts = [ouverture(x), "", intros[hash(keyOf(x)) % intros.length]];
     var mid = [];
     if (p.rythme) mid.push("Le rythme de ma formation est le suivant : " + low1(p.rythme).replace(/[.\s]+$/, "") + ".");
     var e = phraseExp(p); if (e) mid.push(e);
@@ -213,23 +230,23 @@
       "", p.prenom + " " + p.nom,
     ].join("\n");
   }
-  function texteRelance(p, x, s) {
+  function texteRelance(p, x, s, auto) {
     var n = nomCourt(x.nom);
     return [ouverture(x), "",
       "Je me permets de revenir vers vous au sujet de ma candidature pour un contrat en alternance au poste de " + p.metier + ", que je vous ai adressée le " + dateFr(s.date) + ".",
-      "", "Mon intérêt pour " + n + " est toujours le même, et je reste " + T(p).disponible + " pour un échange, même court, par téléphone ou dans vos locaux. Je vous joins à nouveau mon CV.",
+      "", "Mon intérêt pour " + n + " est toujours le même, et je reste " + T(p).disponible + " pour un échange, même court, par téléphone ou dans vos locaux." + (auto ? "" : " Je vous joins à nouveau mon CV."),
       "", "Je vous remercie par avance pour votre retour et vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.",
       "", signature(p)].join("\n");
   }
-  function objet(p, doc) {
-    return (doc === "relance" ? "Relance – " : "") + "Candidature en alternance – " + p.metier + " – " + p.prenom + " " + p.nom;
+  function objet(p, doc, x) {
+    return (doc === "relance" ? "Relance – " : "") + "Candidature en alternance – " + (x && x.titre ? x.titre : p.metier) + " – " + p.prenom + " " + p.nom;
   }
 
   /* ---------- panneau ---------- */
   var cur = null, curDoc = "mail";
   function openSheet(x, doc) {
     if (!x) return;
-    cur = x; var id = x.siret || x.siren, s = S.suivi[id];
+    cur = x; var id = keyOf(x), s = S.suivi[id];
     $("#sh-title").textContent = nomCourt(x.nom);
     $("#sh-sub").textContent = [x.activite, x.ville].filter(Boolean).join(" · ");
     $("#sh-to").value = s && s.to || "";
@@ -238,8 +255,10 @@
     $("#sh-links").innerHTML =
       '<a href="https://www.google.com/search?q=' + q + '" target="_blank" rel="noopener">Trouver son mail ou son site ↗</a>' +
       '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(nomCourt(x.nom) + " " + (x.adresse || "")) + '" target="_blank" rel="noopener">Voir sur la carte ↗</a>' +
-      '<a href="https://annuaire-entreprises.data.gouv.fr/entreprise/' + encodeURIComponent(x.siren) + '" target="_blank" rel="noopener">Fiche officielle ↗</a>';
-    $("#sh-done").textContent = s ? "Enregistrer" : "J'ai envoyé ma candidature";
+      (x.siren ? '<a href="https://annuaire-entreprises.data.gouv.fr/entreprise/' + encodeURIComponent(x.siren) + '" target="_blank" rel="noopener">Fiche officielle ↗</a>' : "") +
+      (x.apply && x.apply.url ? '<a href="' + esc(x.apply.url) + '" target="_blank" rel="noopener">' + (x.type === "offre" ? "Voir l'offre ↗" : "Sa page La bonne alternance ↗") + "</a>" : "") +
+      (x.apply && x.apply.phone ? '<a href="tel:' + esc(x.apply.phone.replace(/[^\d+]/g, "")) + '">Appeler ' + esc(x.apply.phone) + "</a>" : "");
+    $("#sh-done").textContent = s ? "Enregistrer" : "J'ai envoyé ma candidature moi-même";
     $("#sheet").hidden = false; document.body.style.overflow = "hidden";
     setDoc(doc || "mail").then(prepare);
     setTimeout(function () { $(".x", $("#sheet")).focus(); }, 50);
@@ -252,9 +271,9 @@
   async function setDoc(doc) {
     curDoc = doc;
     $$("[data-doc]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.doc === doc)); });
-    var p = S.profil, x = cur, id = x.siret || x.siren, s = S.suivi[id] || {};
+    var p = S.profil, x = cur, id = keyOf(x), s = S.suivi[id] || {};
     $("#sh-kind").textContent = doc === "relance" ? "Relance" : doc === "lettre" ? "Lettre de motivation" : "Candidature par mail";
-    $("#sh-objet").value = objet(p, doc);
+    $("#sh-objet").value = objet(p, doc, x);
     var saved = s.textes && s.textes[doc];
     if (saved) { $("#sh-texte").value = saved; $("#sh-gen").innerHTML = "Ton texte enregistré."; majMail(); return; }
     var modele = doc === "lettre" ? texteLettre(p, x) : doc === "relance" ? texteRelance(p, x, s) : texteMail(p, x);
@@ -276,6 +295,7 @@
     $("#sh-mail").href = "mailto:" + encodeURIComponent(to).replace(/%40/g, "@") + "?subject=" + encodeURIComponent($("#sh-objet").value) + "&body=" + encodeURIComponent(body);
   }
   ["#sh-to", "#sh-texte", "#sh-objet"].forEach(function (s) { $(s).addEventListener("input", majMail); });
+  $("#sh-to").addEventListener("input", function () { majAuto(); });
   $("#sh-texte").addEventListener("input", function () { clearTimeout(prepare.t); prepare.t = setTimeout(prepare, 600); });
 
   /* pièces jointes prêtes à l'avance : le partage doit partir tout de suite au toucher */
@@ -292,6 +312,7 @@
       pj.innerHTML = (PJ.cv ? "<span>CV : " + esc(PJ.cv.name) + "</span>" : '<span class="ko">Pas de CV : ajoute-le dans l\'onglet CV</span>') + "<span>Lettre : " + esc(PJ.lettre.name) + "</span>";
     } catch (e) { pj.innerHTML = '<span class="ko">' + esc(e.message) + "</span>"; }
     $("#sh-share").hidden = !canFiles;
+    majAuto();
     $("#sh-share").textContent = PJ.cv ? "Envoyer avec mon CV et ma lettre" : "Envoyer avec ma lettre";
   }
   $("#sh-share").addEventListener("click", function () {
@@ -312,7 +333,7 @@
   });
   $("#sh-mail").addEventListener("click", function () { if (!$("#sh-to").value.trim()) toast("Ajoute l'adresse de l'entreprise dans ta boîte mail"); });
   $("#sh-done").addEventListener("click", function () {
-    var x = cur, id = x.siret || x.siren, s = S.suivi[id];
+    var x = cur, id = keyOf(x), s = S.suivi[id];
     if (!s) s = S.suivi[id] = { e: x, statut: "envoye", date: new Date().toISOString(), textes: {} };
     s.to = $("#sh-to").value.trim();
     s.doc = curDoc === "relance" ? "mail" : curDoc;
@@ -322,6 +343,77 @@
     toast(curDoc === "relance" ? "Relance notée" : s.date && jours(s.date) === 0 ? "Bravo ! On te rappelle de relancer dans " + RELANCE_J + " jours." : "Enregistré");
   });
 
+
+
+  /* ---------- envoi automatique ---------- */
+  function modeAuto() {
+    if (!cur) return "";
+    if (cur.apply && cur.apply.recipient_id && FL.postuler) return "lba";
+    if (FL.envoi && /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test($("#sh-to").value.trim())) return "mail";
+    return "";
+  }
+  function majAuto() {
+    var m = modeAuto(), box = $("#sh-auto");
+    box.hidden = !m && !(FL.envoi && cur && !(cur.apply && cur.apply.recipient_id && FL.postuler));
+    $("#sh-auto-go").hidden = !m;
+    $("#sh-auto-rel").hidden = m !== "mail";
+    $("#sh-auto-info").innerHTML = m === "lba" ? "Ta candidature (texte + CV) part directement chez le recruteur par <b>La bonne alternance</b>. Il te répondra sur <b>" + esc(S.profil.email) + "</b>."
+      : m === "mail" ? "L'appli envoie ton mail avec ton CV et ta lettre en PDF depuis <b>candidatures@tissaweb.fr</b>, à ton nom. Les réponses arrivent sur <b>" + esc(S.profil.email) + "</b>."
+      : "Ajoute l'adresse mail de l'entreprise ci-dessus et l'appli enverra ta candidature à ta place, avec relance automatique.";
+  }
+  function dataUrl(f) { return new Promise(function (ok, ko) { var r = new FileReader(); r.onload = function () { ok(String(r.result).replace(/^data:[^;]*;/, "data:application/pdf;")); }; r.onerror = function () { ko(r.error); }; r.readAsDataURL(f); }); }
+  function corpsMail() {
+    return curDoc === "lettre" ? "Madame, Monsieur,\n\nVeuillez trouver ci-joint ma candidature (CV et lettre de motivation) pour un contrat en alternance.\n\nJe vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n" + signature(S.profil) : $("#sh-texte").value;
+  }
+  /* vérification de l'adresse de l'étudiant */
+  var verifOk = null;
+  function jetonValide() { return S.jeton && S.jeton.email === (S.profil.email || "").toLowerCase() ? S.jeton.v : null; }
+  function demanderVerif() {
+    return new Promise(function (ok) {
+      verifOk = ok;
+      $("#vf-mail").textContent = S.profil.email; $("#vf-code").value = ""; $("#vf-step2").hidden = true; $("#vf-err").hidden = true;
+      $("#verif").hidden = false; setTimeout(function () { $("#vf-send").focus(); }, 50);
+    });
+  }
+  function finVerif(v) { $("#verif").hidden = true; if (verifOk) { var f = verifOk; verifOk = null; f(v); } }
+  $$("[data-close-verif]").forEach(function (b) { b.addEventListener("click", function () { finVerif(null); }); });
+  $("#vf-send").addEventListener("click", async function () {
+    var b = this; b.disabled = true;
+    try { await api("code", { email: S.profil.email }); $("#vf-step2").hidden = false; $("#vf-code").focus(); toast("Code envoyé sur " + S.profil.email); }
+    catch (e) { $("#vf-err").textContent = e.message; $("#vf-err").hidden = false; } finally { b.disabled = false; }
+  });
+  $("#vf-ok").addEventListener("click", async function () {
+    var b = this; b.disabled = true;
+    try { var d = await api("verif", { email: S.profil.email, code: $("#vf-code").value.trim() }); S.jeton = { email: S.profil.email.toLowerCase(), v: d.jeton }; save(); finVerif(d.jeton); }
+    catch (e) { $("#vf-err").textContent = e.message; $("#vf-err").hidden = false; } finally { b.disabled = false; }
+  });
+  $("#sh-auto-go").addEventListener("click", async function () {
+    var m = modeAuto(), btn = this, x = cur; if (!m) return;
+    if (!PJ.cv) { toast("Ajoute d'abord ton CV (onglet CV)"); return; }
+    btn.disabled = true; var old = btn.textContent; btn.textContent = "Envoi en cours…";
+    try {
+      var id = keyOf(x), s = S.suivi[id] || (S.suivi[id] = { e: x, statut: "envoye", date: new Date().toISOString(), textes: {} });
+      if (m === "lba") {
+        var msg = curDoc === "lettre" ? $("#sh-texte").value : (s.textes && s.textes.lettre) || texteLettre(S.profil, x);
+        await api("postuler", { recipient_id: x.apply.recipient_id, profil: S.profil, cv: { name: PJ.cv.name, content: await dataUrl(PJ.cv) }, message: $("#sh-texte").value || msg });
+        s.via = "lba";
+      } else {
+        var j = jetonValide() || await demanderVerif();
+        if (!j) throw new Error("Adresse non vérifiée, envoi annulé");
+        var rel = $("#sh-auto-rel-cb").checked ? { subject: "Relance – " + $("#sh-objet").value, text: texteRelance(S.profil, x, { date: new Date().toISOString() }, true) } : null;
+        var d = await api("envoyer", { jeton: j, profil: S.profil, to: $("#sh-to").value.trim(), to_name: nomCourt(x.nom), subject: $("#sh-objet").value, text: corpsMail(),
+          attachments: [{ name: PJ.cv.name, content: await dataUrl(PJ.cv) }, { name: PJ.lettre.name, content: await dataUrl(PJ.lettre) }], relance: rel });
+        s.via = "auto"; s.envoiId = d.id; s.relanceAuto = d.relance_at || null;
+      }
+      s.statut = "envoye"; s.date = s.date || new Date().toISOString(); s.to = $("#sh-to").value.trim();
+      s.doc = curDoc === "relance" ? "mail" : curDoc; s.textes = s.textes || {}; s.textes[curDoc] = $("#sh-texte").value;
+      save(); closeSheet(); renderList(); badge();
+      toast(m === "lba" ? "Candidature envoyée ! Le recruteur te répondra par mail." : "Candidature envoyée !" + (s.relanceAuto ? " Relance auto dans 7 jours." : ""));
+    } catch (e) {
+      if (e.status === 401 || /vérifie à nouveau/i.test(e.message)) { delete S.jeton; save(); }
+      toast(e.message);
+    } finally { btn.disabled = false; btn.textContent = old; }
+  });
 
   /* ---------- CV ---------- */
   var CV = window.TACV;
@@ -469,7 +561,7 @@
     return null;
   }
   function lettreTexte() {
-    var id = cur.siret || cur.siren, s = S.suivi[id];
+    var id = keyOf(cur), s = S.suivi[id];
     if (curDoc === "lettre") return $("#sh-texte").value;
     return (s && s.textes && s.textes.lettre) || texteLettre(S.profil, cur);
   }
@@ -480,9 +572,10 @@
 
   /* ---------- suivi ---------- */
   var LABELS = { envoye: "Envoyée", relance: "Relancée", entretien: "Entretien", refus: "Refus", accepte: "Acceptée 🎉" };
-  function aRelancer(s) { return (s.statut === "envoye" && jours(s.date) >= RELANCE_J) || (s.statut === "relance" && s.relance && jours(s.relance) >= 14); }
+  function aRelancer(s) { if (s.relanceAuto) return false; return (s.statut === "envoye" && jours(s.date) >= RELANCE_J) || (s.statut === "relance" && s.relance && jours(s.relance) >= 14); }
   function suiviBloc(id, s) {
-    var info = "Envoyée le " + dateFr(s.date) + (s.relance ? " · relancée le " + dateFr(s.relance) : "");
+    var info = "Envoyée le " + dateFr(s.date) + (s.via === "lba" ? " via La bonne alternance" : s.via === "auto" ? " par l'appli" : "") + (s.relance ? " · relancée le " + dateFr(s.relance) : "");
+    if (s.relanceAuto) info += new Date(s.relanceAuto) > new Date() ? ' · <b>relance auto le ' + dateFr(s.relanceAuto) + '</b> <button class="linklike" data-annuler="' + esc(id) + '">annuler</button>' : " · relance auto envoyée le " + dateFr(s.relanceAuto);
     var opts = Object.keys(LABELS).map(function (k) { return '<option value="' + k + '"' + (k === s.statut ? " selected" : "") + ">" + LABELS[k] + "</option>"; }).join("");
     return '<p class="who">' + info + (aRelancer(s) ? ' · <b style="color:var(--warn)">à relancer</b>' : "") + "</p>" +
       '<div class="card-act">' + (aRelancer(s) ? '<button class="btn btn-accent" data-relance="' + esc(id) + '">Relancer</button>' : '<button class="btn btn-ghost" data-voir="' + esc(id) + '">Voir</button>') +
@@ -505,7 +598,8 @@
       '<div class="empty"><b>Pas encore de candidature</b>Va dans « Entreprises », prépare ta première candidature et clique sur « J\'ai envoyé ».</div>';
   }
   $("#s-list").addEventListener("click", function (e) {
-    var r = e.target.closest("[data-relance]"), v = e.target.closest("[data-voir]");
+    var r = e.target.closest("[data-relance]"), v = e.target.closest("[data-voir]"), an = e.target.closest("[data-annuler]");
+    if (an) { var sv = S.suivi[an.dataset.annuler]; api("annuler", { jeton: jetonValide(), id: sv.envoiId }).then(function () { sv.relanceAuto = null; save(); renderSuivi(); badge(); toast("Relance automatique annulée"); }).catch(function (er) { toast(er.message); }); return; }
     if (r) openSheet(S.suivi[r.dataset.relance].e, "relance");
     if (v) openSheet(S.suivi[v.dataset.voir].e, S.suivi[v.dataset.voir].doc || "mail");
   });
@@ -531,7 +625,7 @@
   var start = location.hash === "#suivi" ? "suivi" : !S.profil ? "profil" : location.hash === "#cv" || !S.cvMode ? "cv" : "recherche";
   if (location.hash === "#cv" && !S.profil) toast("Remplis d'abord ton profil, ensuite on fait ton CV");
   tab(start);
-  api("info").then(function (d) { IA = !!d.ia; }).catch(function () {});
+  getInfo();
 
   /* ---------- appli installable ---------- */
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("/alternance/sw.js", { scope: "/alternance/" }).catch(function () {});

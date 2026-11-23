@@ -232,6 +232,10 @@
       <h2>Entreprises autour de toi</h2>
       <p id="r-resume">Remplis ton profil pour lancer la recherche.</p>
     </div>
+    <div class="chips src" id="src-chips" role="group" aria-label="Quelles entreprises" hidden>
+      <button class="chip" data-source="lba" aria-pressed="true">Recrutent en alternance</button>
+      <button class="chip" data-source="sirene" aria-pressed="false">Toutes les entreprises</button>
+    </div>
     <div class="filters">
       <div class="chips" role="group" aria-label="Zone">
         <button class="chip" data-zone="ville" aria-pressed="true">Ma ville</button>
@@ -243,7 +247,7 @@
         <button class="chip" data-taille="groupe" aria-pressed="false">Grands groupes</button>
       </div>
     </div>
-    <p class="tip"><b>Astuce :</b> les PME répondent plus souvent aux candidatures spontanées. Les grands groupes passent plutôt par leur site carrières.</p>
+    <p class="tip" id="tip-src"><b>Astuce :</b> les PME répondent plus souvent aux candidatures spontanées. Les grands groupes passent plutôt par leur site carrières.</p>
     <div id="r-list" class="list" aria-live="polite"></div>
     <button class="btn btn-ghost btn-wide" id="r-more" hidden>Voir plus d'entreprises</button>
   </section>
@@ -283,6 +287,12 @@
       <label>Adresse mail de l'entreprise <span class="opt">si tu l'as trouvée</span><input id="sh-to" type="email" placeholder="contact@entreprise.fr"></label>
       <div class="links" id="sh-links"></div>
       <div class="pj" id="sh-pj"></div>
+      <div class="auto" id="sh-auto" hidden>
+        <p class="auto-t">Envoi automatique</p>
+        <p class="auto-i" id="sh-auto-info"></p>
+        <label class="check" id="sh-auto-rel"><input type="checkbox" id="sh-auto-rel-cb" checked> Relancer automatiquement dans 7 jours s'il n'y a pas de réponse</label>
+        <button class="btn btn-accent btn-wide" id="sh-auto-go">Envoyer ma candidature pour moi</button>
+      </div>
       <button class="btn btn-accent btn-wide" id="sh-share" hidden>Envoyer avec mon CV et ma lettre</button>
       <div class="sheet-actions">
         <button class="btn btn-ghost" id="sh-copy">Copier le texte</button>
@@ -310,11 +320,27 @@
   </div>
 </div>
 
+<div class="sheet" id="verif" role="dialog" aria-modal="true" aria-labelledby="vf-t" hidden>
+  <div class="sheet-bg" data-close-verif></div>
+  <div class="sheet-in">
+    <div class="sheet-head"><div><p class="sheet-k">Une seule fois</p><h3 id="vf-t">Vérifie ton adresse mail</h3></div><button class="x" data-close-verif aria-label="Fermer">×</button></div>
+    <div class="sheet-body">
+      <p>Pour envoyer des candidatures à ton nom, on vérifie que <b id="vf-mail"></b> est bien à toi. Les entreprises te répondront sur cette adresse.</p>
+      <button class="btn btn-ink btn-wide" id="vf-send">Recevoir mon code</button>
+      <div id="vf-step2" hidden>
+        <label>Code reçu par mail<input id="vf-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 chiffres"></label>
+        <button class="btn btn-accent btn-wide" id="vf-ok" style="margin-top:12px">Valider</button>
+      </div>
+      <p class="err" id="vf-err" role="alert" hidden></p>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <footer class="foot">
   <div class="wrap">
-    <p><b>Comment ça marche :</b> les entreprises viennent de l'annuaire public de l'État (données Sirene de l'Insee, entreprises actives avec au moins 3 salariés). Ton profil, ton CV, tes textes et ton suivi sont gardés uniquement sur ton appareil ; nos serveurs reçoivent seulement le secteur et la ville de ta recherche.</p>
+    <p><b>Comment ça marche :</b> les entreprises viennent de services publics : La bonne alternance (offres et entreprises qui recrutent des alternants) et l'annuaire des entreprises de l'État (données Sirene de l'Insee). Ton profil, ton CV, tes textes et ton suivi sont gardés uniquement sur ton appareil ; nos serveurs reçoivent seulement le secteur et la ville de ta recherche, sauf si tu demandes à l'appli d'envoyer une candidature pour toi (détails dans la page Confidentialité).</p>
     <p class="foot-l">TissAlternance, un outil <a href="/">TissaWeb</a>, Dijon · <a href="/mentions-legales.html">Mentions légales</a> · <a href="/confidentialite.html#alternance">Confidentialité</a> · <button class="linklike" id="reset">Effacer mes données</button></p>
   </div>
 </footer>
