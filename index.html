@@ -85,6 +85,12 @@ section{padding-block:112px}
 .btn-block{width:100%}
 
 /* ---------- 1. Header ---------- */
+.topnote{background:#0B7A55;color:#fff;font-size:14px;line-height:1.45}
+.topnote .wrap{display:flex;gap:10px 14px;align-items:center;justify-content:center;flex-wrap:wrap;padding-block:9px;text-align:center}
+.topnote b{font-weight:700}
+.topnote .tn-new{display:inline-block;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.18);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.topnote a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+@media (max-width:640px){.topnote{font-size:13px}.topnote .tn-why{display:none}}
 .site-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(235,238,241,.9);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
 .nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding-block:14px;position:relative}
 .logo{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.35rem;letter-spacing:-.035em;justify-self:start}
@@ -754,6 +760,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
 </head>
 <body>
 <a class="skip" href="#main-content">Aller au contenu</a>
+<div class="topnote" role="note"><div class="wrap"><span class="tn-new">Nouveau</span><span><b>TissAlternance</b>, notre appli gratuite qui aide les étudiants à décrocher une alternance dans les commerces de Dijon.<span class="tn-why"> Pourquoi ? Pour que vous receviez des candidatures d'alternants sérieuses et près de chez vous, et pour vous montrer qu'on crée aussi des outils sur mesure.</span></span><a href="#appli-alternance">En savoir plus →</a></div></div>
 <!-- =================== 1. HEADER =================== -->
 <header class="site-header">
   <div class="wrap nav">
@@ -869,7 +876,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
 
 <style>
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-#essai{scroll-margin-top:72px}
+#essai,#appli-alternance{scroll-margin-top:84px}
 .sl{position:relative;background:#0C1310;color:#fff;padding-block:24px 120px;overflow:hidden;
   background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px}
 .sl-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:56px;align-items:center}
@@ -1318,7 +1325,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
           <a class="work-link" href="demo-barbier.html">Voir la démo →</a>
         </div>
       </article>
-      <article class="work work-wide reveal">
+      <article class="work work-wide reveal" id="appli-alternance">
         <div class="work-shot ph" style="--fb:linear-gradient(135deg,#0C1310,#123326)"><img decoding="async" src="img/projet-tissalternance.jpg" width="960" height="600" alt="Aperçu de l'appli TissAlternance et de trois modèles de CV" loading="lazy"><span class="w-phone" aria-hidden="true"><img src="img/projet-tissalternance-mobile.jpg" width="300" height="600" alt="" loading="lazy" decoding="async"></span><span class="demo-flag">Projet maison</span><span class="shot-label">Appli web sur mesure</span></div>
         <div class="work-body">
           <span class="kind">Appli maison · Conçue et développée par TissaWeb</span>
