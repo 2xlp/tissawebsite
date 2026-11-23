@@ -359,15 +359,18 @@
     suivi: "Tu suis déjà " + SUIVI_MAX + " candidatures, le maximum de l'offre gratuite.",
     envoi: "Tu as utilisé tes 3 envois automatiques du mois. Avec Pro, l'appli envoie et relance pour toi sans limite.",
     menu: "Garde l'offre gratuite ou passe à la vitesse supérieure.",
+    export: "L'export Excel de ton suivi est inclus dès l'offre Essentiel.",
+    kit: "Le kit entretien fait partie de l'offre Pro.",
   };
   var OFFRES = { gratuit: { n: "Gratuit", p: "0 €", r: 0 }, essentiel: { n: "Essentiel", p: "4,99 €", r: 1 }, pro: { n: "Pro", p: "9,99 €", r: 2 } };
   var ofChoix = "pro", ofWhy = "menu";
   function ofRang() { return S.pass && S.pass.admin ? 2 : OFFRES[tier() || "gratuit"].r; }
   function ofMaj() {
     var r = ofRang();
-    $$(".of-plan").forEach(function (c) {
+    $("#of-compte").addEventListener("click", function () { $("#paywall").hidden = true; ouvreCompte(); });
+  $$(".of-plan").forEach(function (c) {
       var k = c.dataset.plan, o = OFFRES[k];
-      var bloque = o.r < r || (k === "essentiel" && ofWhy === "envoi") ;
+      var bloque = o.r < r || (k === "essentiel" && (ofWhy === "envoi" || ofWhy === "kit"));
       c.setAttribute("aria-checked", String(k === ofChoix));
       c.disabled = bloque && o.r !== r;
       c.classList.toggle("is-cur", o.r === r);
@@ -390,9 +393,10 @@
     ofWhy = why || "menu";
     $("#pw-why").textContent = PW_WHY[ofWhy] || PW_WHY.menu;
     var r = ofRang();
-    ofChoix = r >= 2 ? "pro" : ofWhy === "envoi" || r === 1 ? "pro" : ofWhy === "modele" || ofWhy === "suivi" ? "essentiel" : "pro";
+    ofChoix = r >= 2 ? "pro" : ofWhy === "envoi" || ofWhy === "kit" || r === 1 ? "pro" : ofWhy === "modele" || ofWhy === "suivi" || ofWhy === "export" ? "essentiel" : "pro";
     if (ofWhy === "menu" && r === 0) ofChoix = "pro";
     $("#pw-err").hidden = true; $("#pw-restore-box").hidden = true;
+    $("#of-warn").hidden = !!S.compte;
     ofMaj();
     $("#paywall").hidden = false; document.body.style.overflow = "hidden";
   }
@@ -411,6 +415,7 @@
     if (FL.pay) { $("#free").hidden = true; var t = tier(); b.textContent = S.pass && S.pass.admin ? "Admin ✓" : S.pass && S.pass.invite ? "Accès offert ✓" : t === "pro" ? "Offre Pro ✓" : t === "essentiel" ? "Offre Essentiel ✓" : "Voir les offres"; b.classList.toggle("on", !!t); }
     if (galFait) galerie();
     if (cur) majAuto();
+    majOutils();
   }
   $("#pass-btn").addEventListener("click", function () { paywall("menu"); });
   function suiviPlein() { return !isEss() && Object.keys(S.suivi).length >= SUIVI_MAX; }
@@ -671,14 +676,14 @@
   $("#cv-voir-haut").addEventListener("click", function () { $("#cv-prev").scrollIntoView({ behavior: "smooth", block: "start" }); });
   $("#cv-dl").addEventListener("click", async function () {
     var btn = this; btn.disabled = true;
-    try { var r = await CV.cvPdf(S.profil, S.cv); dl(r.doc.output("blob"), cvNom()); toast(r.pages > 1 ? "CV téléchargé (" + r.pages + " pages : raccourcis un peu pour tenir sur 1 page)" : "CV téléchargé"); }
+    try { var r = await CV.cvPdf(S.profil, S.cv); if (!isEss()) CV.marque(r.doc); dl(r.doc.output("blob"), cvNom()); toast(r.pages > 1 ? "CV téléchargé (" + r.pages + " pages : raccourcis un peu pour tenir sur 1 page)" : "CV téléchargé"); }
     catch (e) { toast(e.message); } finally { btn.disabled = false; }
   });
 
   /* fichiers joints aux candidatures */
   async function cvFichier() {
     if (S.cvMode === "import") { var rec = await CV.fichiers.get("cv"); return rec ? new File([rec.blob], rec.name, { type: "application/pdf" }) : null; }
-    if (S.cvMode === "genere") { cvDefaults(); var r = await CV.cvPdf(S.profil, S.cv); return new File([r.doc.output("blob")], cvNom(), { type: "application/pdf" }); }
+    if (S.cvMode === "genere") { cvDefaults(); var r = await CV.cvPdf(S.profil, S.cv); if (!isEss()) CV.marque(r.doc); return new File([r.doc.output("blob")], cvNom(), { type: "application/pdf" }); }
     return null;
   }
   function lettreTexte() {
@@ -688,6 +693,7 @@
   }
   async function lettreFichier() {
     var d = await CV.lettrePdf(lettreTexte(), S.profil, S.cvMode === "genere" ? S.cv : null);
+    if (!isEss()) CV.marque(d);
     return new File([d.output("blob")], "Lettre-motivation-" + ascii(S.profil.prenom + " " + S.profil.nom) + "-" + ascii(nomCourt(cur.nom)).slice(0, 40) + ".pdf", { type: "application/pdf" });
   }
 
@@ -728,8 +734,30 @@
     var sel = e.target.closest("[data-statut]"); if (!sel) return;
     S.suivi[sel.dataset.statut].statut = sel.value; save(); renderSuivi(); badge();
     if (sel.value === "accepte") toast("Félicitations ! 🎉");
-    if (sel.value === "entretien") toast("Bien joué, prépare-toi bien !");
+    if (sel.value === "entretien") toast(isPro() ? "Bien joué ! Ouvre le kit entretien pour te préparer" : "Bien joué, prépare-toi bien !");
   });
+  function majOutils() { $$(".tool .lock").forEach(function (l) { l.hidden = !FL.pay || (l.dataset.lock === "pro" ? isPro() : isEss()); }); }
+  function csvCell(v) { v = String(v == null ? "" : v).replace(/\s+/g, " ").trim(); return /[;"\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  var STATUTS = { envoye: "Envoyée", relance: "Relancée", entretien: "Entretien", accepte: "Acceptée", refus: "Refusée" };
+  $("#s-export").addEventListener("click", function () {
+    if (!isEss()) { paywall("export"); return; }
+    var ids = Object.keys(S.suivi); if (!ids.length) { toast("Ton suivi est vide pour l'instant"); return; }
+    var lignes = [["Entreprise", "Activité", "Ville", "Adresse", "Contact", "Date d'envoi", "Statut", "Relance"].join(";")];
+    ids.forEach(function (id) { var a = S.suivi[id], e = a.e || {};
+      lignes.push([nomCourt(e.nom), e.activite, e.ville, e.adresse, e.dirigeant ? e.dirigeant.nom : "", a.date ? new Date(a.date).toLocaleDateString("fr-FR") : "", STATUTS[a.statut] || a.statut, a.relanceAuto ? "Automatique" : ""].map(csvCell).join(";")); });
+    dl(new Blob(["\ufeff" + lignes.join("\r\n")], { type: "text/csv;charset=utf-8" }), "Suivi-alternance.csv");
+    toast("Tableau téléchargé : ouvre-le avec Excel");
+  });
+  function kitMail() {
+    var p = S.profil || {};
+    return "Objet : Merci pour notre entretien\n\nMadame, Monsieur,\n\nJe vous remercie pour le temps que vous m'avez accordé aujourd'hui. Notre échange m'a confirmé mon envie de rejoindre votre équipe en alternance" + (p.formation ? " dans le cadre de mon " + p.formation : "") + ".\n\nJe reste disponible pour tout complément d'information et serais ravi(e) de mettre ma motivation au service de votre entreprise.\n\nBien cordialement,\n" + ((p.prenom || "") + " " + (p.nom || "")).trim() + (p.tel ? "\n" + p.tel : "");
+  }
+  $("#s-kit").addEventListener("click", function () {
+    if (!isPro()) { paywall("kit"); return; }
+    $("#kit-mail").value = kitMail(); $("#kit").hidden = false; document.body.style.overflow = "hidden";
+  });
+  $$("[data-close-kit]").forEach(function (b) { b.addEventListener("click", function () { $("#kit").hidden = true; document.body.style.overflow = ""; }); });
+  $("#kit-copy").addEventListener("click", function () { navigator.clipboard.writeText($("#kit-mail").value).then(function () { toast("Mail copié ✓"); }, function () { $("#kit-mail").select(); }); });
   function badge() {
     var n = Object.keys(S.suivi).filter(function (id) { return aRelancer(S.suivi[id]); }).length;
     var b = $("#badge-suivi"); b.hidden = !n; b.textContent = n;
@@ -783,15 +811,15 @@
   var cpMode = "new";
   function majCompte() {
     var on = !!S.compte;
-    $("#acc-btn").hidden = !on;
+    $("#acc-btn").hidden = false; $("#acc-btn").textContent = on ? "Mon compte" : "Se connecter";
     $("#cp-out").hidden = on; $("#cp-on").hidden = !on; $("#cp-reset").hidden = true;
-    $("#cp-x").hidden = !on;
+    $("#cp-x").hidden = !on && !S.sansCompte; $(".cp-skip").hidden = on || !!S.sansCompte;
     $("#cp-t").textContent = on ? "Ton compte" : cpMode === "login" ? "Content de te revoir" : "Crée ton compte, c'est gratuit";
     $("#cp-sub").hidden = on;
     if (on) { $("#cp-email").textContent = S.compte.email; $("#cp-av").textContent = S.compte.email.charAt(0).toUpperCase(); }
   }
   function ouvreCompte() { $("#cp-err").hidden = true; majCompte(); $("#compte").hidden = false; document.body.style.overflow = "hidden"; }
-  function fermeCompte() { if (!S.compte) return; $("#compte").hidden = true; document.body.style.overflow = ""; }
+  function fermeCompte() { if (!S.compte && !S.sansCompte) return; $("#compte").hidden = true; document.body.style.overflow = ""; }
   $$("[data-close-cp]").forEach(function (b) { b.addEventListener("click", fermeCompte); });
   $("#acc-btn").addEventListener("click", ouvreCompte);
   $$("[data-cpm]").forEach(function (b) { b.addEventListener("click", function () {
@@ -847,6 +875,7 @@
       if (!recoit(d, true)) { $("#compte").hidden = true; document.body.style.overflow = ""; toast("Mot de passe changé, tu es connecté ✓"); }
     } catch (err) { cpErr(err.message); } finally { b.disabled = false; }
   });
+  $("#cp-skip").addEventListener("click", function () { S.sansCompte = true; store(); fermeCompte(); majCompte(); toast("OK, tes infos restent sur ce téléphone"); });
   $("#cp-logout").addEventListener("click", function () {
     if (!confirm("Te déconnecter ? Tes données restent sauvegardées dans ton compte et seront retirées de cet appareil.")) return;
     deconnexion(false);
@@ -856,7 +885,7 @@
     var g = sessionStorage.getItem("tw-alt-login");
     if (g) { sessionStorage.removeItem("tw-alt-login"); try { if (recoit(JSON.parse(g), true)) return; toast("Connecté avec Google ✓"); } catch (e) {} }
     majCompte();
-    if (!S.compte) { ouvreCompte(); return; }
+    if (!S.compte) { if (!S.sansCompte) ouvreCompte(); return; }
     api("compte", { cjeton: S.compte.cj, pass: S.pass && S.pass.v }).then(function (d) { recoit(d, false); })
       .catch(function (e) { if (e.status === 401) deconnexion(true); });
   }

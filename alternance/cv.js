@@ -807,5 +807,14 @@
     });
   }
 
-  window.TACV = { cvPdf: cvPdf, draw: draw, vignette: vignette, exemple: exemple, lettrePdf: lettrePdf, fichiers: fichiers, photo: photo, load: load, COULEURS: COULEURS, MODELES: MODELES };
+  /* mention « Créé avec TissAlternance » en bas des PDF de l'offre gratuite */
+  function marque(doc) {
+    var n = doc.getNumberOfPages();
+    for (var i = 1; i <= n; i++) {
+      doc.setPage(i); doc.setFont("body", "w400"); doc.setFontSize(6.5); doc.setTextColor("#9A9DAE");
+      doc.text("Créé avec TissAlternance · tissaweb.fr/alternance", 105, 294, { align: "center" });
+    }
+    return doc;
+  }
+  window.TACV = { marque: marque, cvPdf: cvPdf, draw: draw, vignette: vignette, exemple: exemple, lettrePdf: lettrePdf, fichiers: fichiers, photo: photo, load: load, COULEURS: COULEURS, MODELES: MODELES };
 })();

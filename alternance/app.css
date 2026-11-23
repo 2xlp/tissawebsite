@@ -393,3 +393,38 @@ fieldset{border-color:var(--line);box-shadow:var(--shadow)}
 .of-sum b{font:800 18px var(--display)}
 .of-sum span{font-size:13.5px;color:var(--muted)}
 .of-go{min-width:180px;min-height:52px;font-size:16.5px}
+
+/* compte facultatif */
+.cp-skip{display:grid;gap:6px;margin-top:4px;padding-top:14px;border-top:1px solid var(--line)}
+.cp-skip small{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.4}
+.cp-skip .btn{min-height:46px;border-width:1.5px;border-color:var(--line);color:var(--ink-2);font-size:15px}
+
+/* outils du suivi */
+.s-tools{display:grid;gap:10px;margin:0 0 16px}
+@media (min-width:640px){.s-tools{grid-template-columns:1fr 1fr}}
+.tool{appearance:none;display:flex;align-items:center;gap:12px;text-align:left;font:inherit;color:var(--ink);padding:14px 16px;border-radius:16px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);cursor:pointer;transition:transform .15s,border-color .15s}
+.tool:hover{transform:translateY(-2px);border-color:#D2CCFF}
+.tool i{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#F1EEFF;font-size:20px;font-style:normal}
+.tool span{flex:1;display:grid;gap:2px}
+.tool b{font:700 15.5px var(--display)}
+.tool small{font-size:13px;color:var(--muted)}
+.lock{flex:none;font:700 11px/1.7 var(--body);font-style:normal;text-transform:uppercase;letter-spacing:.05em;padding:2px 9px;border-radius:99px;background:var(--grad);color:#fff}
+
+/* kit entretien */
+.kit-avant{display:grid;gap:8px;padding:14px 16px;border-radius:14px;background:linear-gradient(90deg,#F1EEFF,#FBF0F8)}
+.kit-avant p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.kit-q{margin:0;padding:0;list-style:none;counter-reset:q;display:grid;gap:10px}
+.kit-q li{counter-increment:q;position:relative;display:grid;gap:4px;padding:14px 14px 14px 52px;border-radius:14px;background:#fff;border:1px solid var(--line)}
+.kit-q li::before{content:counter(q);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--grad);color:#fff;font:700 13px var(--display)}
+.kit-q b{font:700 15.5px var(--display)}
+.kit-q span{font-size:14px;color:var(--ink-2);line-height:1.5}
+.kit-merci{display:grid;gap:10px}
+.kit-h{margin:6px 0 0;font:700 16px var(--display)}
+#kit-mail{font-size:14px;background:#fff}
+
+/* offres : sections et croix */
+.of-sec>span{min-height:0;padding:14px 10px 6px;background:#FAFAFD}
+.of-sec>span:first-child{font:700 11.5px var(--body);text-transform:uppercase;letter-spacing:.1em;color:var(--accent)}
+.of-sec>span.sel{background:#F3F0FF}
+.no{display:inline-block;width:12px;height:2px;border-radius:2px;background:#C9CAD6}
+.of-warn{margin:0;padding:12px 14px;border-radius:12px;background:#FFF6E8;border:1px solid #F2D9A8;color:#7A4B00;font-size:14px;text-align:center}

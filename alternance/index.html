@@ -31,7 +31,7 @@
     <button class="pill pill-btn" id="install" hidden>Installer l'appli</button>
     <span class="pill" id="free">Gratuit</span>
     <button class="pill pill-btn pill-pass" id="pass-btn" hidden>Offres</button>
-    <button class="pill pill-acc" id="acc-btn" hidden>Mon compte</button>
+    <button class="pill pill-acc" id="acc-btn" hidden>Se connecter</button>
   </div>
 </header>
 
@@ -43,7 +43,7 @@
       <p class="lead">TissAlternance trouve les entreprises qui emploient autour de chez toi, crée ton CV, écrit ta lettre de motivation à leur nom et te dit quand relancer. Toi, tu relis et tu envoies.</p>
       <div class="hero-cta">
         <a class="btn btn-accent" href="#app" data-go="profil">Commencer, c'est 2 minutes</a>
-        <span class="hero-note">Gratuit · tout est sauvegardé dans ton compte.</span>
+        <span class="hero-note">Gratuit · sans inscription obligatoire.</span>
       </div>
     </div>
     <div class="hero-vis" aria-hidden="true">
@@ -72,7 +72,7 @@
   <section class="view" id="v-profil" role="tabpanel" aria-labelledby="t-profil">
     <div class="vhead">
       <h2>Ton profil</h2>
-      <p>Il sert à écrire ton CV et tes candidatures. Il est sauvegardé dans ton compte : tu le retrouves sur tous tes appareils.</p>
+      <p>Il sert à écrire ton CV et tes candidatures. Avec un compte, tu le retrouves sur tous tes appareils.</p>
     </div>
     <form id="f-profil" class="form" novalidate>
       <fieldset>
@@ -269,6 +269,10 @@
       <p>Chaque candidature envoyée arrive ici. On te dit quand relancer.</p>
     </div>
     <div class="stats" id="s-stats"></div>
+    <div class="s-tools">
+      <button type="button" class="tool" id="s-kit"><i aria-hidden="true">🎤</i><span><b>Kit entretien</b><small>15 questions, conseils, mail de remerciement</small></span><em class="lock" data-lock="pro">Pro</em></button>
+      <button type="button" class="tool" id="s-export"><i aria-hidden="true">📊</i><span><b>Exporter en Excel</b><small>Tout ton suivi dans un tableau</small></span><em class="lock" data-lock="essentiel">Essentiel</em></button>
+    </div>
     <div id="s-list" class="list"></div>
   </section>
 </main>
@@ -362,6 +366,7 @@
           <button class="btn btn-accent btn-wide" id="cp-go" type="submit">Créer mon compte</button>
         </form>
         <p class="cp-small" id="cp-oubli" hidden><button type="button" class="linklike" id="cp-oubli-go">Mot de passe oublié ?</button></p>
+        <div class="cp-skip"><button type="button" class="btn btn-ghost btn-wide" id="cp-skip">Continuer sans compte</button><small>Sans compte, tout reste sur ce téléphone : si tu réinstalles l'appli, tu perds ton profil, ton suivi et ton offre.</small></div>
       </div>
       <div id="cp-reset" hidden>
         <form id="cp-r1" class="cp-form" novalidate>
@@ -387,6 +392,41 @@
   </div>
 </div>
 
+<div class="sheet" id="kit" role="dialog" aria-modal="true" aria-labelledby="kit-t" hidden>
+  <div class="sheet-bg" data-close-kit></div>
+  <div class="sheet-in">
+    <div class="sheet-head"><div><p class="sheet-k">Offre Pro</p><h3 id="kit-t">Kit entretien</h3><p class="sheet-sub">Les questions qu'on te posera presque à coup sûr, avec la bonne façon d'y répondre.</p></div><button class="x" data-close-kit aria-label="Fermer">×</button></div>
+    <div class="sheet-body">
+      <div class="kit-avant">
+        <p><b>La veille :</b> relis l'annonce et le site de l'entreprise, prépare 2 questions à poser, imprime ton CV et le calendrier de ton école.</p>
+        <p><b>Le jour J :</b> arrive 10 minutes en avance, tenue propre et simple, téléphone en silencieux, et souris : on recrute aussi une personne avec qui travailler.</p>
+      </div>
+      <ol class="kit-q">
+          <li><b>Présentez-vous.</b><span>2 minutes maximum : ta formation, ce que tu as déjà fait (stages, jobs, projets), et pourquoi ce métier. Termine par ce que tu viens chercher chez eux.</span></li>
+          <li><b>Pourquoi l'alternance ?</b><span>Montre que c'est un choix : apprendre sur le terrain, être autonome plus vite, mettre en pratique les cours tout de suite.</span></li>
+          <li><b>Pourquoi notre entreprise ?</b><span>Cite 1 ou 2 choses précises vues sur leur site, leurs réseaux ou en magasin. C'est la question qui fait la différence.</span></li>
+          <li><b>Que connaissez-vous de notre activité ?</b><span>Renseigne-toi avant : ce qu'ils vendent ou font, leurs clients, leur taille, une actu récente.</span></li>
+          <li><b>Quel est votre rythme d'alternance ?</b><span>Donne-le clairement (ex. 3 semaines entreprise / 1 semaine école) et la date de début. Prends le calendrier de l'école avec toi.</span></li>
+          <li><b>Quelles sont vos qualités ?</b><span>3 qualités maximum, chacune avec un exemple concret (« sérieux : je n'ai jamais raté un jour de mon job d'été »).</span></li>
+          <li><b>Et vos défauts ?</b><span>Un vrai défaut, pas « perfectionniste », et ce que tu fais pour t'améliorer.</span></li>
+          <li><b>Parlez-nous d'une difficulté que vous avez surmontée.</b><span>Situation, ce que tu as fait, le résultat. Court et concret.</span></li>
+          <li><b>Avez-vous déjà travaillé en équipe ?</b><span>Sport, projet d'école, job : explique ton rôle et ce que ça a donné.</span></li>
+          <li><b>Où vous voyez-vous dans 3 ans ?</b><span>Diplômé, dans le même métier, idéalement embauché chez eux. Montre que tu veux rester.</span></li>
+          <li><b>Avez-vous postulé ailleurs ?</b><span>Sois honnête sans donner de noms : « oui, quelques entreprises, mais votre poste m'intéresse le plus parce que… ».</span></li>
+          <li><b>Que ferez-vous les semaines d'école ?</b><span>Rassure : tu préviens à l'avance, tu fais le lien, et tu appliques ce que tu apprends.</span></li>
+          <li><b>Êtes-vous mobile ? Avez-vous le permis ?</b><span>Réponds franchement. Si tu n'as pas le permis, explique comment tu viens (bus, vélo…) et le temps de trajet.</span></li>
+          <li><b>Quelle rémunération attendez-vous ?</b><span>En alternance, le salaire est fixé par la loi selon ton âge et ton année : dis simplement que tu suis la grille légale.</span></li>
+          <li><b>Avez-vous des questions ?</b><span>Toujours dire oui. Exemples : « À quoi ressemblerait une journée type ? », « Qui serait mon tuteur ? », « Quand aurez-vous une réponse ? ».</span></li>
+      </ol>
+      <div class="kit-merci">
+        <p class="kit-h">Mail de remerciement à envoyer le jour même</p>
+        <textarea id="kit-mail" rows="9" readonly></textarea>
+        <button type="button" class="btn btn-ink btn-wide" id="kit-copy">Copier le mail</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="sheet of" id="paywall" role="dialog" aria-modal="true" aria-labelledby="pw-t" hidden>
   <div class="sheet-bg" data-close-pw></div>
   <div class="sheet-in of-in">
@@ -403,14 +443,14 @@
           <span class="of-tag of-cur" hidden>Ton offre</span>
           <span class="of-name">Gratuit</span>
           <span class="of-price">0 €</span>
-          <span class="of-desc">Pour commencer : chercher, faire ton CV et postuler.</span>
+          <span class="of-desc">Pour commencer : trouver des entreprises, faire ton CV et postuler.</span>
           <span class="of-dot" aria-hidden="true"></span>
         </button>
         <button type="button" class="of-plan" role="radio" data-plan="essentiel" aria-checked="false">
           <span class="of-tag of-cur" hidden>Ton offre</span>
           <span class="of-name">Essentiel</span>
           <span class="of-price">4,99 €<small>une fois</small></span>
-          <span class="of-desc">Les 14 modèles de CV et un suivi sans limite.</span>
+          <span class="of-desc">Un CV qui sort du lot : 14 modèles, sans mention TissAlternance, suivi illimité et export Excel.</span>
           <span class="of-dot" aria-hidden="true"></span>
         </button>
         <button type="button" class="of-plan of-reco" role="radio" data-plan="pro" aria-checked="true">
@@ -418,22 +458,33 @@
           <span class="of-tag of-cur" hidden>Ton offre</span>
           <span class="of-name">Pro</span>
           <span class="of-price">9,99 €<small>une fois</small></span>
-          <span class="of-desc">Tout, plus l'envoi et les relances automatiques sans limite.</span>
+          <span class="of-desc">Tout l'Essentiel + l'appli envoie et relance pour toi sans limite, le kit entretien et une aide prioritaire.</span>
           <span class="of-dot" aria-hidden="true"></span>
         </button>
       </div>
 
       <div class="of-table" role="table" aria-label="Ce qui est inclus">
         <div class="of-row of-th" role="row"><span role="columnheader">Ce qui est inclus</span><span role="columnheader" data-col="gratuit">Gratuit</span><span role="columnheader" data-col="essentiel">Essentiel</span><span role="columnheader" data-col="pro">Pro</span></div>
-        <div class="of-row" role="row"><span role="cell">Recherche d'entreprises près de chez toi</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row of-sec" role="row"><span role="cell">Trouver</span><span role="cell" data-col="gratuit"></span><span role="cell" data-col="essentiel"></span><span role="cell" data-col="pro"></span></div>
+        <div class="of-row" role="row"><span role="cell">Entreprises qui recrutent près de chez toi</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row" role="row"><span role="cell">Offres d'alternance de La bonne alternance</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row of-sec" role="row"><span role="cell">Ton CV</span><span role="cell" data-col="gratuit"></span><span role="cell" data-col="essentiel"></span><span role="cell" data-col="pro"></span></div>
         <div class="of-row" role="row"><span role="cell">Modèles de CV</span><span role="cell" data-col="gratuit">6</span><span role="cell" data-col="essentiel"><b>14</b></span><span role="cell" data-col="pro"><b>14</b></span></div>
-        <div class="of-row" role="row"><span role="cell">Lettre de motivation à chaque entreprise</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
-        <div class="of-row" role="row"><span role="cell">Candidatures suivies</span><span role="cell" data-col="gratuit">10</span><span role="cell" data-col="essentiel"><b>Illimité</b></span><span role="cell" data-col="pro"><b>Illimité</b></span></div>
+        <div class="of-row" role="row"><span role="cell">Couleurs et photo</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row" role="row"><span role="cell">Sans mention « Créé avec TissAlternance »</span><span role="cell" data-col="gratuit"><i class="no" aria-label="non"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row of-sec" role="row"><span role="cell">Postuler</span><span role="cell" data-col="gratuit"></span><span role="cell" data-col="essentiel"></span><span role="cell" data-col="pro"></span></div>
+        <div class="of-row" role="row"><span role="cell">Lettre de motivation au nom de chaque entreprise</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
         <div class="of-row" role="row"><span role="cell">Envois automatiques depuis ton Gmail</span><span role="cell" data-col="gratuit">3 / mois</span><span role="cell" data-col="essentiel">3 / mois</span><span role="cell" data-col="pro"><b>Illimité</b></span></div>
         <div class="of-row" role="row"><span role="cell">Relances automatiques à 7 jours</span><span role="cell" data-col="gratuit">3 / mois</span><span role="cell" data-col="essentiel">3 / mois</span><span role="cell" data-col="pro"><b>Illimité</b></span></div>
+        <div class="of-row of-sec" role="row"><span role="cell">Suivre</span><span role="cell" data-col="gratuit"></span><span role="cell" data-col="essentiel"></span><span role="cell" data-col="pro"></span></div>
+        <div class="of-row" role="row"><span role="cell">Candidatures suivies</span><span role="cell" data-col="gratuit">10</span><span role="cell" data-col="essentiel"><b>Illimité</b></span><span role="cell" data-col="pro"><b>Illimité</b></span></div>
+        <div class="of-row" role="row"><span role="cell">Export du suivi en Excel</span><span role="cell" data-col="gratuit"><i class="no" aria-label="non"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row" role="row"><span role="cell">Kit entretien : 15 questions + mail de remerciement</span><span role="cell" data-col="gratuit"><i class="no" aria-label="non"></i></span><span role="cell" data-col="essentiel"><i class="no" aria-label="non"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row" role="row"><span role="cell">Aide prioritaire par mail</span><span role="cell" data-col="gratuit"><i class="no" aria-label="non"></i></span><span role="cell" data-col="essentiel"><i class="no" aria-label="non"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
         <div class="of-row" role="row"><span role="cell">Sauvegarde dans ton compte</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
       </div>
 
+      <p class="of-warn" id="of-warn" hidden>Tu n'as pas de compte : ton offre restera seulement sur ce téléphone. <button type="button" class="linklike" id="of-compte">Créer mon compte d'abord</button></p>
       <p class="pw-small of-small">Paiement sécurisé par Stripe (carte, Apple Pay, Google Pay) · <a href="/cgv.html#alternance">Conditions</a> · <button type="button" class="linklike" id="pw-restore">Déjà payé ? Récupérer mon offre</button></p>
       <div id="pw-restore-box" hidden>
         <label>Adresse mail utilisée pour le paiement<input id="pw-mail" type="email" autocomplete="email"></label>
@@ -452,7 +503,7 @@
 
 <footer class="foot">
   <div class="wrap">
-    <p><b>Comment ça marche :</b> les entreprises viennent de services publics : La bonne alternance (offres et entreprises qui recrutent des alternants) et l'annuaire des entreprises de l'État (données Sirene de l'Insee). Ton profil, ton CV, tes textes et ton suivi sont sauvegardés dans ton compte pour que tu les retrouves partout ; ils ne sont jamais revendus ni partagés (détails dans la page Confidentialité).</p>
+    <p><b>Comment ça marche :</b> les entreprises viennent de services publics : La bonne alternance (offres et entreprises qui recrutent des alternants) et l'annuaire des entreprises de l'État (données Sirene de l'Insee). Ton profil, ton CV, tes textes et ton suivi restent sur ton appareil, et sont sauvegardés dans ton compte si tu en crées un ; ils ne sont jamais revendus ni partagés (détails dans la page Confidentialité).</p>
     <p class="foot-l">TissAlternance, une appli gratuite créée à Dijon par <a href="/">TissaWeb</a> · <a href="/mentions-legales.html">Mentions légales</a> · <a href="/confidentialite.html#alternance">Confidentialité</a> · <button class="linklike" id="reset">Effacer mes données</button></p>
   </div>
 </footer>
