@@ -17,7 +17,7 @@
   var R = { data: null, page: 1, items: [], taille: "tout", loading: false };
   var IA = false, FL = {}, infoP = null;
   function keyOf(x) { return x.siret || x.id || x.siren; }
-  function getInfo() { return infoP || (infoP = api("info").then(function (d) { FL = d || {}; IA = !!FL.ia; majSource(); majGmail(); return FL; }).catch(function () { return FL; })); }
+  function getInfo() { return infoP || (infoP = api("info").then(function (d) { FL = d || {}; IA = !!FL.ia; majSource(); majGmail(); majPass(); return FL; }).catch(function () { return FL; })); }
 
   /* ---------- outils ---------- */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -334,6 +334,7 @@
   $("#sh-mail").addEventListener("click", function () { if (!$("#sh-to").value.trim()) toast("Ajoute l'adresse de l'entreprise dans ta boîte mail"); });
   $("#sh-done").addEventListener("click", function () {
     var x = cur, id = keyOf(x), s = S.suivi[id];
+    if (!s && suiviPlein()) { paywall("suivi"); return; }
     if (!s) s = S.suivi[id] = { e: x, statut: "envoye", date: new Date().toISOString(), textes: {} };
     s.to = $("#sh-to").value.trim();
     s.doc = curDoc === "relance" ? "mail" : curDoc;
@@ -344,6 +345,49 @@
   });
 
 
+
+
+  /* ---------- Pass payant (Essentiel 4,99 € / Pro 9,99 €) ---------- */
+  var SUIVI_MAX = 10;
+  function tier() { return S.pass && S.pass.v ? S.pass.tier : ""; }
+  function isEss() { return !FL.pay || tier() === "essentiel" || tier() === "pro"; }
+  function isPro() { return !FL.pay || tier() === "pro"; }
+  function lienPay(u) { if (!u) return "#"; var em = (S.profil && S.profil.email) || ""; return u + (u.indexOf("?") < 0 ? "?" : "&") + (em ? "prefilled_email=" + encodeURIComponent(em) + "&" : "") + "locale=fr"; }
+  var PW_WHY = {
+    modele: "Ce modèle fait partie des 8 modèles premium. Débloque-les avec le Pass.",
+    suivi: "Tu suis déjà " + SUIVI_MAX + " candidatures, la limite gratuite. Passe au Pass pour en suivre autant que tu veux.",
+    envoi: "Tu as utilisé tes envois automatiques gratuits du mois. Avec le Pass Pro, l'appli envoie et relance pour toi sans limite.",
+    menu: "Un petit coup de pouce à 4,99 € ou 9,99 €, une seule fois, et c'est à vie.",
+  };
+  function paywall(why) {
+    if (!FL.pay) return;
+    $("#pw-why").textContent = PW_WHY[why] || PW_WHY.menu;
+    $("#pw-ess").href = lienPay(FL.links && FL.links.essentiel);
+    $("#pw-pro").href = lienPay(FL.links && FL.links.pro);
+    $("#pw-ess").closest(".pw-card").hidden = why === "envoi" || tier() === "essentiel";
+    $("#pw-err").hidden = true; $("#pw-restore-box").hidden = true;
+    $("#paywall").hidden = false;
+  }
+  $$("[data-close-pw]").forEach(function (b) { b.addEventListener("click", function () { $("#paywall").hidden = true; }); });
+  $("#pw-restore").addEventListener("click", function () { $("#pw-restore-box").hidden = false; $("#pw-mail").value = (S.profil && S.profil.email) || ""; $("#pw-mail").focus(); });
+  $("#pw-restore-go").addEventListener("click", async function () {
+    var b = this; b.disabled = true; $("#pw-err").hidden = true;
+    try { var d = await api("restaurer", { email: $("#pw-mail").value.trim() }); S.pass = { tier: d.tier, email: d.email, v: d.jeton }; save(); majPass(); $("#paywall").hidden = true; toast("Pass " + (d.tier === "pro" ? "Pro" : "Essentiel") + " récupéré ✓"); }
+    catch (e) { $("#pw-err").textContent = e.message; $("#pw-err").hidden = false; } finally { b.disabled = false; }
+  });
+  function majPass() {
+    var b = $("#pass-btn"); if (!b) return;
+    b.hidden = !FL.pay;
+    if (FL.pay) { $("#free").hidden = true; var t = tier(); b.textContent = t === "pro" ? "Pass Pro ✓" : t === "essentiel" ? "Pass Essentiel ✓" : "Débloquer le Pass"; b.classList.toggle("on", !!t); }
+    if (galFait) galerie();
+    if (cur) majAuto();
+  }
+  $("#pass-btn").addEventListener("click", function () { if (tier() === "pro") { toast("Tu as le Pass Pro : tout est débloqué"); return; } paywall("menu"); });
+  function suiviPlein() { return !isEss() && Object.keys(S.suivi).length >= SUIVI_MAX; }
+  (function () {
+    var q = new URLSearchParams(location.search);
+    if (q.get("pass") === "ok") { history.replaceState(null, "", location.pathname + location.hash); setTimeout(function () { toast(S.pass ? "Merci ! Pass " + (S.pass.tier === "pro" ? "Pro" : "Essentiel") + " activé ✓" : "Pass activé"); }, 400); }
+  })();
 
   /* ---------- envoi automatique ---------- */
   /* ---------- Gmail de l'étudiant ---------- */
@@ -395,7 +439,7 @@
     $("#sh-auto-rel").hidden = m !== "mail";
     var adr = gmailOk() ? S.gmail.email : S.profil.email;
     $("#sh-auto-info").innerHTML = m === "lba" ? "Ta candidature (texte + CV) part directement chez le recruteur par <b>La bonne alternance</b>. Il te répondra sur <b>" + esc(S.profil.email) + "</b>."
-      : m === "mail" && gmailOk() ? "L'appli envoie ton mail avec ton CV et ta lettre en PDF depuis <b>ton Gmail (" + esc(adr) + ")</b>. Tu le retrouveras dans tes « Envoyés » et les réponses arrivent directement chez toi."
+      : m === "mail" && gmailOk() ? "L'appli envoie ton mail avec ton CV et ta lettre en PDF depuis <b>ton Gmail (" + esc(adr) + ")</b>. Tu le retrouveras dans tes « Envoyés » et les réponses arrivent directement chez toi." + (isPro() ? "" : " <br><small>" + ((FL.gratuit && FL.gratuit.envois) || 3) + " envois automatiques gratuits par mois, illimités avec le Pass Pro.</small>")
       : m === "mail" ? "L'appli envoie ton mail avec ton CV et ta lettre en PDF depuis <b>candidatures@tissaweb.fr</b>, à ton nom. Les réponses arrivent sur <b>" + esc(adr) + "</b>."
       : besoinGmail ? "Connecte ton Gmail une fois : ensuite, l'appli envoie tes candidatures depuis ta propre adresse, avec relance automatique au bout de 7 jours."
       : "Ajoute l'adresse mail de l'entreprise ci-dessus et l'appli enverra ta candidature à ta place, avec relance automatique.";
@@ -429,6 +473,7 @@
   $("#sh-auto-go").addEventListener("click", async function () {
     var m = modeAuto(), btn = this, x = cur; if (!m) return;
     if (!PJ.cv) { toast("Ajoute d'abord ton CV (onglet CV)"); return; }
+    if (!S.suivi[keyOf(x)] && suiviPlein()) { paywall("suivi"); return; }
     btn.disabled = true; var old = btn.textContent; btn.textContent = "Envoi en cours…";
     try {
       var id = keyOf(x), s = S.suivi[id] || (S.suivi[id] = { e: x, statut: "envoye", date: new Date().toISOString(), textes: {} });
@@ -440,7 +485,7 @@
         var j = gmailOk() ? S.gmail.v : jetonValide() || await demanderVerif();
         if (!j) throw new Error("Adresse non vérifiée, envoi annulé");
         var rel = $("#sh-auto-rel-cb").checked ? { subject: "Relance – " + $("#sh-objet").value, text: texteRelance(S.profil, x, { date: new Date().toISOString() }, true) } : null;
-        var d = await api("envoyer", { jeton: j, profil: S.profil, to: $("#sh-to").value.trim(), to_name: nomCourt(x.nom), subject: $("#sh-objet").value, text: corpsMail(),
+        var d = await api("envoyer", { jeton: j, profil: S.profil, to: $("#sh-to").value.trim(), to_name: nomCourt(x.nom), subject: $("#sh-objet").value, text: corpsMail(), pass: S.pass && S.pass.v,
           attachments: [{ name: PJ.cv.name, content: await dataUrl(PJ.cv) }, { name: PJ.lettre.name, content: await dataUrl(PJ.lettre) }], relance: rel });
         s.via = d.via === "gmail" ? "gmail" : "auto"; s.envoiId = d.id; s.relanceAuto = d.relance_at || null;
       }
@@ -449,6 +494,7 @@
       save(); closeSheet(); renderList(); badge();
       toast(m === "lba" ? "Candidature envoyée ! Le recruteur te répondra par mail." : "Candidature envoyée" + (s.via === "gmail" ? " depuis ton Gmail" : "") + " !" + (s.relanceAuto ? " Relance auto dans 7 jours." : ""));
     } catch (e) {
+      if (e.status === 402) { paywall("envoi"); return; }
       if (/reconnecte ton gmail/i.test(e.message)) { delete S.gmail; save(); majGmail(); }
       else if (e.status === 401 || /vérifie à nouveau/i.test(e.message)) { if (gmailOk()) delete S.gmail; else delete S.jeton; save(); majGmail(); }
       toast(e.message);
@@ -576,12 +622,17 @@
         try { var c = await CV.vignette(ex.p, ex.cv, 140); var ph = $('[data-tpl="' + m.id + '"] .ph', box); if (ph) ph.replaceWith(c); } catch (e) {}
       }
     }
-    $$(".tpl", box).forEach(function (b) { b.setAttribute("aria-checked", String(b.dataset.tpl === S.cv.modele)); });
+    $$(".tpl", box).forEach(function (b) {
+      b.setAttribute("aria-checked", String(b.dataset.tpl === S.cv.modele));
+      var m = CV.MODELES.filter(function (x) { return x.id === b.dataset.tpl; })[0];
+      b.classList.toggle("locked", !!(m && m.premium && !isEss()));
+    });
   }
   $("#cv-gal").addEventListener("click", function (e) {
     var b = e.target.closest("[data-tpl]"); if (!b) return;
+    var m = CV.MODELES.filter(function (x) { return x.id === b.dataset.tpl; })[0];
+    if (m && m.premium && !isEss()) { paywall("modele"); return; }
     S.cv.modele = b.dataset.tpl;
-    var m = CV.MODELES.filter(function (x) { return x.id === S.cv.modele; })[0];
     if (!S.cv.couleurChoisie && m) S.cv.couleur = m.couleur;
     save(); galerie(); setPressed("[data-couleur]", "couleur", S.cv.couleur); preview();
   });
@@ -672,7 +723,7 @@
   var promptEv = null;
   var standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
   var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  function showInstall(on) { $("#install").hidden = !on; $("#free").hidden = on; }
+  function showInstall(on) { $("#install").hidden = !on; $("#free").hidden = on || !!FL.pay; }
   addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); promptEv = e; showInstall(true); });
   addEventListener("appinstalled", function () { showInstall(false); toast("TissAlternance est installée"); });
   if (ios && !standalone) showInstall(true);

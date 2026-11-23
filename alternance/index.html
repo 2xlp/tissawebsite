@@ -30,6 +30,7 @@
     <a class="logo" href="/alternance/" aria-label="TissAlternance, accueil"><img class="logo-mark" src="icon-192.png" alt="" width="32" height="32"><span>Tiss<b>Alternance</b></span></a>
     <button class="pill pill-btn" id="install" hidden>Installer l'appli</button>
     <span class="pill" id="free">Gratuit</span>
+    <button class="pill pill-btn pill-pass" id="pass-btn" hidden>Pass</button>
   </div>
 </header>
 
@@ -341,6 +342,38 @@
         <button class="btn btn-accent btn-wide" id="vf-ok" style="margin-top:12px">Valider</button>
       </div>
       <p class="err" id="vf-err" role="alert" hidden></p>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="paywall" role="dialog" aria-modal="true" aria-labelledby="pw-t" hidden>
+  <div class="sheet-bg" data-close-pw></div>
+  <div class="sheet-in">
+    <div class="sheet-head"><div><p class="sheet-k">Pass TissAlternance</p><h3 id="pw-t">Mets toutes les chances de ton côté</h3></div><button class="x" data-close-pw aria-label="Fermer">×</button></div>
+    <div class="sheet-body">
+      <p class="pw-why" id="pw-why"></p>
+      <div class="pw-grid">
+        <div class="pw-card">
+          <p class="pw-name">Essentiel</p>
+          <p class="pw-price">4,99 € <small>une fois, à vie</small></p>
+          <ul class="pw-list"><li>Les <b>8 modèles de CV premium</b> (Exécutif, Classique, Corporate, Banque, Ardoise, Monogramme, Parcours, Conseil)</li><li><b>Suivi illimité</b> de tes candidatures</li><li>Lettre assortie à chaque modèle</li></ul>
+          <a class="btn btn-ink btn-wide" id="pw-ess" href="#" rel="noopener">Prendre l'Essentiel</a>
+        </div>
+        <div class="pw-card pw-best">
+          <span class="pw-tag">Le plus choisi</span>
+          <p class="pw-name">Pro</p>
+          <p class="pw-price">9,99 € <small>une fois, à vie</small></p>
+          <ul class="pw-list"><li><b>Tout l'Essentiel</b></li><li><b>Envois automatiques illimités</b> depuis ton Gmail</li><li><b>Relances automatiques</b> illimitées à 7 jours</li></ul>
+          <a class="btn btn-accent btn-wide" id="pw-pro" href="#" rel="noopener">Prendre le Pro</a>
+        </div>
+      </div>
+      <p class="pw-free">Gratuit pour toujours : recherche d'entreprises, 6 modèles de CV, lettres, 10 candidatures suivies et 3 envois automatiques par mois.</p>
+      <p class="pw-small">Paiement sécurisé par Stripe (carte, Apple Pay, Google Pay). Accès immédiat. <a href="/cgv.html#alternance">Conditions</a> · <button type="button" class="linklike" id="pw-restore">Déjà payé ? Récupérer mon Pass</button></p>
+      <div id="pw-restore-box" hidden>
+        <label>Adresse mail utilisée pour le paiement<input id="pw-mail" type="email" autocomplete="email"></label>
+        <button type="button" class="btn btn-ink btn-wide" id="pw-restore-go" style="margin-top:10px">Récupérer</button>
+      </div>
+      <p class="err" id="pw-err" role="alert" hidden></p>
     </div>
   </div>
 </div>

@@ -216,3 +216,23 @@ label.btn{display:inline-flex;position:relative}
 .lnk{justify-self:start;background:none;border:0;padding:0;font:inherit;font-size:14px;color:var(--ink-2);text-decoration:underline;cursor:pointer}
 .gw{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
 .gw-c{max-width:420px;display:grid;gap:14px}
+
+/* Pass payant */
+.pill-pass{background:var(--accent);color:#fff;border-color:var(--accent)}
+.pill-pass.on{background:transparent;color:var(--accent)}
+.tpl{position:relative}
+.tpl.locked::after{content:"Pass";position:absolute;top:8px;right:8px;padding:2px 8px;border-radius:99px;background:#0C1310;color:#fff;font:700 11px/1.6 var(--body);letter-spacing:.03em}
+.tpl.locked canvas{opacity:.92}
+.pw-why{margin:0 0 14px;font-weight:600}
+.pw-grid{display:grid;gap:12px}
+@media (min-width:620px){.pw-grid{grid-template-columns:1fr 1fr}}
+.pw-card{position:relative;display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+.pw-best{border:2px solid var(--accent)}
+.pw-tag{position:absolute;top:-11px;left:16px;padding:2px 10px;border-radius:99px;background:var(--accent);color:#fff;font:700 12px/1.6 var(--body)}
+.pw-name{margin:0;font:700 18px var(--display)}
+.pw-price{margin:0;font:800 28px var(--display)}
+.pw-price small{font:500 13px var(--body);color:var(--muted)}
+.pw-list{margin:0 0 6px;padding-left:18px;display:grid;gap:6px;font-size:14px;color:var(--ink-2)}
+.pw-card .btn{margin-top:auto}
+.pw-free{margin:14px 0 6px;font-size:14px;color:var(--ink-2)}
+.pw-small{margin:0;font-size:13px;color:var(--muted)}
