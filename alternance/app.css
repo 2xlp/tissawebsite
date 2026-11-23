@@ -341,3 +341,5 @@ fieldset{border-color:var(--line);box-shadow:var(--shadow)}
 .cp-card b{display:block;font:700 16px var(--display);word-break:break-all}
 .cp-card small{color:var(--muted);font-size:13.5px}
 .cp-av{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;font:700 18px var(--display)}
+.cp-txt{margin:0;font-size:14.5px;color:var(--ink-2)}
+#cp-oubli{margin:-4px 0 0}

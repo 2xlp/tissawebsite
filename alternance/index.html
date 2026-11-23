@@ -361,7 +361,21 @@
           <label>Mot de passe <span class="opt" id="cp-hint">8 caractères minimum</span><input id="cp-mdp" type="password" autocomplete="new-password" minlength="8" required></label>
           <button class="btn btn-accent btn-wide" id="cp-go" type="submit">Créer mon compte</button>
         </form>
-        <p class="pw-small cp-small" id="cp-oubli" hidden>Mot de passe oublié ? Écris à <a href="mailto:contact@tissaweb.fr">contact@tissaweb.fr</a></p>
+        <p class="cp-small" id="cp-oubli" hidden><button type="button" class="linklike" id="cp-oubli-go">Mot de passe oublié ?</button></p>
+      </div>
+      <div id="cp-reset" hidden>
+        <form id="cp-r1" class="cp-form" novalidate>
+          <p class="cp-txt">Entre l'adresse de ton compte : on t'envoie un code à 6 chiffres pour choisir un nouveau mot de passe.</p>
+          <label>Adresse mail<input id="cp-r-mail" type="email" autocomplete="email" inputmode="email" required></label>
+          <button class="btn btn-accent btn-wide" id="cp-r1-go" type="submit">Recevoir le code</button>
+        </form>
+        <form id="cp-r2" class="cp-form" novalidate hidden>
+          <p class="cp-txt" id="cp-r2-txt"></p>
+          <label>Code reçu par mail<input id="cp-r-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" required></label>
+          <label>Nouveau mot de passe <span class="opt">8 caractères minimum</span><input id="cp-r-mdp" type="password" autocomplete="new-password" minlength="8" required></label>
+          <button class="btn btn-accent btn-wide" id="cp-r2-go" type="submit">Changer mon mot de passe</button>
+        </form>
+        <p class="cp-small"><button type="button" class="linklike" id="cp-r-back">← Retour à la connexion</button></p>
         <p class="pw-small cp-small">En créant un compte, tu acceptes que tes données de l'appli soient sauvegardées chez nous (<a href="/confidentialite.html#alternance">Confidentialité</a>).</p>
       </div>
       <div id="cp-on" hidden>
@@ -395,11 +409,7 @@
         </div>
       </div>
       <p class="pw-free">Gratuit pour toujours : recherche d'entreprises, 6 modèles de CV, lettres, 10 candidatures suivies et 3 envois automatiques par mois.</p>
-      <p class="pw-small">Paiement sécurisé par Stripe (carte, Apple Pay, Google Pay). Accès immédiat. <a href="/cgv.html#alternance">Conditions</a> · <button type="button" class="linklike" id="pw-restore">Déjà payé ? Récupérer mon Pass</button> · <button type="button" class="linklike" id="pw-code">J'ai un code d'invitation</button></p>
-      <div id="pw-code-box" hidden>
-        <label>Code d'invitation<input id="pw-code-in" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ex. AMIS-XXXXXX"></label>
-        <button type="button" class="btn btn-ink btn-wide" id="pw-code-go" style="margin-top:10px">Activer</button>
-      </div>
+      <p class="pw-small">Paiement sécurisé par Stripe (carte, Apple Pay, Google Pay). Accès immédiat. <a href="/cgv.html#alternance">Conditions</a> · <button type="button" class="linklike" id="pw-restore">Déjà payé ? Récupérer mon Pass</button></p>
       <div id="pw-restore-box" hidden>
         <label>Adresse mail utilisée pour le paiement<input id="pw-mail" type="email" autocomplete="email"></label>
         <button type="button" class="btn btn-ink btn-wide" id="pw-restore-go" style="margin-top:10px">Récupérer</button>

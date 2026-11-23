@@ -366,26 +366,20 @@
     $("#pw-ess").href = lienPay(FL.links && FL.links.essentiel);
     $("#pw-pro").href = lienPay(FL.links && FL.links.pro);
     $("#pw-ess").closest(".pw-card").hidden = why === "envoi" || tier() === "essentiel";
-    $("#pw-err").hidden = true; $("#pw-restore-box").hidden = true; $("#pw-code-box").hidden = true;
+    $("#pw-err").hidden = true; $("#pw-restore-box").hidden = true;
     $("#paywall").hidden = false;
   }
   $$("[data-close-pw]").forEach(function (b) { b.addEventListener("click", function () { $("#paywall").hidden = true; }); });
-  $("#pw-restore").addEventListener("click", function () { $("#pw-restore-box").hidden = false; $("#pw-code-box").hidden = true; $("#pw-mail").value = (S.profil && S.profil.email) || ""; $("#pw-mail").focus(); });
+  $("#pw-restore").addEventListener("click", function () { $("#pw-restore-box").hidden = false; $("#pw-mail").value = (S.profil && S.profil.email) || ""; $("#pw-mail").focus(); });
   $("#pw-restore-go").addEventListener("click", async function () {
     var b = this; b.disabled = true; $("#pw-err").hidden = true;
     try { var d = await api("restaurer", { email: $("#pw-mail").value.trim() }); S.pass = { tier: d.tier, email: d.email, v: d.jeton }; save(); majPass(); $("#paywall").hidden = true; toast("Pass " + (d.tier === "pro" ? "Pro" : "Essentiel") + " récupéré ✓"); }
     catch (e) { $("#pw-err").textContent = e.message; $("#pw-err").hidden = false; } finally { b.disabled = false; }
   });
-  $("#pw-code").addEventListener("click", function () { $("#pw-code-box").hidden = false; $("#pw-restore-box").hidden = true; $("#pw-code-in").focus(); });
-  $("#pw-code-go").addEventListener("click", async function () {
-    var b = this; b.disabled = true; $("#pw-err").hidden = true;
-    try { var d = await api("code_pass", { code: $("#pw-code-in").value.trim() }); S.pass = { tier: d.tier, email: d.email, v: d.jeton, invite: true }; save(); majPass(); $("#paywall").hidden = true; toast("Code activé : tout est débloqué ✓"); }
-    catch (e) { $("#pw-err").textContent = e.message; $("#pw-err").hidden = false; } finally { b.disabled = false; }
-  });
   function majPass() {
     var b = $("#pass-btn"); if (!b) return;
     b.hidden = !FL.pay;
-    if (FL.pay) { $("#free").hidden = true; var t = tier(); b.textContent = S.pass && S.pass.invite ? "Accès offert ✓" : t === "pro" ? "Pass Pro ✓" : t === "essentiel" ? "Pass Essentiel ✓" : "Débloquer le Pass"; b.classList.toggle("on", !!t); }
+    if (FL.pay) { $("#free").hidden = true; var t = tier(); b.textContent = S.pass && S.pass.admin ? "Admin ✓" : S.pass && S.pass.invite ? "Accès offert ✓" : t === "pro" ? "Pass Pro ✓" : t === "essentiel" ? "Pass Essentiel ✓" : "Débloquer le Pass"; b.classList.toggle("on", !!t); }
     if (galFait) galerie();
     if (cur) majAuto();
   }
@@ -723,8 +717,8 @@
   function localVide() { return !S.profil && !Object.keys(S.suivi || {}).length && !S.cvMode; }
   function appliquePass(p) {
     if (!p || !p.v) return;
-    if (S.pass && S.pass.v === p.v) return;
-    S.pass = { tier: p.tier, email: p.email, v: p.v, invite: !!p.invite }; store(); majPass();
+    if (S.pass && S.pass.v === p.v && !!S.pass.admin === !!p.admin) return;
+    S.pass = { tier: p.tier, email: p.email, v: p.v, invite: !!p.invite, admin: !!p.admin }; store(); majPass();
   }
   function syncTxt(t) { var el = $("#cp-sync"); if (el) el.textContent = t; }
   async function pousse() {
@@ -761,7 +755,7 @@
   function majCompte() {
     var on = !!S.compte;
     $("#acc-btn").hidden = !on;
-    $("#cp-out").hidden = on; $("#cp-on").hidden = !on;
+    $("#cp-out").hidden = on; $("#cp-on").hidden = !on; $("#cp-reset").hidden = true;
     $("#cp-x").hidden = !on;
     $("#cp-t").textContent = on ? "Ton compte" : cpMode === "login" ? "Content de te revoir" : "Crée ton compte, c'est gratuit";
     $("#cp-sub").hidden = on;
@@ -794,6 +788,35 @@
     var st = "L" + Array.from(crypto.getRandomValues(new Uint8Array(16)), function (x) { return x.toString(16).padStart(2, "0"); }).join("");
     try { sessionStorage.setItem("tw-alt-gstate", st); } catch (e) {}
     location.href = "https://accounts.google.com/o/oauth2/v2/auth?" + new URLSearchParams({ client_id: FL.gclient, redirect_uri: GREDIR, response_type: "code", scope: "openid email profile", state: st, prompt: "select_account" }).toString();
+  });
+  function vueReset(on) {
+    $("#cp-out").hidden = on; $("#cp-reset").hidden = !on; $("#cp-err").hidden = true;
+    $("#cp-t").textContent = on ? "Nouveau mot de passe" : cpMode === "login" ? "Content de te revoir" : "Crée ton compte, c'est gratuit";
+    $("#cp-sub").hidden = on;
+    if (on) { $("#cp-r1").hidden = false; $("#cp-r2").hidden = true; $("#cp-r-mail").value = $("#cp-mail").value; $("#cp-r-mail").focus(); }
+  }
+  function cpErr(m) { $("#cp-err").textContent = m; $("#cp-err").hidden = false; }
+  $("#cp-oubli-go").addEventListener("click", async function () {
+    await getInfo();
+    if (!FL.mail) { cpErr("Pour récupérer ton compte, écris à contact@tissaweb.fr depuis l'adresse de ton compte."); return; }
+    vueReset(true);
+  });
+  $("#cp-r-back").addEventListener("click", function () { vueReset(false); });
+  $("#cp-r1").addEventListener("submit", async function (e) {
+    e.preventDefault(); var b = $("#cp-r1-go"); b.disabled = true; $("#cp-err").hidden = true;
+    try {
+      var m = $("#cp-r-mail").value.trim();
+      await api("mdp_oubli", { email: m });
+      $("#cp-r2-txt").textContent = "Si un compte existe avec " + m + ", un code vient d'y être envoyé (regarde aussi dans les spams).";
+      $("#cp-r1").hidden = true; $("#cp-r2").hidden = false; $("#cp-r-code").focus();
+    } catch (err) { cpErr(err.message); } finally { b.disabled = false; }
+  });
+  $("#cp-r2").addEventListener("submit", async function (e) {
+    e.preventDefault(); var b = $("#cp-r2-go"); b.disabled = true; $("#cp-err").hidden = true;
+    try {
+      var d = await api("mdp_reset", { email: $("#cp-r-mail").value.trim(), code: $("#cp-r-code").value, mdp: $("#cp-r-mdp").value });
+      if (!recoit(d, true)) { $("#compte").hidden = true; document.body.style.overflow = ""; toast("Mot de passe changé, tu es connecté ✓"); }
+    } catch (err) { cpErr(err.message); } finally { b.disabled = false; }
   });
   $("#cp-logout").addEventListener("click", function () {
     if (!confirm("Te déconnecter ? Tes données restent sauvegardées dans ton compte et seront retirées de cet appareil.")) return;
