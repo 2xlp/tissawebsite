@@ -1,0 +1,19 @@
+{
+  "name": "TissAlternance",
+  "short_name": "TissAlternance",
+  "description": "Trouve ton alternance : entreprises près de chez toi, CV, lettre de motivation et suivi des relances.",
+  "id": "/alternance/",
+  "start_url": "/alternance/?source=appli",
+  "scope": "/alternance/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "fr",
+  "background_color": "#0C1310",
+  "theme_color": "#0C1310",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -2,3 +2,7 @@
 https://www.tissaweb.fr/*  https://tissaweb.fr/:splat  301!
 http://www.tissaweb.fr/*   https://tissaweb.fr/:splat  301!
 http://tissaweb.fr/*       https://tissaweb.fr/:splat  301!
+
+# Nom de l'appli
+/tissalternance   /alternance/   301
+/tissalternance/  /alternance/   301

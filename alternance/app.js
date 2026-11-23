@@ -37,11 +37,12 @@
     $$(".tabs [data-tab]").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === name)); b.tabIndex = b.dataset.tab === name ? 0 : -1; });
     $$(".view").forEach(function (v) { v.hidden = v.id !== "v-" + name; });
     if (name === "suivi") renderSuivi();
+    if (name === "cv") renderCv();
     if (name === "recherche" && S.profil && !R.data && !R.loading) search(1);
     if (focus) { var top = $("#app").getBoundingClientRect().top + scrollY - 70; scrollTo({ top: top, behavior: "smooth" }); }
   }
   $$(".tabs [data-tab]").forEach(function (b) { b.addEventListener("click", function () { tab(b.dataset.tab, true); }); });
-  $$("[data-go]").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); tab(S.profil ? "recherche" : a.dataset.go, true); }); });
+  $$("[data-go]").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); tab(!S.profil ? "profil" : !S.cvMode ? "cv" : "recherche", true); }); });
 
   /* ---------- profil ---------- */
   var F = $("#f-profil");
@@ -74,7 +75,7 @@
     var changed = !S.profil || ["secteur", "ville", "q"].some(function (k) { return S.profil[k] !== p[k]; });
     S.profil = p; save();
     if (changed) R.data = null;
-    tab("recherche", true);
+    tab(S.cvMode ? "recherche" : "cv", true);
   });
 
   /* ---------- recherche ---------- */
@@ -240,13 +241,13 @@
       '<a href="https://annuaire-entreprises.data.gouv.fr/entreprise/' + encodeURIComponent(x.siren) + '" target="_blank" rel="noopener">Fiche officielle ↗</a>';
     $("#sh-done").textContent = s ? "Enregistrer" : "J'ai envoyé ma candidature";
     $("#sheet").hidden = false; document.body.style.overflow = "hidden";
-    setDoc(doc || "mail");
+    setDoc(doc || "mail").then(prepare);
     setTimeout(function () { $(".x", $("#sheet")).focus(); }, 50);
   }
-  function closeSheet() { $("#sheet").hidden = true; document.body.style.overflow = ""; cur = null; }
+  function closeSheet() { $("#sheet").hidden = true; document.body.style.overflow = ""; cur = null; PJ = { cv: null, lettre: null }; }
   $$("[data-close]").forEach(function (b) { b.addEventListener("click", closeSheet); });
   addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
-  $$("[data-doc]").forEach(function (b) { b.addEventListener("click", function () { setDoc(b.dataset.doc); }); });
+  $$("[data-doc]").forEach(function (b) { b.addEventListener("click", function () { setDoc(b.dataset.doc).then(prepare); }); });
 
   async function setDoc(doc) {
     curDoc = doc;
@@ -275,6 +276,35 @@
     $("#sh-mail").href = "mailto:" + encodeURIComponent(to).replace(/%40/g, "@") + "?subject=" + encodeURIComponent($("#sh-objet").value) + "&body=" + encodeURIComponent(body);
   }
   ["#sh-to", "#sh-texte", "#sh-objet"].forEach(function (s) { $(s).addEventListener("input", majMail); });
+  $("#sh-texte").addEventListener("input", function () { clearTimeout(prepare.t); prepare.t = setTimeout(prepare, 600); });
+
+  /* pièces jointes prêtes à l'avance : le partage doit partir tout de suite au toucher */
+  var PJ = { cv: null, lettre: null }, canFiles = false;
+  try { canFiles = !!(navigator.canShare && navigator.canShare({ files: [new File(["x"], "t.pdf", { type: "application/pdf" })] })); } catch (e) {}
+  async function prepare() {
+    if (!cur) return;
+    var x = cur, pj = $("#sh-pj");
+    pj.innerHTML = "<span>Préparation des PDF…</span>";
+    try {
+      var r = await Promise.all([cvFichier(), lettreFichier()]);
+      if (cur !== x) return;
+      PJ = { cv: r[0], lettre: r[1] };
+      pj.innerHTML = (PJ.cv ? "<span>CV : " + esc(PJ.cv.name) + "</span>" : '<span class="ko">Pas de CV : ajoute-le dans l\'onglet CV</span>') + "<span>Lettre : " + esc(PJ.lettre.name) + "</span>";
+    } catch (e) { pj.innerHTML = '<span class="ko">' + esc(e.message) + "</span>"; }
+    $("#sh-share").hidden = !canFiles;
+    $("#sh-share").textContent = PJ.cv ? "Envoyer avec mon CV et ma lettre" : "Envoyer avec ma lettre";
+  }
+  $("#sh-share").addEventListener("click", function () {
+    var files = [PJ.cv, PJ.lettre].filter(Boolean);
+    if (!files.length) return toast("Les PDF sont en préparation, réessaie dans une seconde");
+    var body = decodeURIComponent(($("#sh-mail").href.split("&body=")[1] || ""));
+    navigator.share({ files: files, title: $("#sh-objet").value, text: body })
+      .then(function () { toast("Envoyé ? Clique sur « J'ai envoyé ma candidature »"); })
+      .catch(function (e) { if (e && e.name !== "AbortError") toast("Partage impossible ici : télécharge les PDF"); });
+  });
+  $("#sh-dl-lettre").addEventListener("click", async function () { try { var f = PJ.lettre || await lettreFichier(); dl(f, f.name); } catch (e) { toast(e.message); } });
+  $("#sh-dl-cv").addEventListener("click", async function () { try { var f = PJ.cv || await cvFichier(); if (!f) { closeSheet(); tab("cv", true); return toast("Ajoute d'abord ton CV"); } dl(f, f.name); } catch (e) { toast(e.message); } });
+  $("#sh-copy-objet").addEventListener("click", async function () { try { await navigator.clipboard.writeText($("#sh-objet").value); toast("Objet copié"); } catch (e) { toast("Copie impossible"); } });
   $("#sh-copy").addEventListener("click", async function () {
     var t = $("#sh-texte").value;
     try { await navigator.clipboard.writeText(t); toast("Texte copié"); }
@@ -291,6 +321,134 @@
     save(); closeSheet(); renderList(); badge();
     toast(curDoc === "relance" ? "Relance notée" : s.date && jours(s.date) === 0 ? "Bravo ! On te rappelle de relancer dans " + RELANCE_J + " jours." : "Enregistré");
   });
+
+
+  /* ---------- CV ---------- */
+  var CV = window.TACV;
+  S.cv = S.cv || { modele: "moderne", couleur: "vert", exps: [{}], forms: [] };
+  function cap1(s) { s = String(s || ""); return s.charAt(0).toUpperCase() + s.slice(1); }
+  function ascii(s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function cvNom() { return "CV-" + ascii(S.profil.prenom + " " + S.profil.nom) + ".pdf"; }
+  function dl(blob, name) {
+    var u = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 30000);
+  }
+  function cvDefaults() {
+    var p = S.profil; if (!p) return;
+    if (!S.cv.forms || !S.cv.forms.length) S.cv.forms = [{ diplome: p.formation, ecole: p.ecole, ville: p.ville, debut: "", fin: "En cours" }];
+    if (!S.cv.exps || !S.cv.exps.length) S.cv.exps = [{}];
+    if (!S.cv.titre) S.cv.titre = "Alternance – " + cap1(p.metier);
+  }
+  function accroche(p) {
+    var q = qualitesTxt(p);
+    return (p.genre === "f" ? "Étudiante" : "Étudiant") + " en " + p.formation + ecoleTxt(p) + ", je recherche une alternance" + (p.duree ? " de " + p.duree : "") + " en tant que " + p.metier + " à partir de " + p.debut + ". " +
+      (q ? cap1(q) + ", j'ai" : "J'ai") + " envie d'apprendre sur le terrain et de m'investir pleinement dans une équipe.";
+  }
+  var FIELDS = {
+    exps: [["poste", "Poste", "ex. Vendeur en boulangerie"], ["entreprise", "Entreprise", "ex. Maison Martin"], ["ville", "Ville", "ex. Dijon"], ["debut", "Début", "ex. juin 2025"], ["fin", "Fin", "ex. août 2025"], ["missions", "Missions (une par ligne)", "Accueil et conseil des clients\nEncaissement\nMise en rayon"]],
+    forms: [["diplome", "Diplôme", "ex. Bac STMG"], ["ecole", "Établissement", "ex. Lycée Carnot"], ["ville", "Ville", "ex. Dijon"], ["debut", "Début", "ex. 2022"], ["fin", "Fin", "ex. 2025"]],
+  };
+  function renderReps(kind) {
+    var box = $(kind === "exps" ? "#cv-exps" : "#cv-forms");
+    box.innerHTML = (S.cv[kind] || []).map(function (it, i) {
+      var f = FIELDS[kind], inp = function (d) {
+        var v = esc(it[d[0]] || "");
+        return d[0] === "missions" ? '<label>' + d[1] + '<textarea rows="3" data-k="' + kind + '" data-i="' + i + '" data-f="' + d[0] + '" placeholder="' + esc(d[2]) + '">' + v + "</textarea></label>"
+          : '<label>' + d[1] + '<input data-k="' + kind + '" data-i="' + i + '" data-f="' + d[0] + '" value="' + v + '" placeholder="' + esc(d[2]) + '"></label>';
+      };
+      return '<div class="item"><button type="button" class="del" data-del="' + kind + '" data-i="' + i + '">Supprimer</button>' +
+        inp(f[0]) + '<div class="row2">' + inp(f[1]) + inp(f[2]) + "</div>" + '<div class="row2">' + inp(f[3]) + inp(f[4]) + "</div>" + (f[5] ? inp(f[5]) : "") + "</div>";
+    }).join("") || '<p class="opt">Rien pour l\'instant.</p>';
+  }
+  function setPressed(sel, attr, val) { $$(sel).forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset[attr] === val)); }); }
+  async function renderCv() {
+    if (!S.profil) { $("#cv-genere").hidden = $("#cv-import").hidden = true; $(".choix").hidden = true; $("#cv-next").hidden = true; $("#v-cv .vhead p").textContent = "Remplis d'abord ton profil (onglet 1)."; return; }
+    $(".choix").hidden = false; $("#v-cv .vhead p").textContent = "Mets ton CV ou crée-le ici en 5 minutes. Il sera joint à tes candidatures.";
+    setPressed("[data-mode]", "mode", S.cvMode || "");
+    $("#cv-import").hidden = S.cvMode !== "import";
+    $("#cv-genere").hidden = S.cvMode !== "genere";
+    $("#cv-next").hidden = !S.cvMode;
+    if (S.cvMode === "import") fileInfo();
+    if (S.cvMode === "genere") {
+      cvDefaults();
+      var f = $("#f-cv");
+      ["titre", "accroche", "competences", "langues", "logiciels", "interets"].forEach(function (n) { f[n].value = S.cv[n] || ""; });
+      renderReps("exps"); renderReps("forms");
+      setPressed("[data-modele]", "modele", S.cv.modele); setPressed("[data-couleur]", "couleur", S.cv.couleur);
+      thumb(); preview();
+    }
+  }
+  $$("[data-mode]").forEach(function (b) { b.addEventListener("click", function () { S.cvMode = b.dataset.mode; save(); renderCv(); }); });
+  $("#cv-next").addEventListener("click", function () { tab("recherche", true); });
+
+  /* CV importé */
+  async function fileInfo() {
+    var rec = await CV.fichiers.get("cv"), box = $("#cv-file-info");
+    box.innerHTML = rec ? '<div class="file"><span class="file-ic">PDF</span><div><b>' + esc(rec.name) + "</b><small>" + Math.round(rec.size / 1024) + ' Ko · ajouté le ' + dateFr(rec.date) + '</small></div><button class="btn btn-ghost btn-sm" id="cv-voir">Voir</button><button class="linklike" id="cv-suppr">Supprimer</button></div>'
+      : "<p class=\"opt\">Aucun CV pour l'instant. Choisis ton fichier PDF (8 Mo maximum).</p>";
+    if (!rec) return;
+    $("#cv-voir").onclick = function () { var u = URL.createObjectURL(rec.blob); window.open(u, "_blank"); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); };
+    $("#cv-suppr").onclick = async function () { await CV.fichiers.del("cv"); fileInfo(); toast("CV supprimé"); };
+  }
+  $("#cv-file").addEventListener("change", async function () {
+    var f = this.files[0]; this.value = "";
+    if (!f) return;
+    if (!/pdf$/i.test(f.type) && !/\.pdf$/i.test(f.name)) return toast("Choisis un fichier PDF");
+    if (f.size > 8 * 1024 * 1024) return toast("Fichier trop lourd (8 Mo maximum)");
+    try { await CV.fichiers.put("cv", { name: f.name, size: f.size, date: new Date().toISOString(), blob: f }); toast("CV enregistré"); fileInfo(); }
+    catch (e) { toast("Impossible d'enregistrer le fichier sur cet appareil"); }
+  });
+
+  /* CV créé */
+  var pvT = null, pvN = 0;
+  function preview() { clearTimeout(pvT); pvT = setTimeout(async function () {
+    var n = ++pvN;
+    try { var r = await CV.cvPdf(S.profil, S.cv); if (n === pvN) await CV.draw($("#cv-prev"), r); }
+    catch (e) { $("#cv-prev").innerHTML = '<div class="empty"><b>Aperçu indisponible</b>' + esc(e.message) + "</div>"; }
+  }, 300); }
+  function thumb() { var t = $("#cv-photo-prev"); t.style.backgroundImage = S.cv.photo ? "url(" + S.cv.photo + ")" : ""; t.textContent = S.cv.photo ? "" : "Photo"; $("#cv-photo-del").hidden = !S.cv.photo; }
+  $("#f-cv").addEventListener("input", function (e) {
+    var el = e.target;
+    if (el.dataset.k) S.cv[el.dataset.k][+el.dataset.i][el.dataset.f] = el.value;
+    else if (el.name) S.cv[el.name] = el.value;
+    else return;
+    save(); preview();
+  });
+  $("#f-cv").addEventListener("click", function (e) {
+    var d = e.target.closest("[data-del]"), a = e.target.closest("[data-add]");
+    if (d) { S.cv[d.dataset.del].splice(+d.dataset.i, 1); save(); renderReps(d.dataset.del); preview(); }
+    if (a) { var k = a.dataset.add; (S.cv[k] = S.cv[k] || []).push({}); save(); renderReps(k); var ins = $$("[data-k=" + k + "]"); if (ins.length) ins[ins.length - FIELDS[k].length].focus(); }
+  });
+  $("#cv-accroche").addEventListener("click", function () { S.cv.accroche = accroche(S.profil); $("#f-cv").accroche.value = S.cv.accroche; save(); preview(); toast("Accroche écrite, tu peux la modifier"); });
+  $("#cv-photo").addEventListener("change", async function () {
+    var f = this.files[0]; this.value = ""; if (!f) return;
+    try { S.cv.photo = await CV.photo(f); save(); thumb(); preview(); } catch (e) { toast(e.message); }
+  });
+  $("#cv-photo-del").addEventListener("click", function () { delete S.cv.photo; save(); thumb(); preview(); });
+  $$("[data-modele]").forEach(function (b) { b.addEventListener("click", function () { S.cv.modele = b.dataset.modele; save(); setPressed("[data-modele]", "modele", S.cv.modele); preview(); }); });
+  $$("[data-couleur]").forEach(function (b) { b.addEventListener("click", function () { S.cv.couleur = b.dataset.couleur; save(); setPressed("[data-couleur]", "couleur", S.cv.couleur); preview(); }); });
+  $("#cv-dl").addEventListener("click", async function () {
+    var btn = this; btn.disabled = true;
+    try { var r = await CV.cvPdf(S.profil, S.cv); dl(r.doc.output("blob"), cvNom()); toast(r.pages > 1 ? "CV téléchargé (" + r.pages + " pages : raccourcis un peu pour tenir sur 1 page)" : "CV téléchargé"); }
+    catch (e) { toast(e.message); } finally { btn.disabled = false; }
+  });
+
+  /* fichiers joints aux candidatures */
+  async function cvFichier() {
+    if (S.cvMode === "import") { var rec = await CV.fichiers.get("cv"); return rec ? new File([rec.blob], rec.name, { type: "application/pdf" }) : null; }
+    if (S.cvMode === "genere") { cvDefaults(); var r = await CV.cvPdf(S.profil, S.cv); return new File([r.doc.output("blob")], cvNom(), { type: "application/pdf" }); }
+    return null;
+  }
+  function lettreTexte() {
+    var id = cur.siret || cur.siren, s = S.suivi[id];
+    if (curDoc === "lettre") return $("#sh-texte").value;
+    return (s && s.textes && s.textes.lettre) || texteLettre(S.profil, cur);
+  }
+  async function lettreFichier() {
+    var d = await CV.lettrePdf(lettreTexte(), S.profil);
+    return new File([d.output("blob")], "Lettre-motivation-" + ascii(S.profil.prenom + " " + S.profil.nom) + "-" + ascii(nomCourt(cur.nom)).slice(0, 40) + ".pdf", { type: "application/pdf" });
+  }
 
   /* ---------- suivi ---------- */
   var LABELS = { envoye: "Envoyée", relance: "Relancée", entretien: "Entretien", refus: "Refus", accepte: "Acceptée 🎉" };
@@ -335,14 +493,29 @@
   }
 
   $("#reset").addEventListener("click", function () {
-    if (!confirm("Effacer ton profil, tes textes et ton suivi de ce navigateur ?")) return;
+    if (!confirm("Effacer ton profil, ton CV, tes textes et ton suivi de cet appareil ?")) return;
     try { localStorage.removeItem(KEY); } catch (e) {}
-    location.reload();
+    CV.fichiers.del("cv").then(function () { location.reload(); });
   });
 
   /* ---------- démarrage ---------- */
   fillForm(); badge();
-  var start = location.hash === "#suivi" ? "suivi" : S.profil ? "recherche" : "profil";
+  var start = location.hash === "#suivi" ? "suivi" : !S.profil ? "profil" : !S.cvMode ? "cv" : "recherche";
   tab(start);
   api("info").then(function (d) { IA = !!d.ia; }).catch(function () {});
+
+  /* ---------- appli installable ---------- */
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/alternance/sw.js", { scope: "/alternance/" }).catch(function () {});
+  var promptEv = null;
+  var standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  function showInstall(on) { $("#install").hidden = !on; $("#free").hidden = on; }
+  addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); promptEv = e; showInstall(true); });
+  addEventListener("appinstalled", function () { showInstall(false); toast("TissAlternance est installée"); });
+  if (ios && !standalone) showInstall(true);
+  $("#install").addEventListener("click", function () {
+    if (promptEv) { promptEv.prompt(); promptEv.userChoice.finally(function () { promptEv = null; showInstall(false); }); }
+    else if (ios) { $("#ios-help").hidden = false; }
+  });
+  $$("[data-close-ios]").forEach(function (b) { b.addEventListener("click", function () { $("#ios-help").hidden = true; }); });
 })();
