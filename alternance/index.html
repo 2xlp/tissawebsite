@@ -30,7 +30,7 @@
     <a class="logo" href="/alternance/" aria-label="TissAlternance, accueil"><img class="logo-mark" src="icon-192.png" alt="" width="32" height="32"><span>Tiss<b>Alternance</b></span></a>
     <button class="pill pill-btn" id="install" hidden>Installer l'appli</button>
     <span class="pill" id="free">Gratuit</span>
-    <button class="pill pill-btn pill-pass" id="pass-btn" hidden>Pass</button>
+    <button class="pill pill-btn pill-pass" id="pass-btn" hidden>Offres</button>
     <button class="pill pill-acc" id="acc-btn" hidden>Mon compte</button>
   </div>
 </header>
@@ -387,34 +387,63 @@
   </div>
 </div>
 
-<div class="sheet" id="paywall" role="dialog" aria-modal="true" aria-labelledby="pw-t" hidden>
+<div class="sheet of" id="paywall" role="dialog" aria-modal="true" aria-labelledby="pw-t" hidden>
   <div class="sheet-bg" data-close-pw></div>
-  <div class="sheet-in">
-    <div class="sheet-head"><div><p class="sheet-k">Pass TissAlternance</p><h3 id="pw-t">Mets toutes les chances de ton côté</h3></div><button class="x" data-close-pw aria-label="Fermer">×</button></div>
-    <div class="sheet-body">
-      <p class="pw-why" id="pw-why"></p>
-      <div class="pw-grid">
-        <div class="pw-card">
-          <p class="pw-name">Essentiel</p>
-          <p class="pw-price">4,99 € <small>une fois, à vie</small></p>
-          <ul class="pw-list"><li>Les <b>8 modèles de CV premium</b> (Exécutif, Classique, Corporate, Banque, Ardoise, Monogramme, Parcours, Conseil)</li><li><b>Suivi illimité</b> de tes candidatures</li><li>Lettre assortie à chaque modèle</li></ul>
-          <a class="btn btn-ink btn-wide" id="pw-ess" href="#" rel="noopener">Prendre l'Essentiel</a>
-        </div>
-        <div class="pw-card pw-best">
-          <span class="pw-tag">Le plus choisi</span>
-          <p class="pw-name">Pro</p>
-          <p class="pw-price">9,99 € <small>une fois, à vie</small></p>
-          <ul class="pw-list"><li><b>Tout l'Essentiel</b></li><li><b>Envois automatiques illimités</b> depuis ton Gmail</li><li><b>Relances automatiques</b> illimitées à 7 jours</li></ul>
-          <a class="btn btn-accent btn-wide" id="pw-pro" href="#" rel="noopener">Prendre le Pro</a>
-        </div>
+  <div class="sheet-in of-in">
+    <div class="of-head">
+      <button class="x of-x" data-close-pw aria-label="Fermer">×</button>
+      <p class="sheet-k">Offres TissAlternance</p>
+      <h3 id="pw-t">Choisis ton offre</h3>
+      <p class="of-why" id="pw-why"></p>
+      <p class="of-once"><span>Paiement unique</span><span>Accès à vie</span><span>Sans abonnement</span></p>
+    </div>
+    <div class="of-body">
+      <div class="of-plans" role="radiogroup" aria-label="Offres">
+        <button type="button" class="of-plan" role="radio" data-plan="gratuit" aria-checked="false">
+          <span class="of-tag of-cur" hidden>Ton offre</span>
+          <span class="of-name">Gratuit</span>
+          <span class="of-price">0 €</span>
+          <span class="of-desc">Pour commencer : chercher, faire ton CV et postuler.</span>
+          <span class="of-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="of-plan" role="radio" data-plan="essentiel" aria-checked="false">
+          <span class="of-tag of-cur" hidden>Ton offre</span>
+          <span class="of-name">Essentiel</span>
+          <span class="of-price">4,99 €<small>une fois</small></span>
+          <span class="of-desc">Les 14 modèles de CV et un suivi sans limite.</span>
+          <span class="of-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="of-plan of-reco" role="radio" data-plan="pro" aria-checked="true">
+          <span class="of-tag">Recommandé</span>
+          <span class="of-tag of-cur" hidden>Ton offre</span>
+          <span class="of-name">Pro</span>
+          <span class="of-price">9,99 €<small>une fois</small></span>
+          <span class="of-desc">Tout, plus l'envoi et les relances automatiques sans limite.</span>
+          <span class="of-dot" aria-hidden="true"></span>
+        </button>
       </div>
-      <p class="pw-free">Gratuit pour toujours : recherche d'entreprises, 6 modèles de CV, lettres, 10 candidatures suivies et 3 envois automatiques par mois.</p>
-      <p class="pw-small">Paiement sécurisé par Stripe (carte, Apple Pay, Google Pay). Accès immédiat. <a href="/cgv.html#alternance">Conditions</a> · <button type="button" class="linklike" id="pw-restore">Déjà payé ? Récupérer mon Pass</button></p>
+
+      <div class="of-table" role="table" aria-label="Ce qui est inclus">
+        <div class="of-row of-th" role="row"><span role="columnheader">Ce qui est inclus</span><span role="columnheader" data-col="gratuit">Gratuit</span><span role="columnheader" data-col="essentiel">Essentiel</span><span role="columnheader" data-col="pro">Pro</span></div>
+        <div class="of-row" role="row"><span role="cell">Recherche d'entreprises près de chez toi</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row" role="row"><span role="cell">Modèles de CV</span><span role="cell" data-col="gratuit">6</span><span role="cell" data-col="essentiel"><b>14</b></span><span role="cell" data-col="pro"><b>14</b></span></div>
+        <div class="of-row" role="row"><span role="cell">Lettre de motivation à chaque entreprise</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+        <div class="of-row" role="row"><span role="cell">Candidatures suivies</span><span role="cell" data-col="gratuit">10</span><span role="cell" data-col="essentiel"><b>Illimité</b></span><span role="cell" data-col="pro"><b>Illimité</b></span></div>
+        <div class="of-row" role="row"><span role="cell">Envois automatiques depuis ton Gmail</span><span role="cell" data-col="gratuit">3 / mois</span><span role="cell" data-col="essentiel">3 / mois</span><span role="cell" data-col="pro"><b>Illimité</b></span></div>
+        <div class="of-row" role="row"><span role="cell">Relances automatiques à 7 jours</span><span role="cell" data-col="gratuit">3 / mois</span><span role="cell" data-col="essentiel">3 / mois</span><span role="cell" data-col="pro"><b>Illimité</b></span></div>
+        <div class="of-row" role="row"><span role="cell">Sauvegarde dans ton compte</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
+      </div>
+
+      <p class="pw-small of-small">Paiement sécurisé par Stripe (carte, Apple Pay, Google Pay) · <a href="/cgv.html#alternance">Conditions</a> · <button type="button" class="linklike" id="pw-restore">Déjà payé ? Récupérer mon offre</button></p>
       <div id="pw-restore-box" hidden>
         <label>Adresse mail utilisée pour le paiement<input id="pw-mail" type="email" autocomplete="email"></label>
         <button type="button" class="btn btn-ink btn-wide" id="pw-restore-go" style="margin-top:10px">Récupérer</button>
       </div>
       <p class="err" id="pw-err" role="alert" hidden></p>
+    </div>
+    <div class="of-bar">
+      <div class="of-sum"><b id="of-sum-n">Pro</b><span id="of-sum-p">9,99 € · une fois, à vie</span></div>
+      <a class="btn btn-accent of-go" id="of-go" href="#" rel="noopener">Payer 9,99 €</a>
     </div>
   </div>
 </div>

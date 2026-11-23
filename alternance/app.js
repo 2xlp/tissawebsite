@@ -355,35 +355,64 @@
   function isPro() { return !FL.pay || tier() === "pro"; }
   function lienPay(u) { if (!u) return "#"; var em = (S.profil && S.profil.email) || ""; return u + (u.indexOf("?") < 0 ? "?" : "&") + (em ? "prefilled_email=" + encodeURIComponent(em) + "&" : "") + "locale=fr"; }
   var PW_WHY = {
-    modele: "Ce modèle fait partie des 8 modèles premium. Débloque-les avec le Pass.",
-    suivi: "Tu suis déjà " + SUIVI_MAX + " candidatures, la limite gratuite. Passe au Pass pour en suivre autant que tu veux.",
-    envoi: "Tu as utilisé tes envois automatiques gratuits du mois. Avec le Pass Pro, l'appli envoie et relance pour toi sans limite.",
-    menu: "Un petit coup de pouce à 4,99 € ou 9,99 €, une seule fois, et c'est à vie.",
+    modele: "Ce modèle fait partie des 8 modèles premium, inclus dès l'offre Essentiel.",
+    suivi: "Tu suis déjà " + SUIVI_MAX + " candidatures, le maximum de l'offre gratuite.",
+    envoi: "Tu as utilisé tes 3 envois automatiques du mois. Avec Pro, l'appli envoie et relance pour toi sans limite.",
+    menu: "Garde l'offre gratuite ou passe à la vitesse supérieure.",
   };
+  var OFFRES = { gratuit: { n: "Gratuit", p: "0 €", r: 0 }, essentiel: { n: "Essentiel", p: "4,99 €", r: 1 }, pro: { n: "Pro", p: "9,99 €", r: 2 } };
+  var ofChoix = "pro", ofWhy = "menu";
+  function ofRang() { return S.pass && S.pass.admin ? 2 : OFFRES[tier() || "gratuit"].r; }
+  function ofMaj() {
+    var r = ofRang();
+    $$(".of-plan").forEach(function (c) {
+      var k = c.dataset.plan, o = OFFRES[k];
+      var bloque = o.r < r || (k === "essentiel" && ofWhy === "envoi") ;
+      c.setAttribute("aria-checked", String(k === ofChoix));
+      c.disabled = bloque && o.r !== r;
+      c.classList.toggle("is-cur", o.r === r);
+      $(".of-cur", c).hidden = o.r !== r;
+      var tag = $(".of-tag:not(.of-cur)", c); if (tag) tag.hidden = o.r === r;
+    });
+    $$("[data-col]").forEach(function (el) { el.classList.toggle("sel", el.dataset.col === ofChoix); });
+    var o = OFFRES[ofChoix], go = $("#of-go");
+    $("#of-sum-n").textContent = o.n;
+    if (o.r <= r) {
+      $("#of-sum-p").textContent = o.r === r ? "C'est ton offre actuelle" : "Déjà inclus dans ton offre";
+      go.textContent = "Continuer"; go.removeAttribute("href"); go.dataset.close = "1";
+    } else {
+      $("#of-sum-p").textContent = o.p + " · une fois, à vie";
+      go.textContent = "Payer " + o.p; go.href = lienPay(FL.links && FL.links[ofChoix]); delete go.dataset.close;
+    }
+  }
   function paywall(why) {
     if (!FL.pay) return;
-    $("#pw-why").textContent = PW_WHY[why] || PW_WHY.menu;
-    $("#pw-ess").href = lienPay(FL.links && FL.links.essentiel);
-    $("#pw-pro").href = lienPay(FL.links && FL.links.pro);
-    $("#pw-ess").closest(".pw-card").hidden = why === "envoi" || tier() === "essentiel";
+    ofWhy = why || "menu";
+    $("#pw-why").textContent = PW_WHY[ofWhy] || PW_WHY.menu;
+    var r = ofRang();
+    ofChoix = r >= 2 ? "pro" : ofWhy === "envoi" || r === 1 ? "pro" : ofWhy === "modele" || ofWhy === "suivi" ? "essentiel" : "pro";
+    if (ofWhy === "menu" && r === 0) ofChoix = "pro";
     $("#pw-err").hidden = true; $("#pw-restore-box").hidden = true;
-    $("#paywall").hidden = false;
+    ofMaj();
+    $("#paywall").hidden = false; document.body.style.overflow = "hidden";
   }
-  $$("[data-close-pw]").forEach(function (b) { b.addEventListener("click", function () { $("#paywall").hidden = true; }); });
+  $$(".of-plan").forEach(function (c) { c.addEventListener("click", function () { if (c.disabled) return; ofChoix = c.dataset.plan; ofMaj(); }); });
+  $("#of-go").addEventListener("click", function (e) { if (this.dataset.close) { e.preventDefault(); $("#paywall").hidden = true; document.body.style.overflow = ""; } });
+  $$("[data-close-pw]").forEach(function (b) { b.addEventListener("click", function () { $("#paywall").hidden = true; document.body.style.overflow = ""; }); });
   $("#pw-restore").addEventListener("click", function () { $("#pw-restore-box").hidden = false; $("#pw-mail").value = (S.profil && S.profil.email) || ""; $("#pw-mail").focus(); });
   $("#pw-restore-go").addEventListener("click", async function () {
     var b = this; b.disabled = true; $("#pw-err").hidden = true;
-    try { var d = await api("restaurer", { email: $("#pw-mail").value.trim() }); S.pass = { tier: d.tier, email: d.email, v: d.jeton }; save(); majPass(); $("#paywall").hidden = true; toast("Pass " + (d.tier === "pro" ? "Pro" : "Essentiel") + " récupéré ✓"); }
+    try { var d = await api("restaurer", { email: $("#pw-mail").value.trim() }); S.pass = { tier: d.tier, email: d.email, v: d.jeton }; save(); majPass(); $("#paywall").hidden = true; document.body.style.overflow = ""; toast("Offre " + (d.tier === "pro" ? "Pro" : "Essentiel") + " récupérée ✓"); }
     catch (e) { $("#pw-err").textContent = e.message; $("#pw-err").hidden = false; } finally { b.disabled = false; }
   });
   function majPass() {
     var b = $("#pass-btn"); if (!b) return;
     b.hidden = !FL.pay;
-    if (FL.pay) { $("#free").hidden = true; var t = tier(); b.textContent = S.pass && S.pass.admin ? "Admin ✓" : S.pass && S.pass.invite ? "Accès offert ✓" : t === "pro" ? "Pass Pro ✓" : t === "essentiel" ? "Pass Essentiel ✓" : "Débloquer le Pass"; b.classList.toggle("on", !!t); }
+    if (FL.pay) { $("#free").hidden = true; var t = tier(); b.textContent = S.pass && S.pass.admin ? "Admin ✓" : S.pass && S.pass.invite ? "Accès offert ✓" : t === "pro" ? "Offre Pro ✓" : t === "essentiel" ? "Offre Essentiel ✓" : "Voir les offres"; b.classList.toggle("on", !!t); }
     if (galFait) galerie();
     if (cur) majAuto();
   }
-  $("#pass-btn").addEventListener("click", function () { if (tier() === "pro") { toast("Tu as le Pass Pro : tout est débloqué"); return; } paywall("menu"); });
+  $("#pass-btn").addEventListener("click", function () { paywall("menu"); });
   function suiviPlein() { return !isEss() && Object.keys(S.suivi).length >= SUIVI_MAX; }
   (function () {
     var q = new URLSearchParams(location.search);
