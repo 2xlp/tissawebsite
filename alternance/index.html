@@ -152,7 +152,7 @@
     </div>
     <div class="choix" role="radiogroup" aria-label="Ton CV">
       <button class="choix-b" data-mode="import" aria-pressed="false"><b>J'ai déjà un CV</b><span>Je mets mon fichier PDF</span></button>
-      <button class="choix-b" data-mode="genere" aria-pressed="false"><b>Je crée mon CV</b><span>On le met en page pour toi</span></button>
+      <button class="choix-b" data-mode="genere" aria-pressed="false"><b>Je crée mon CV</b><span>6 modèles pros, tu remplis, c'est prêt</span></button>
     </div>
 
     <div id="cv-import" hidden>
@@ -162,7 +162,11 @@
       </div>
     </div>
 
-    <div id="cv-genere" class="cv-grid" hidden>
+    <div id="cv-genere" hidden>
+      <div class="gal-head"><h3>1. Choisis ton modèle</h3><span class="opt">Fais glisser pour tout voir</span></div>
+      <div class="gal" id="cv-gal" role="radiogroup" aria-label="Modèle de CV"></div>
+      <div class="gal-head"><h3>2. Remplis tes infos</h3><span class="opt">L'aperçu se met à jour tout seul</span></div>
+      <div class="cv-grid">
       <form id="f-cv" class="form" novalidate>
         <fieldset>
           <legend>Présentation</legend>
@@ -196,22 +200,27 @@
           <label>Centres d'intérêt<input name="interets" placeholder="ex. Football en club, photo, voyages"></label>
           <p class="opt">Tes qualités, ton téléphone, ton mail et le permis viennent de ton profil.</p>
         </fieldset>
+        <button type="button" class="btn btn-ink btn-wide" id="cv-voir-haut">Voir mon CV</button>
       </form>
       <div class="cv-side">
         <div class="cv-opts">
-          <div class="chips" role="group" aria-label="Modèle">
-            <button class="chip" data-modele="moderne" aria-pressed="true">Moderne</button>
-            <button class="chip" data-modele="sobre" aria-pressed="false">Sobre</button>
+          <div class="chips" role="group" aria-label="Aperçu">
+            <button class="chip" data-vue="moi" aria-pressed="true">Mon CV</button>
+            <button class="chip" data-vue="exemple" aria-pressed="false">Voir un exemple</button>
           </div>
           <div class="swatches" role="group" aria-label="Couleur">
             <button class="sw" data-couleur="vert" aria-label="Vert"></button>
             <button class="sw" data-couleur="bleu" aria-label="Bleu"></button>
             <button class="sw" data-couleur="bordeaux" aria-label="Bordeaux"></button>
+            <button class="sw" data-couleur="terracotta" aria-label="Terracotta"></button>
+            <button class="sw" data-couleur="violet" aria-label="Violet"></button>
             <button class="sw" data-couleur="noir" aria-label="Noir"></button>
           </div>
         </div>
+        <p class="tip" id="cv-ex-note" hidden>Exemple avec une personne imaginaire. Clique sur « Mon CV » pour revenir au tien.</p>
         <div class="cv-prev" id="cv-prev"><div class="skel"></div></div>
         <button class="btn btn-accent btn-wide" id="cv-dl">Télécharger mon CV (PDF)</button>
+      </div>
       </div>
     </div>
     <button class="btn btn-ink btn-wide" id="cv-next" hidden>Trouver des entreprises</button>

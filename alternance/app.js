@@ -325,7 +325,10 @@
 
   /* ---------- CV ---------- */
   var CV = window.TACV;
-  S.cv = S.cv || { modele: "moderne", couleur: "vert", exps: [{}], forms: [] };
+  S.cv = S.cv || { modele: "emeraude", couleur: "vert", exps: [{}], forms: [] };
+  if (!S.cv.modele || S.cv.modele === "moderne") S.cv.modele = "emeraude";
+  if (!CV.COULEURS[S.cv.couleur]) S.cv.couleur = "vert";
+  var vue = "moi";
   function cap1(s) { s = String(s || ""); return s.charAt(0).toUpperCase() + s.slice(1); }
   function ascii(s) { return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
   function cvNom() { return "CV-" + ascii(S.profil.prenom + " " + S.profil.nom) + ".pdf"; }
@@ -375,8 +378,8 @@
       var f = $("#f-cv");
       ["titre", "accroche", "competences", "langues", "logiciels", "interets"].forEach(function (n) { f[n].value = S.cv[n] || ""; });
       renderReps("exps"); renderReps("forms");
-      setPressed("[data-modele]", "modele", S.cv.modele); setPressed("[data-couleur]", "couleur", S.cv.couleur);
-      thumb(); preview();
+      setPressed("[data-couleur]", "couleur", S.cv.couleur);
+      galerie(); thumb(); preview();
     }
   }
   $$("[data-mode]").forEach(function (b) { b.addEventListener("click", function () { S.cvMode = b.dataset.mode; save(); renderCv(); }); });
@@ -404,7 +407,11 @@
   var pvT = null, pvN = 0;
   function preview() { clearTimeout(pvT); pvT = setTimeout(async function () {
     var n = ++pvN;
-    try { var r = await CV.cvPdf(S.profil, S.cv); if (n === pvN) await CV.draw($("#cv-prev"), r); }
+    try {
+      var src = vue === "exemple" ? CV.exemple() : { p: S.profil, cv: S.cv };
+      if (vue === "exemple") { src.cv.modele = S.cv.modele; src.cv.couleur = S.cv.couleur; }
+      var r = await CV.cvPdf(src.p, src.cv); if (n === pvN) await CV.draw($("#cv-prev"), r);
+    }
     catch (e) { $("#cv-prev").innerHTML = '<div class="empty"><b>Aperçu indisponible</b>' + esc(e.message) + "</div>"; }
   }, 300); }
   function thumb() { var t = $("#cv-photo-prev"); t.style.backgroundImage = S.cv.photo ? "url(" + S.cv.photo + ")" : ""; t.textContent = S.cv.photo ? "" : "Photo"; $("#cv-photo-del").hidden = !S.cv.photo; }
@@ -426,8 +433,29 @@
     try { S.cv.photo = await CV.photo(f); save(); thumb(); preview(); } catch (e) { toast(e.message); }
   });
   $("#cv-photo-del").addEventListener("click", function () { delete S.cv.photo; save(); thumb(); preview(); });
-  $$("[data-modele]").forEach(function (b) { b.addEventListener("click", function () { S.cv.modele = b.dataset.modele; save(); setPressed("[data-modele]", "modele", S.cv.modele); preview(); }); });
-  $$("[data-couleur]").forEach(function (b) { b.addEventListener("click", function () { S.cv.couleur = b.dataset.couleur; save(); setPressed("[data-couleur]", "couleur", S.cv.couleur); preview(); }); });
+  var galFait = false;
+  async function galerie() {
+    var box = $("#cv-gal");
+    if (!galFait) {
+      galFait = true;
+      box.innerHTML = CV.MODELES.map(function (m) { return '<button class="tpl" role="radio" data-tpl="' + m.id + '"><span class="ph"></span><b>' + esc(m.nom) + "</b><small>" + esc(m.desc) + "</small></button>"; }).join("");
+      for (var i = 0; i < CV.MODELES.length; i++) {
+        var m = CV.MODELES[i], ex = CV.exemple(); ex.cv.modele = m.id; ex.cv.couleur = m.couleur;
+        try { var c = await CV.vignette(ex.p, ex.cv, 140); var ph = $('[data-tpl="' + m.id + '"] .ph', box); if (ph) ph.replaceWith(c); } catch (e) {}
+      }
+    }
+    $$(".tpl", box).forEach(function (b) { b.setAttribute("aria-checked", String(b.dataset.tpl === S.cv.modele)); });
+  }
+  $("#cv-gal").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-tpl]"); if (!b) return;
+    S.cv.modele = b.dataset.tpl;
+    var m = CV.MODELES.filter(function (x) { return x.id === S.cv.modele; })[0];
+    if (!S.cv.couleurChoisie && m) S.cv.couleur = m.couleur;
+    save(); galerie(); setPressed("[data-couleur]", "couleur", S.cv.couleur); preview();
+  });
+  $$("[data-vue]").forEach(function (b) { b.addEventListener("click", function () { vue = b.dataset.vue; setPressed("[data-vue]", "vue", vue); $("#cv-ex-note").hidden = vue !== "exemple"; preview(); }); });
+  $$("[data-couleur]").forEach(function (b) { b.addEventListener("click", function () { S.cv.couleur = b.dataset.couleur; S.cv.couleurChoisie = true; save(); setPressed("[data-couleur]", "couleur", S.cv.couleur); preview(); }); });
+  $("#cv-voir-haut").addEventListener("click", function () { $("#cv-prev").scrollIntoView({ behavior: "smooth", block: "start" }); });
   $("#cv-dl").addEventListener("click", async function () {
     var btn = this; btn.disabled = true;
     try { var r = await CV.cvPdf(S.profil, S.cv); dl(r.doc.output("blob"), cvNom()); toast(r.pages > 1 ? "CV téléchargé (" + r.pages + " pages : raccourcis un peu pour tenir sur 1 page)" : "CV téléchargé"); }
@@ -446,7 +474,7 @@
     return (s && s.textes && s.textes.lettre) || texteLettre(S.profil, cur);
   }
   async function lettreFichier() {
-    var d = await CV.lettrePdf(lettreTexte(), S.profil);
+    var d = await CV.lettrePdf(lettreTexte(), S.profil, S.cvMode === "genere" ? S.cv : null);
     return new File([d.output("blob")], "Lettre-motivation-" + ascii(S.profil.prenom + " " + S.profil.nom) + "-" + ascii(nomCourt(cur.nom)).slice(0, 40) + ".pdf", { type: "application/pdf" });
   }
 

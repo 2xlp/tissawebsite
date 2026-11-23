@@ -1,8 +1,8 @@
 /* TissAlternance : fonctionne hors connexion pour l'interface (profil, CV, lettres, suivi).
    La recherche d'entreprises passe toujours par le réseau. Changer V à chaque mise à jour des fichiers. */
-var V = "ta-v1";
+var V = "ta-v2";
 var SHELL = ["/alternance/", "/alternance/app.css", "/alternance/app.js", "/alternance/cv.js", "/alternance/vendor/jspdf.umd.min.js",
-  "/alternance/icon-192.png", "/fonts/fonts.css", "/fonts/onest-latin-wght-normal.woff2", "/fonts/bricolage-grotesque-latin-opsz-normal.woff2"];
+  "/alternance/icon-192.png", "/alternance/fonts/onest-400.ttf", "/alternance/fonts/onest-600.ttf", "/alternance/fonts/onest-700.ttf", "/alternance/fonts/bricolage-700.ttf", "/alternance/fonts/bricolage-800.ttf", "/alternance/fonts/dmserif-400.ttf", "/alternance/fonts/archivoblack-400.ttf", "/fonts/fonts.css", "/fonts/onest-latin-wght-normal.woff2", "/fonts/bricolage-grotesque-latin-opsz-normal.woff2"];
 self.addEventListener("install", function (e) { e.waitUntil(caches.open(V).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); })); });
 self.addEventListener("activate", function (e) {
   e.waitUntil(caches.keys().then(function (k) { return Promise.all(k.filter(function (n) { return n.indexOf("ta-") === 0 && n !== V; }).map(function (n) { return caches.delete(n); })); }).then(function () { return self.clients.claim(); }));
