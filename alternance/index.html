@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Trouve ton alternance : entreprises près de chez toi + candidature prête | TissaWeb</title>
+<meta name="description" content="Appli gratuite pour étudiants : elle trouve les entreprises qui emploient près de chez toi, rédige ta candidature d'alternance à leur nom et te rappelle quand relancer.">
+<link rel="canonical" href="https://tissaweb.fr/alternance/">
+<meta property="og:title" content="Trouve ton alternance – TissaWeb">
+<meta property="og:description" content="Les entreprises autour de toi, ta candidature écrite à leur nom, le suivi des relances. Gratuit.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tissaweb.fr/alternance/">
+<meta property="og:locale" content="fr_FR">
+<meta name="theme-color" content="#0C1310">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230C1310'/%3E%3Cpath d='M8 10h16M16 10v14' stroke='white' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body data-noi18n>
+<a class="skip" href="#app">Aller à l'appli</a>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="logo" href="/alternance/" aria-label="Alternance, par TissaWeb"><span class="logo-mark" aria-hidden="true">A</span><span>Alternance<span class="by"> · par Tissa<b>Web</b></span></span></a>
+    <span class="pill">Gratuit</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-txt">
+      <p class="eyebrow">Pour les étudiants qui cherchent une entreprise</p>
+      <h1>Trouve ton alternance.<br><span>On écrit les candidatures.</span></h1>
+      <p class="lead">L'appli trouve les entreprises qui emploient autour de chez toi, rédige ta candidature à leur nom et te dit quand relancer. Toi, tu relis et tu envoies.</p>
+      <div class="hero-cta">
+        <a class="btn btn-accent" href="#app" data-go="profil">Commencer, c'est 2 minutes</a>
+        <span class="hero-note">Tes infos restent sur ton téléphone.</span>
+      </div>
+    </div>
+    <div class="hero-vis" aria-hidden="true">
+      <div class="flow">
+        <div class="fcard f1"><i>1</i><div><b>Ton profil</b><small>BTS MCO · Dijon · sept.</small></div></div>
+        <div class="fline"></div>
+        <div class="fcard f2"><i>2</i><div><b>42 entreprises trouvées</b><small>à moins de 5 km</small></div></div>
+        <div class="fline"></div>
+        <div class="fcard f3"><i>3</i><div><b>Candidature prête</b><small>« Madame, Monsieur, actuellement… »</small></div></div>
+        <div class="fline"></div>
+        <div class="fcard f4"><i>✓</i><div><b>Relance dans 7 jours</b><small>on te prévient</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main id="app" class="wrap app">
+  <nav class="tabs" role="tablist" aria-label="Étapes">
+    <button role="tab" id="t-profil" aria-controls="v-profil" data-tab="profil"><i>1</i>Profil</button>
+    <button role="tab" id="t-recherche" aria-controls="v-recherche" data-tab="recherche"><i>2</i>Entreprises</button>
+    <button role="tab" id="t-suivi" aria-controls="v-suivi" data-tab="suivi"><i>3</i>Suivi <span class="badge" id="badge-suivi" hidden></span></button>
+  </nav>
+
+  <!-- 1. PROFIL -->
+  <section class="view" id="v-profil" role="tabpanel" aria-labelledby="t-profil">
+    <div class="vhead">
+      <h2>Ton profil</h2>
+      <p>Il sert à écrire tes candidatures. Rien n'est envoyé sur nos serveurs : tout reste dans ce navigateur.</p>
+    </div>
+    <form id="f-profil" class="form" novalidate>
+      <fieldset>
+        <legend>Toi</legend>
+        <div class="row2">
+          <label>Prénom<input name="prenom" autocomplete="given-name" required></label>
+          <label>Nom<input name="nom" autocomplete="family-name" required></label>
+        </div>
+        <div class="row2">
+          <label>Ton e-mail<input name="email" type="email" autocomplete="email" required></label>
+          <label>Téléphone<input name="tel" type="tel" autocomplete="tel" required></label>
+        </div>
+        <div class="seg" role="radiogroup" aria-label="Accords dans la lettre">
+          <span class="seg-l">Dans la lettre, écrire :</span>
+          <label><input type="radio" name="genre" value="f"> « étudiante »</label>
+          <label><input type="radio" name="genre" value="m" checked> « étudiant »</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Ta formation</legend>
+        <div class="row2">
+          <label>Diplôme préparé<input name="formation" placeholder="ex. BTS MCO, Bachelor RH" required></label>
+          <label>École <span class="opt">facultatif</span><input name="ecole" placeholder="ex. Pigier Dijon"></label>
+        </div>
+        <div class="row2">
+          <label>Début de l'alternance<input name="debut" placeholder="ex. septembre 2027" required></label>
+          <label>Durée<input name="duree" placeholder="ex. 2 ans"></label>
+        </div>
+        <label>Rythme <span class="opt">facultatif</span><input name="rythme" placeholder="ex. 2 jours en formation, 3 jours en entreprise"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Ce que tu cherches</legend>
+        <label>Poste visé<input name="metier" placeholder="ex. conseiller de vente, développeur web" required></label>
+        <div class="row2">
+          <label>Secteur
+            <select name="secteur" required>
+              <option value="commerce">Commerce / vente</option>
+              <option value="informatique">Informatique / développement</option>
+              <option value="marketing">Marketing / communication</option>
+              <option value="compta">Comptabilité / gestion / juridique</option>
+              <option value="rh">Ressources humaines / recrutement</option>
+              <option value="banque">Banque / assurance</option>
+              <option value="immobilier">Immobilier</option>
+              <option value="industrie">Industrie / production</option>
+              <option value="maintenance">Maintenance / automatisme</option>
+              <option value="btp">BTP / construction</option>
+              <option value="electricite">Électricité / énergie</option>
+              <option value="auto">Automobile / mécanique</option>
+              <option value="hotellerie">Hôtellerie / restauration</option>
+              <option value="beaute">Coiffure / esthétique</option>
+              <option value="logistique">Transport / logistique</option>
+              <option value="sante">Santé / pharmacie / optique</option>
+              <option value="social">Petite enfance / social</option>
+              <option value="paysage">Paysage / agriculture</option>
+              <option value="tourisme">Tourisme / événementiel</option>
+              <option value="autre">Autre : je tape un mot-clé</option>
+            </select>
+          </label>
+          <label>Ville ou code postal<input name="ville" placeholder="ex. Dijon" autocomplete="address-level2" required></label>
+        </div>
+        <label class="kw" hidden>Mot-clé<input name="q" placeholder="ex. agence web, boulangerie, cabinet d'architecte"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Pour personnaliser <span class="opt">facultatif</span></legend>
+        <label>3 qualités<input name="qualites" placeholder="ex. organisé, souriant, à l'aise au téléphone"></label>
+        <label>Une expérience à mettre en avant<textarea name="experience" rows="2" placeholder="ex. 6 mois de job étudiant en caisse chez Carrefour, où j'ai appris à gérer l'affluence"></textarea></label>
+        <label class="check"><input type="checkbox" name="permis"> J'ai le permis B</label>
+      </fieldset>
+      <p class="err" id="err-profil" role="alert" hidden></p>
+      <button class="btn btn-accent btn-wide" type="submit">Trouver des entreprises</button>
+    </form>
+  </section>
+
+  <!-- 2. RECHERCHE -->
+  <section class="view" id="v-recherche" role="tabpanel" aria-labelledby="t-recherche" hidden>
+    <div class="vhead">
+      <h2>Entreprises autour de toi</h2>
+      <p id="r-resume">Remplis ton profil pour lancer la recherche.</p>
+    </div>
+    <div class="filters">
+      <div class="chips" role="group" aria-label="Zone">
+        <button class="chip" data-zone="ville" aria-pressed="true">Ma ville</button>
+        <button class="chip" data-zone="dep" aria-pressed="false">Mon département</button>
+      </div>
+      <div class="chips" role="group" aria-label="Taille">
+        <button class="chip" data-taille="tout" aria-pressed="true">Toutes</button>
+        <button class="chip" data-taille="petit" aria-pressed="false">PME (moins de 50)</button>
+        <button class="chip" data-taille="groupe" aria-pressed="false">Grands groupes</button>
+      </div>
+    </div>
+    <p class="tip"><b>Astuce :</b> les PME répondent plus souvent aux candidatures spontanées. Les grands groupes passent plutôt par leur site carrières.</p>
+    <div id="r-list" class="list" aria-live="polite"></div>
+    <button class="btn btn-ghost btn-wide" id="r-more" hidden>Voir plus d'entreprises</button>
+  </section>
+
+  <!-- 3. SUIVI -->
+  <section class="view" id="v-suivi" role="tabpanel" aria-labelledby="t-suivi" hidden>
+    <div class="vhead">
+      <h2>Ton suivi</h2>
+      <p>Chaque candidature envoyée arrive ici. On te dit quand relancer.</p>
+    </div>
+    <div class="stats" id="s-stats"></div>
+    <div id="s-list" class="list"></div>
+  </section>
+</main>
+
+<!-- Panneau candidature -->
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title" hidden>
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <div>
+        <p class="sheet-k" id="sh-kind">Candidature</p>
+        <h3 id="sh-title"></h3>
+        <p class="sheet-sub" id="sh-sub"></p>
+      </div>
+      <button class="x" data-close aria-label="Fermer">×</button>
+    </div>
+    <div class="sheet-body">
+      <div class="chips" role="tablist" aria-label="Type de texte">
+        <button class="chip" data-doc="mail" aria-pressed="true">Mail</button>
+        <button class="chip" data-doc="lettre" aria-pressed="false">Lettre de motivation</button>
+        <button class="chip" data-doc="relance" aria-pressed="false" hidden>Relance</button>
+      </div>
+      <p class="gen" id="sh-gen"></p>
+      <label>Objet<input id="sh-objet"></label>
+      <label>Texte <span class="opt">tu peux le modifier</span><textarea id="sh-texte" rows="14"></textarea></label>
+      <label>Adresse mail de l'entreprise <span class="opt">si tu l'as trouvée</span><input id="sh-to" type="email" placeholder="contact@entreprise.fr"></label>
+      <div class="links" id="sh-links"></div>
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" id="sh-copy">Copier le texte</button>
+        <a class="btn btn-accent" id="sh-mail" href="#">Ouvrir dans ma boîte mail</a>
+      </div>
+      <button class="btn btn-ink btn-wide" id="sh-done">J'ai envoyé ma candidature</button>
+      <p class="fine">N'oublie pas de joindre ton CV au mail avant d'envoyer.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><b>Comment ça marche :</b> les entreprises viennent de l'annuaire public de l'État (données Sirene de l'Insee, entreprises actives avec au moins 3 salariés). Ton profil, tes textes et ton suivi sont gardés uniquement dans ce navigateur ; nos serveurs reçoivent seulement le secteur et la ville de ta recherche.</p>
+    <p class="foot-l">Un outil <a href="/">TissaWeb</a>, Dijon · <a href="/mentions-legales.html">Mentions légales</a> · <a href="/confidentialite.html#alternance">Confidentialité</a> · <button class="linklike" id="reset">Effacer mes données</button></p>
+  </div>
+</footer>
+
+<script src="app.js" defer></script>
+</body>
+</html>
