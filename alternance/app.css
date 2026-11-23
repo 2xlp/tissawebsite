@@ -205,3 +205,14 @@ label.btn{display:inline-flex;position:relative}
 .auto-t{margin:0;font:700 15px var(--display);color:var(--accent)}
 .auto-i{margin:0;font-size:14px;color:var(--ink-2)}
 #vf-step2{display:grid}
+
+/* connexion Gmail */
+.gm{display:grid;gap:10px;margin-top:14px;padding:14px;border-radius:14px;background:#fff;border:1px solid var(--line,#dfe5e1)}
+.gm-t{margin:0;font:700 15px var(--display)}
+.gm-s{margin:4px 0 0;font-size:14px;color:var(--ink-2)}
+.gm.on{border:2px solid var(--accent)}
+.gm-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1f1f1f;border:1px solid #c7ccc9}
+.gm-g{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font:800 13px/1 Arial,sans-serif;color:#fff;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0)}
+.lnk{justify-self:start;background:none;border:0;padding:0;font:inherit;font-size:14px;color:var(--ink-2);text-decoration:underline;cursor:pointer}
+.gw{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
+.gw-c{max-width:420px;display:grid;gap:14px}

@@ -17,7 +17,7 @@
   var R = { data: null, page: 1, items: [], taille: "tout", loading: false };
   var IA = false, FL = {}, infoP = null;
   function keyOf(x) { return x.siret || x.id || x.siren; }
-  function getInfo() { return infoP || (infoP = api("info").then(function (d) { FL = d || {}; IA = !!FL.ia; majSource(); return FL; }).catch(function () { return FL; })); }
+  function getInfo() { return infoP || (infoP = api("info").then(function (d) { FL = d || {}; IA = !!FL.ia; majSource(); majGmail(); return FL; }).catch(function () { return FL; })); }
 
   /* ---------- outils ---------- */
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -346,19 +346,58 @@
 
 
   /* ---------- envoi automatique ---------- */
+  /* ---------- Gmail de l'étudiant ---------- */
+  var GREDIR = "https://tissaweb.fr/alternance/google.html";
+  function gmailOk() { return !!(FL.gmail && S.gmail && S.gmail.v); }
+  function gmailConnect() {
+    if (!FL.gclient) { toast("Connexion Gmail indisponible pour le moment"); return; }
+    var st = Array.from(crypto.getRandomValues(new Uint8Array(16)), function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+    try { sessionStorage.setItem("tw-alt-gstate", st); } catch (e) {}
+    var em = (S.profil && S.profil.email) || "";
+    location.href = "https://accounts.google.com/o/oauth2/v2/auth?" + new URLSearchParams({
+      client_id: FL.gclient, redirect_uri: GREDIR, response_type: "code", access_type: "offline", prompt: "consent", include_granted_scopes: "true",
+      scope: "openid email https://www.googleapis.com/auth/gmail.send", state: st, login_hint: /@(gmail|googlemail)\.com$/i.test(em) ? em : "" }).toString();
+  }
+  function majGmail() {
+    var box = $("#gm-box"); if (!box) return;
+    box.hidden = !FL.gmail;
+    var on = gmailOk();
+    box.classList.toggle("on", on);
+    $("#gm-go").hidden = on; $("#gm-off").hidden = !on;
+    $("#gm-etat").innerHTML = on ? "Connecté : tes candidatures et relances partent de <b>" + esc(S.gmail.email) + "</b>. L'appli peut seulement envoyer, jamais lire tes mails."
+      : "Connecte ton Gmail : l'appli envoie tes candidatures et tes relances depuis ta propre adresse. Elle peut seulement envoyer, jamais lire tes mails.";
+    if (cur) majAuto();
+  }
+  $("#gm-go").addEventListener("click", gmailConnect);
+  $("#sh-gmail").addEventListener("click", function () { toast("Connexion à Google…"); gmailConnect(); });
+  $("#gm-off").addEventListener("click", async function () {
+    var b = this; b.disabled = true;
+    try { await api("gdeconnect", { jeton: S.gmail.v }); } catch (e) {}
+    delete S.gmail; save(); majGmail(); b.disabled = false; toast("Gmail déconnecté");
+  });
+  (function () {
+    var q = new URLSearchParams(location.search);
+    if (q.get("gmail") === "ok") { history.replaceState(null, "", location.pathname + location.hash); setTimeout(function () { toast(S.gmail ? "Gmail connecté : " + S.gmail.email : "Gmail connecté"); }, 400); }
+  })();
+
   function modeAuto() {
     if (!cur) return "";
     if (cur.apply && cur.apply.recipient_id && FL.postuler) return "lba";
-    if (FL.envoi && /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test($("#sh-to").value.trim())) return "mail";
+    if ((FL.envoi || gmailOk()) && /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test($("#sh-to").value.trim())) return "mail";
     return "";
   }
   function majAuto() {
-    var m = modeAuto(), box = $("#sh-auto");
-    box.hidden = !m && !(FL.envoi && cur && !(cur.apply && cur.apply.recipient_id && FL.postuler));
+    var m = modeAuto(), box = $("#sh-auto"), lba = cur && cur.apply && cur.apply.recipient_id && FL.postuler;
+    var besoinGmail = !lba && FL.gmail && !gmailOk() && !FL.envoi;
+    box.hidden = !m && !((FL.envoi || FL.gmail) && cur && !lba);
     $("#sh-auto-go").hidden = !m;
+    $("#sh-gmail").hidden = !besoinGmail;
     $("#sh-auto-rel").hidden = m !== "mail";
+    var adr = gmailOk() ? S.gmail.email : S.profil.email;
     $("#sh-auto-info").innerHTML = m === "lba" ? "Ta candidature (texte + CV) part directement chez le recruteur par <b>La bonne alternance</b>. Il te répondra sur <b>" + esc(S.profil.email) + "</b>."
-      : m === "mail" ? "L'appli envoie ton mail avec ton CV et ta lettre en PDF depuis <b>candidatures@tissaweb.fr</b>, à ton nom. Les réponses arrivent sur <b>" + esc(S.profil.email) + "</b>."
+      : m === "mail" && gmailOk() ? "L'appli envoie ton mail avec ton CV et ta lettre en PDF depuis <b>ton Gmail (" + esc(adr) + ")</b>. Tu le retrouveras dans tes « Envoyés » et les réponses arrivent directement chez toi."
+      : m === "mail" ? "L'appli envoie ton mail avec ton CV et ta lettre en PDF depuis <b>candidatures@tissaweb.fr</b>, à ton nom. Les réponses arrivent sur <b>" + esc(adr) + "</b>."
+      : besoinGmail ? "Connecte ton Gmail une fois : ensuite, l'appli envoie tes candidatures depuis ta propre adresse, avec relance automatique au bout de 7 jours."
       : "Ajoute l'adresse mail de l'entreprise ci-dessus et l'appli enverra ta candidature à ta place, avec relance automatique.";
   }
   function dataUrl(f) { return new Promise(function (ok, ko) { var r = new FileReader(); r.onload = function () { ok(String(r.result).replace(/^data:[^;]*;/, "data:application/pdf;")); }; r.onerror = function () { ko(r.error); }; r.readAsDataURL(f); }); }
@@ -398,19 +437,20 @@
         await api("postuler", { recipient_id: x.apply.recipient_id, profil: S.profil, cv: { name: PJ.cv.name, content: await dataUrl(PJ.cv) }, message: $("#sh-texte").value || msg });
         s.via = "lba";
       } else {
-        var j = jetonValide() || await demanderVerif();
+        var j = gmailOk() ? S.gmail.v : jetonValide() || await demanderVerif();
         if (!j) throw new Error("Adresse non vérifiée, envoi annulé");
         var rel = $("#sh-auto-rel-cb").checked ? { subject: "Relance – " + $("#sh-objet").value, text: texteRelance(S.profil, x, { date: new Date().toISOString() }, true) } : null;
         var d = await api("envoyer", { jeton: j, profil: S.profil, to: $("#sh-to").value.trim(), to_name: nomCourt(x.nom), subject: $("#sh-objet").value, text: corpsMail(),
           attachments: [{ name: PJ.cv.name, content: await dataUrl(PJ.cv) }, { name: PJ.lettre.name, content: await dataUrl(PJ.lettre) }], relance: rel });
-        s.via = "auto"; s.envoiId = d.id; s.relanceAuto = d.relance_at || null;
+        s.via = d.via === "gmail" ? "gmail" : "auto"; s.envoiId = d.id; s.relanceAuto = d.relance_at || null;
       }
       s.statut = "envoye"; s.date = s.date || new Date().toISOString(); s.to = $("#sh-to").value.trim();
       s.doc = curDoc === "relance" ? "mail" : curDoc; s.textes = s.textes || {}; s.textes[curDoc] = $("#sh-texte").value;
       save(); closeSheet(); renderList(); badge();
-      toast(m === "lba" ? "Candidature envoyée ! Le recruteur te répondra par mail." : "Candidature envoyée !" + (s.relanceAuto ? " Relance auto dans 7 jours." : ""));
+      toast(m === "lba" ? "Candidature envoyée ! Le recruteur te répondra par mail." : "Candidature envoyée" + (s.via === "gmail" ? " depuis ton Gmail" : "") + " !" + (s.relanceAuto ? " Relance auto dans 7 jours." : ""));
     } catch (e) {
-      if (e.status === 401 || /vérifie à nouveau/i.test(e.message)) { delete S.jeton; save(); }
+      if (/reconnecte ton gmail/i.test(e.message)) { delete S.gmail; save(); majGmail(); }
+      else if (e.status === 401 || /vérifie à nouveau/i.test(e.message)) { if (gmailOk()) delete S.gmail; else delete S.jeton; save(); majGmail(); }
       toast(e.message);
     } finally { btn.disabled = false; btn.textContent = old; }
   });
@@ -574,7 +614,7 @@
   var LABELS = { envoye: "Envoyée", relance: "Relancée", entretien: "Entretien", refus: "Refus", accepte: "Acceptée 🎉" };
   function aRelancer(s) { if (s.relanceAuto) return false; return (s.statut === "envoye" && jours(s.date) >= RELANCE_J) || (s.statut === "relance" && s.relance && jours(s.relance) >= 14); }
   function suiviBloc(id, s) {
-    var info = "Envoyée le " + dateFr(s.date) + (s.via === "lba" ? " via La bonne alternance" : s.via === "auto" ? " par l'appli" : "") + (s.relance ? " · relancée le " + dateFr(s.relance) : "");
+    var info = "Envoyée le " + dateFr(s.date) + (s.via === "lba" ? " via La bonne alternance" : s.via === "auto" ? " par l'appli" : s.via === "gmail" ? " depuis ton Gmail" : "") + (s.relance ? " · relancée le " + dateFr(s.relance) : "");
     if (s.relanceAuto) info += new Date(s.relanceAuto) > new Date() ? ' · <b>relance auto le ' + dateFr(s.relanceAuto) + '</b> <button class="linklike" data-annuler="' + esc(id) + '">annuler</button>' : " · relance auto envoyée le " + dateFr(s.relanceAuto);
     var opts = Object.keys(LABELS).map(function (k) { return '<option value="' + k + '"' + (k === s.statut ? " selected" : "") + ">" + LABELS[k] + "</option>"; }).join("");
     return '<p class="who">' + info + (aRelancer(s) ? ' · <b style="color:var(--warn)">à relancer</b>' : "") + "</p>" +
@@ -599,7 +639,7 @@
   }
   $("#s-list").addEventListener("click", function (e) {
     var r = e.target.closest("[data-relance]"), v = e.target.closest("[data-voir]"), an = e.target.closest("[data-annuler]");
-    if (an) { var sv = S.suivi[an.dataset.annuler]; api("annuler", { jeton: jetonValide(), id: sv.envoiId }).then(function () { sv.relanceAuto = null; save(); renderSuivi(); badge(); toast("Relance automatique annulée"); }).catch(function (er) { toast(er.message); }); return; }
+    if (an) { var sv = S.suivi[an.dataset.annuler]; api("annuler", { jeton: (sv.via === "gmail" && S.gmail ? S.gmail.v : null) || jetonValide() || (S.gmail && S.gmail.v), id: sv.envoiId }).then(function () { sv.relanceAuto = null; save(); renderSuivi(); badge(); toast("Relance automatique annulée"); }).catch(function (er) { toast(er.message); }); return; }
     if (r) openSheet(S.suivi[r.dataset.relance].e, "relance");
     if (v) openSheet(S.suivi[v.dataset.voir].e, S.suivi[v.dataset.voir].doc || "mail");
   });

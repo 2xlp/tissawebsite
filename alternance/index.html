@@ -83,6 +83,14 @@
           <label>Ton e-mail<input name="email" type="email" autocomplete="email" required></label>
           <label>Téléphone<input name="tel" type="tel" autocomplete="tel" required></label>
         </div>
+        <div class="gm" id="gm-box" hidden>
+          <div class="gm-i">
+            <p class="gm-t">Envoyer depuis ton Gmail</p>
+            <p class="gm-s" id="gm-etat">Connecte ton Gmail : l'appli envoie tes candidatures et tes relances depuis ta propre adresse. Elle peut seulement envoyer, jamais lire tes mails.</p>
+          </div>
+          <button type="button" class="btn btn-wide gm-btn" id="gm-go"><span class="gm-g" aria-hidden="true">G</span> Connecter mon Gmail</button>
+          <button type="button" class="lnk" id="gm-off" hidden>Déconnecter</button>
+        </div>
         <div class="seg" role="radiogroup" aria-label="Accords dans la lettre">
           <span class="seg-l">Dans la lettre, écrire :</span>
           <label><input type="radio" name="genre" value="f"> « étudiante »</label>
@@ -291,6 +299,7 @@
         <p class="auto-t">Envoi automatique</p>
         <p class="auto-i" id="sh-auto-info"></p>
         <label class="check" id="sh-auto-rel"><input type="checkbox" id="sh-auto-rel-cb" checked> Relancer automatiquement dans 7 jours s'il n'y a pas de réponse</label>
+        <button type="button" class="btn btn-wide gm-btn" id="sh-gmail" hidden><span class="gm-g" aria-hidden="true">G</span> Connecter mon Gmail</button>
         <button class="btn btn-accent btn-wide" id="sh-auto-go">Envoyer ma candidature pour moi</button>
       </div>
       <button class="btn btn-accent btn-wide" id="sh-share" hidden>Envoyer avec mon CV et ma lettre</button>
