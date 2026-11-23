@@ -6,3 +6,4 @@ http://tissaweb.fr/*       https://tissaweb.fr/:splat  301!
 # Nom de l'appli
 /tissalternance   /alternance/   301
 /tissalternance/  /alternance/   301
+/tools/*  /404.html  404
