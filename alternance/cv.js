@@ -13,6 +13,10 @@
     { id: "creatif", nom: "Créatif", desc: "Formes graphiques, photo carrée", couleur: "terracotta" },
     { id: "minimal", nom: "Minimal", desc: "Blanc, aéré, très lisible", couleur: "noir" },
     { id: "sobre", nom: "Sobre", desc: "Classique, idéal grands groupes", couleur: "bleu" },
+    { id: "executif", nom: "Exécutif", desc: "Sérieux, colonne grise, titres serif", couleur: "bleu" },
+    { id: "classique", nom: "Classique", desc: "Centré, traits fins, style cabinet", couleur: "noir" },
+    { id: "corporate", nom: "Corporate", desc: "Bandeau sombre, très structuré", couleur: "bleu" },
+    { id: "banque", nom: "Banque", desc: "Sobre et dense, colonne de dates", couleur: "bordeaux" },
   ];
   var FONTS = {
     body: { css: "TA Onest", w: { 400: "onest-400.ttf", 600: "onest-600.ttf", 700: "onest-700.ttf" } },
@@ -386,6 +390,124 @@
       track(Y);
     }
 
+    else if (modele === "executif") {
+      var GR = "#F1F3F5", SX = 140, SW = 54, MX8 = 18, MW8 = 112;
+      bgFn = function () { P.rect(SX - 6, 0, 210 - SX + 6, H, GR); P.rect(0, 0, 210, 2.2, C); };
+      bgFn();
+      Y = 26;
+      P.wrap(D.prenom + " " + D.nom, MW8, { f: "serif", size: s(28) }).forEach(function (l) { t(l, MX8, Y, { f: "serif", w: 400, size: s(28), color: INK }); Y += s(10); });
+      P.wrap(D.titre.toUpperCase(), MW8, { f: "body", w: 600, size: s(8.8) }).forEach(function (l) { spaced(l, MX8, Y, { f: "body", w: 600, size: s(8.8), color: C }, s(0.5)); Y += s(4.6); });
+      Y += s(3); P.line(MX8, Y, MX8 + MW8, Y, "#D5DADF", 0.35); Y += s(9);
+      var sy8 = 20;
+      if (D.rond) { avatar(SX + SW / 2 - 17, sy8, 34, "rond", mix(C, 0.85), C, null, 0); sy8 += 44; } else sy8 += 6;
+      var ssec8 = function (title) { t(title.toUpperCase(), SX, sy8, { f: "body", w: 700, size: s(8.4), color: C }); sy8 += s(2); P.line(SX, sy8, SX + SW, sy8, "#C9CFD5", 0.3); sy8 += s(5.2); };
+      var st8 = { f: "body", w: 400, size: s(8.6), color: TXT };
+      ssec8("Contact");
+      D.contact.forEach(function (c) { P.wrap(c.t, SW, st8).forEach(function (l) { t(l, SX, sy8, st8); sy8 += s(4.2); }); sy8 += s(1); });
+      sy8 += s(3);
+      if (D.comp.length) { ssec8("Compétences"); sy8 = listeCol(D.comp, SX, SW, st8, C, sy8, s(4.2)) + s(3); }
+      if (D.lang.length) { ssec8("Langues"); D.lang.forEach(function (l) { t(l.nom, SX, sy8, { f: "body", w: 600, size: s(8.6), color: INK }); if (l.txt) t(l.txt, SX + SW, sy8, Object.assign({ align: "right" }, st8)); sy8 += s(4.8); }); sy8 += s(3); }
+      [["Qualités", D.qual], ["Logiciels", D.log], ["Centres d'intérêt", D.int]].forEach(function (g) { if (!g[1].length) return; ssec8(g[0]); sy8 = listeCol(g[1], SX, SW, st8, C, sy8, s(4.2)) + s(3); });
+      track(sy8);
+      var msec8 = function (title) { ensure(s(14)); t(title, MX8, Y, { f: "serif", w: 400, size: s(14), color: INK }); Y += s(2.2); P.rect(MX8, Y, 10, 0.7, C); Y += s(6); };
+      if (D.accroche) { msec8("Profil"); para(D.accroche, MX8, MW8, body, s(4.6)); Y += s(5); }
+      msec8("Objectif"); recherche(MX8, MW8, mix(C, 0.94), C, body); Y += s(3);
+      var b8 = stdBloc(C, null); b8.sub = { f: "body", w: 600, size: s(9.2), color: GREY };
+      if (D.exps.length) { msec8("Expérience professionnelle"); D.exps.forEach(function (e) { bloc(e, MX8, MW8, b8); }); Y += s(2); }
+      if (D.forms.length) { msec8("Formation"); D.forms.forEach(function (e) { bloc(e, MX8, MW8, b8); }); }
+      track(Y);
+    }
+
+    else if (modele === "classique") {
+      var M9 = 20, W9 = 170;
+      Y = 26;
+      t((D.prenom + " " + D.nom).toUpperCase(), 105, Y, { f: "serif", w: 400, size: s(24), color: INK, align: "center" }); Y += s(7);
+      t(D.titre, 105, Y, { f: "body", w: 600, size: s(10), color: C, align: "center" }); Y += s(5.5);
+      P.wrap(D.contact.map(function (c) { return c.t; }).join("  |  "), W9, { f: "body", size: s(8.8) }).forEach(function (l) { t(l, 105, Y, { f: "body", w: 400, size: s(8.8), color: GREY, align: "center" }); Y += s(4.4); });
+      Y += s(2); P.line(M9, Y, M9 + W9, Y, INK, 0.5); Y += s(8);
+      var sec9 = function (title) { ensure(s(14)); spaced(title.toUpperCase(), M9, Y, { f: "serif", w: 400, size: s(11.5), color: INK }, s(0.8)); Y += s(2); P.line(M9, Y, M9 + W9, Y, "#9AA19D", 0.25); Y += s(5.6); };
+      if (D.accroche) { sec9("Profil"); para(D.accroche, M9, W9, body, s(4.6)); Y += s(4); }
+      sec9("Objectif");
+      [D.rech.poste, D.rech.quand, D.rech.rythme, D.rech.ecole].filter(Boolean).forEach(function (r, i) { para(r, M9, W9, Object.assign({}, body, { w: i ? 400 : 700, color: i ? TXT : INK }), s(4.6)); }); Y += s(4);
+      var b9 = stdBloc(INK, null); b9.sub = { f: "body", w: 400, size: s(9.2), color: GREY }; b9.bullet = INK;
+      b9.sub = Object.assign({}, b9.sub); b9.title = { f: "body", w: 700, size: s(10.2), color: INK };
+      if (D.forms.length) { sec9("Formation"); D.forms.forEach(function (e) { bloc(e, M9, W9, b9); }); }
+      if (D.exps.length) { sec9("Expérience professionnelle"); D.exps.forEach(function (e) { bloc(e, M9, W9, b9); }); }
+      var ex9 = [["Compétences", D.comp], ["Langues", D.lang.map(function (l) { return l.nom + (l.txt ? " (" + l.txt + ")" : ""); })], ["Informatique", D.log], ["Qualités", D.qual], ["Centres d'intérêt", D.int]].filter(function (g) { return g[1].length; });
+      if (ex9.length) {
+        sec9("Compétences et informations");
+        ex9.forEach(function (g) {
+          var lab = g[0] + " : ", lo = { f: "body", w: 700, size: s(9.3), color: INK }, lw = P.width(lab, lo);
+          var ls = P.wrap(g[1].join(", "), W9 - lw, body); ensure(ls.length * s(4.6));
+          t(lab, M9, Y, lo); ls.forEach(function (l) { t(l, M9 + lw, Y, body); Y += s(4.6); }); Y += s(0.8);
+        });
+      }
+      track(Y);
+    }
+
+    else if (modele === "corporate") {
+      var BH10 = 46, M10 = 18, W10 = 174;
+      P.rect(0, 0, 210, BH10, mix(C, 0.15, "#000000"));
+      P.rect(0, BH10, 210, 1.2, C);
+      bgFn = function () { P.rect(0, 0, 210, 6, mix(C, 0.15, "#000000")); };
+      var ph10 = D.rond ? 30 : 0;
+      if (D.rond) avatar(M10, 8, 30, "carre", mix(C, 0.3), "#FFFFFF", null, 0);
+      var nx10 = M10 + (ph10 ? ph10 + 8 : 0), yy10 = 21;
+      t(D.prenom + " " + D.nom, nx10, yy10, { f: "body", w: 700, size: s(22), color: "#FFFFFF" }); yy10 += s(7.5);
+      P.wrap(D.titre, 120, { f: "body", w: 400, size: s(10.5) }).forEach(function (l) { t(l, nx10, yy10, { f: "body", w: 400, size: s(10.5), color: mix(C, 0.75) }); yy10 += s(5); });
+      Y = BH10 + s(8);
+      var cx10 = M10, ct10 = { f: "body", w: 400, size: s(8.6), color: TXT };
+      D.contact.forEach(function (c) { var w = P.width(c.t, ct10) + s(6.5); if (cx10 + w > 192) { cx10 = M10; Y += s(6); } icon(c.ic, cx10 + s(2), Y - s(1.1), s(2.1), C, "#FFFFFF"); t(c.t, cx10 + s(5.2), Y, ct10); cx10 += w + s(4); });
+      Y += s(5); P.line(M10, Y, M10 + W10, Y, "#DDE1E5", 0.3); Y += s(8);
+      var LW10 = 40, CX10 = M10 + LW10 + 4, CW10 = W10 - LW10 - 4;
+      var row10 = function (label, fn) { ensure(s(12)); var yl = Y; P.wrap(label.toUpperCase(), LW10 - 2, { f: "body", w: 700, size: s(8.6) }).forEach(function (l) { t(l, M10, yl, { f: "body", w: 700, size: s(8.6), color: C }); yl += s(4); }); fn(); Y = Math.max(Y, yl) + s(3); };
+      var b10 = stdBloc(C, null); b10.sub = { f: "body", w: 600, size: s(9.1), color: GREY };
+      if (D.accroche) row10("Profil", function () { para(D.accroche, CX10, CW10, body, s(4.6)); Y += s(2); });
+      row10("Objectif", function () { [D.rech.poste, D.rech.quand, D.rech.rythme, D.rech.ecole].filter(Boolean).forEach(function (r, i) { para(r, CX10, CW10, Object.assign({}, body, { w: i ? 400 : 700, color: i ? TXT : INK }), s(4.6)); }); Y += s(2); });
+      if (D.exps.length) row10("Expérience", function () { D.exps.forEach(function (e) { bloc(e, CX10, CW10, b10); }); Y -= s(1); });
+      if (D.forms.length) row10("Formation", function () { D.forms.forEach(function (e) { bloc(e, CX10, CW10, b10); }); Y -= s(1); });
+      if (D.comp.length) row10("Compétences", function () { Y = chips(D.comp, CX10, Y - s(4), CW10, { f: "body", w: 600, size: s(8) }, mix(C, 0.9), C) + s(1); });
+      if (D.lang.length) row10("Langues", function () { para(D.lang.map(function (l) { return l.nom + (l.txt ? " (" + l.txt + ")" : ""); }).join("  ·  "), CX10, CW10, body, s(4.6)); Y += s(1); });
+      [["Informatique", D.log], ["Qualités", D.qual], ["Intérêts", D.int]].forEach(function (g) { if (g[1].length) row10(g[0], function () { para(g[1].join("  ·  "), CX10, CW10, body, s(4.6)); Y += s(1); }); });
+      track(Y);
+    }
+
+    else if (modele === "banque") {
+      var M11 = 18, W11 = 174, DW = 34;
+      bgFn = function () { P.rect(M11, 10, W11, 0.4, C); };
+      Y = 22;
+      var nw11 = D.rond ? W11 - 34 : W11;
+      if (D.rond) avatar(210 - M11 - 26, 12, 26, "carre", mix(C, 0.85), C, null, 0);
+      t(D.nom.toUpperCase() + " " + D.prenom, M11, Y, { f: "body", w: 700, size: s(20), color: INK }); Y += s(6.5);
+      P.wrap(D.titre, nw11, { f: "body", w: 600, size: s(10.5) }).forEach(function (l) { t(l, M11, Y, { f: "body", w: 600, size: s(10.5), color: C }); Y += s(5); });
+      P.wrap(D.contact.map(function (c) { return c.t; }).join("  ·  "), nw11, { f: "body", size: s(8.8) }).forEach(function (l) { t(l, M11, Y, { f: "body", w: 400, size: s(8.8), color: GREY }); Y += s(4.4); });
+      Y = Math.max(Y, D.rond ? 40 : 0) + s(2); P.rect(M11, Y, W11, 0.9, C); Y += s(8);
+      var sec11 = function (title) { ensure(s(14)); P.rect(M11, Y - s(4), W11, s(6), mix(C, 0.92)); t(title.toUpperCase(), M11 + s(2.5), Y, { f: "body", w: 700, size: s(9.4), color: C }); Y += s(7); };
+      var dated = function (e) {
+        ensure(s(10));
+        var y0 = Y; P.wrap(e.dates || "", DW - 3, { f: "body", w: 600, size: s(8.6) }).forEach(function (l, i) { t(l, M11, y0 + i * s(4.2), { f: "body", w: 600, size: s(8.6), color: GREY }); });
+        var x = M11 + DW, w = W11 - DW;
+        P.wrap(e.titre, w, { f: "body", w: 700, size: s(10) }).forEach(function (l) { t(l, x, Y, { f: "body", w: 700, size: s(10), color: INK }); Y += s(4.8); });
+        if (e.sous) { t(e.sous, x, Y, { f: "body", w: 400, size: s(9.1), color: C }); Y += s(4.6); }
+        e.puces.forEach(function (m) { P.wrap(m, w - s(3.4), body).forEach(function (l, i) { ensure(s(4.5)); if (!i) t("–", x, Y, body); t(l, x + s(3.4), Y, body); Y += s(4.45); }); });
+        Y += s(2.8);
+      };
+      if (D.accroche) { sec11("Profil"); para(D.accroche, M11, W11, body, s(4.6)); Y += s(4); }
+      sec11("Objectif");
+      [D.rech.poste, D.rech.quand, D.rech.rythme, D.rech.ecole].filter(Boolean).forEach(function (r, i) { para(r, M11, W11, Object.assign({}, body, { w: i ? 400 : 700, color: i ? TXT : INK }), s(4.6)); }); Y += s(4);
+      if (D.exps.length) { sec11("Expérience professionnelle"); D.exps.forEach(dated); }
+      if (D.forms.length) { sec11("Formation"); D.forms.forEach(dated); }
+      var ex11 = [["Compétences", D.comp], ["Langues", D.lang.map(function (l) { return l.nom + (l.txt ? " (" + l.txt + ")" : ""); })], ["Informatique", D.log], ["Qualités", D.qual], ["Intérêts", D.int]].filter(function (g) { return g[1].length; });
+      if (ex11.length) {
+        sec11("Compétences");
+        ex11.forEach(function (g) {
+          var ls = P.wrap(g[1].join(", "), W11 - DW, body); ensure(ls.length * s(4.6));
+          t(g[0], M11, Y, { f: "body", w: 600, size: s(8.8), color: GREY }); ls.forEach(function (l) { t(l, M11 + DW, Y, body); Y += s(4.6); }); Y += s(1.2);
+        });
+      }
+      track(Y);
+    }
+
     else { /* sobre : une colonne, idéal pour les logiciels de recrutement */
       var M = 18, W7 = 174;
       Y = 24;
@@ -490,7 +612,7 @@
   async function lettrePdf(texte, p, cv) {
     var J = await load(), doc = newDoc(J);
     cv = cv || {};
-    var C = COULEURS[cv.couleur] || COULEURS.vert, disp = cv.modele === "elegance" ? "serif" : cv.modele === "creatif" ? "black" : "display";
+    var C = COULEURS[cv.couleur] || COULEURS.vert, disp = cv.modele === "elegance" || cv.modele === "executif" || cv.modele === "classique" ? "serif" : cv.modele === "creatif" ? "black" : "display";
     doc.setProperties({ title: "Lettre de motivation " + clean(p.prenom + " " + p.nom), author: clean(p.prenom + " " + p.nom), creator: "TissAlternance" });
     var M = 22, W = 210 - 2 * M, y = 24, LH = 5.3;
     doc.setFillColor(C); doc.rect(0, 0, 210, 3.5, "F");
