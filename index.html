@@ -742,6 +742,45 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
 :root[data-theme=dark] .field input::placeholder,:root[data-theme=dark] .field textarea::placeholder{color:#93A19A}
 .req{font-weight:400;font-size:.85em;opacity:.85}
 .form-foot a{color:inherit;text-decoration:underline}
+
+/* ---------- TissAlternance (appli étudiants) ---------- */
+.ta-sec{position:relative;overflow:hidden;color:#fff;background:#0C1310 radial-gradient(900px 500px at 85% 20%,#123326 0%,rgba(12,19,16,0) 70%)}
+.ta-grid{display:grid;gap:56px;align-items:center}
+@media (min-width:900px){.ta-grid{grid-template-columns:1.05fr .95fr}}
+.ta-tag{display:inline-flex;align-items:center;gap:8px;font:600 13px/1 var(--body);text-transform:uppercase;letter-spacing:.08em;color:#5FD3A6;margin-bottom:16px}
+.ta-tag b{background:#0B7A55;color:#fff;border-radius:99px;padding:5px 9px;letter-spacing:.04em}
+.ta-sec h2{color:#fff;margin:0 0 18px;font-family:var(--display);font-weight:800;font-size:clamp(2.1rem,4.6vw,3.4rem);line-height:1.04;letter-spacing:-.025em}
+.ta-sec h2 span{color:#5FD3A6}
+.ta-lead{color:#C9D1CC;font-size:1.08rem;max-width:540px;margin:0 0 26px}
+.ta-list{list-style:none;padding:0;margin:0 0 30px;display:grid;gap:14px}
+.ta-list li{display:flex;gap:12px;align-items:flex-start;color:#E6ECE9}
+.ta-list i{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:rgba(95,211,166,.14);color:#5FD3A6;font:700 14px/1 var(--body);font-style:normal;margin-top:1px}
+.ta-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.ta-sec .btn-ghost-light{border:2px solid rgba(255,255,255,.35);color:#fff;background:transparent}
+.ta-sec .btn-ghost-light:hover{border-color:#fff}
+.ta-note{display:block;margin-top:14px;font-size:.9rem;color:#9FAAA4}
+.ta-vis{position:relative;display:flex;justify-content:center;min-height:440px}
+.ta-cv{position:absolute;width:250px;border-radius:8px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);background:#fff}
+.ta-cv.c1{left:6%;top:30px;transform:rotate(-7deg)}
+.ta-cv.c2{right:4%;top:0;transform:rotate(5deg)}
+.ta-phone{position:relative;z-index:2;width:236px;margin-top:40px;border-radius:38px;padding:10px;background:#1B2420;box-shadow:0 0 0 2px #2E3A34,0 40px 80px -24px rgba(0,0,0,.75)}
+.ta-screen{border-radius:29px;overflow:hidden;background:#EBEEF1;color:#0C1310;font-family:var(--body)}
+.ta-bar{display:flex;align-items:center;gap:8px;padding:14px 14px 10px;background:#0C1310;color:#fff;font:700 14px/1 var(--display)}
+.ta-bar img{width:22px;height:22px;border-radius:6px}
+.ta-bar b{color:#5FD3A6}
+.ta-body{padding:12px;display:grid;gap:9px}
+.ta-res{font-size:11.5px;color:#5F6A64}
+.ta-card{background:#F8F9FA;border:1px solid #D6DCE3;border-radius:12px;padding:10px;display:grid;gap:6px}
+.ta-card strong{font:700 13px/1.2 var(--display)}
+.ta-tags{display:flex;gap:5px;flex-wrap:wrap}
+.ta-tags span{font-size:10px;font-weight:600;padding:3px 6px;border-radius:5px;background:#E6EAEE;color:#33403A}
+.ta-tags span.g{background:#E2F1EA;color:#08603F}
+.ta-btn{display:block;text-align:center;font:650 11.5px/1 var(--body);padding:8px;border-radius:8px;background:#0B7A55;color:#fff}
+.ta-float{position:absolute;z-index:3;left:0;bottom:0;background:#fff;color:#0C1310;border-radius:14px;padding:12px 14px;box-shadow:0 18px 40px -14px rgba(0,0,0,.55);font:600 13px/1.35 var(--body);display:flex;gap:10px;align-items:center}
+.ta-float i{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#0B7A55;color:#fff;font-style:normal;font-weight:700}
+.ta-float small{display:block;color:#5F6A64;font-weight:500}
+@media (max-width:560px){.ta-cv{width:180px}.ta-cv.c1{left:-4%}.ta-cv.c2{right:-4%}.ta-vis{min-height:400px}.ta-float{left:0}}
+@media (prefers-reduced-motion:no-preference){.ta-phone{animation:taFloat 6s ease-in-out infinite}@keyframes taFloat{50%{transform:translateY(-8px)}}}
 </style>
 
 </head>
@@ -758,7 +797,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
         <li><a href="#tarifs">Tarifs</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#contact">Contact</a></li>
-        <li><a href="/alternance/" data-noi18n>TissAlternance</a></li>
+        <li><a href="#alternance" data-noi18n>TissAlternance</a></li>
       </ul>
     </nav>
     <div class="nav-cta">
@@ -776,7 +815,7 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
         <li><a href="#tarifs">Tarifs</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#contact">Contact</a></li>
-        <li><a href="/alternance/" data-noi18n>TissAlternance</a></li>
+        <li><a href="#alternance" data-noi18n>TissAlternance</a></li>
       </ul>
       <a href="#contact" class="btn btn-accent btn-block">Demander mon devis gratuit</a>
     </div>
@@ -1502,6 +1541,43 @@ html:lang(ar) .eyebrow,html:lang(ar) .label,html:lang(ar) .kind{letter-spacing:0
         <p class="sim-note">Nom de domaine : environ 10 € par an, à votre nom.</p>
         <a href="#contact" class="btn btn-accent btn-lg" id="simGo">Recevoir mon devis gratuit</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="ta-sec" id="alternance" aria-labelledby="taTitle" data-noi18n>
+  <div class="wrap ta-grid">
+    <div class="reveal">
+      <span class="ta-tag"><b>Nouveau</b> Pour les étudiants</span>
+      <h2 id="taTitle">TissAlternance : <span>trouve ton alternance.</span></h2>
+      <p class="ta-lead">Notre appli gratuite pour les étudiants qui cherchent une entreprise. Elle trouve les boîtes autour de chez toi, fait ton CV et écrit ta lettre de motivation à leur nom.</p>
+      <ul class="ta-list">
+        <li><i>1</i><span><b>Les entreprises près de chez toi</b>, classées de la plus proche à la plus loin (annuaire officiel de l'État).</span></li>
+        <li><i>2</i><span><b>Un CV pro en 5 minutes</b> : 6 modèles, ta photo, prêt en PDF.</span></li>
+        <li><i>3</i><span><b>Ta lettre de motivation</b> écrite pour chaque entreprise, à envoyer depuis ta boîte mail.</span></li>
+        <li><i>4</i><span><b>Le suivi</b> : on te dit quand relancer.</span></li>
+      </ul>
+      <div class="ta-cta">
+        <a href="/alternance/" class="btn btn-accent btn-lg">Ouvrir l'appli</a>
+        <a href="/alternance/#cv" class="btn btn-lg btn-ghost-light">Créer mon CV</a>
+      </div>
+      <span class="ta-note">Gratuit, sans inscription. Tes infos restent sur ton téléphone. Installable sur l'écran d'accueil.</span>
+    </div>
+    <div class="ta-vis" aria-hidden="true">
+      <img class="ta-cv c1" src="img/alternance-cv-emeraude.webp" alt="" width="250" height="354" loading="lazy" decoding="async">
+      <img class="ta-cv c2" src="img/alternance-cv-horizon.webp" alt="" width="250" height="354" loading="lazy" decoding="async">
+      <div class="ta-phone">
+        <div class="ta-screen">
+          <div class="ta-bar"><img src="/alternance/icon-192.png" alt=""><span>Tiss<b>Alternance</b></span></div>
+          <div class="ta-body">
+            <div class="ta-res"><b>872</b> entreprises en commerce à Dijon</div>
+            <div class="ta-card"><strong>Boulangerie du Centre</strong><div class="ta-tags"><span>0,4 km</span><span>6 à 9 salariés</span><span class="g">PME</span></div><span class="ta-btn">Préparer ma candidature</span></div>
+            <div class="ta-card"><strong>Optique Darcy</strong><div class="ta-tags"><span>0,9 km</span><span>10 à 19 salariés</span><span class="g">PME</span></div><span class="ta-btn">Préparer ma candidature</span></div>
+            <div class="ta-card"><strong>Maison Rameau</strong><div class="ta-tags"><span>1,3 km</span><span>3 à 5 salariés</span></div><span class="ta-btn">Préparer ma candidature</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="ta-float"><i>✓</i><span>CV + lettre en PDF<small>envoyés depuis ta boîte mail</small></span></div>
     </div>
   </div>
 </section>

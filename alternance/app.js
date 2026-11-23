@@ -528,7 +528,8 @@
 
   /* ---------- démarrage ---------- */
   fillForm(); badge();
-  var start = location.hash === "#suivi" ? "suivi" : !S.profil ? "profil" : !S.cvMode ? "cv" : "recherche";
+  var start = location.hash === "#suivi" ? "suivi" : !S.profil ? "profil" : location.hash === "#cv" || !S.cvMode ? "cv" : "recherche";
+  if (location.hash === "#cv" && !S.profil) toast("Remplis d'abord ton profil, ensuite on fait ton CV");
   tab(start);
   api("info").then(function (d) { IA = !!d.ia; }).catch(function () {});
 
