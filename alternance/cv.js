@@ -17,6 +17,10 @@
     { id: "classique", nom: "Classique", desc: "Centré, traits fins, style cabinet", couleur: "noir" },
     { id: "corporate", nom: "Corporate", desc: "Bandeau sombre, très structuré", couleur: "bleu" },
     { id: "banque", nom: "Banque", desc: "Sobre et dense, colonne de dates", couleur: "bordeaux" },
+    { id: "ardoise", nom: "Ardoise", desc: "Colonne anthracite, finitions couleur", couleur: "bleu" },
+    { id: "monogramme", nom: "Monogramme", desc: "Initiales encadrées, très chic", couleur: "noir" },
+    { id: "parcours", nom: "Parcours", desc: "Frise des dates, lecture rapide", couleur: "vert" },
+    { id: "conseil", nom: "Conseil", desc: "Ultra épuré, style cabinet de conseil", couleur: "bleu" },
   ];
   var FONTS = {
     body: { css: "TA Onest", w: { 400: "onest-400.ttf", 600: "onest-600.ttf", 700: "onest-700.ttf" } },
@@ -508,6 +512,150 @@
       track(Y);
     }
 
+    else if (modele === "ardoise") {
+      var SL = "#1F2629", SB12 = 68, X12 = 78, W12 = 210 - X12 - 16;
+      bgFn = function () { P.rect(0, 0, SB12, H, SL); P.rect(SB12, 0, 1.4, H, C); };
+      bgFn();
+      var sy12 = 16;
+      avatar(SB12 / 2 - 19, sy12, 38, "rond", mix(C, 0.25, SL), "#FFFFFF", C, 1.2); sy12 += 50;
+      var lt12 = { f: "body", w: 400, size: s(8.7), color: "#D9DEE0" };
+      var side12 = function (title) { t(title.toUpperCase(), 12, sy12, { f: "body", w: 700, size: s(8.4), color: "#FFFFFF" }); sy12 += s(2.2); P.rect(12, sy12, 8, 0.8, mix(C, 0.45)); sy12 += s(5.4); };
+      side12("Contact");
+      D.contact.forEach(function (c) { icon(c.ic, 14.4, sy12 - s(1.2), s(2.5), mix(C, 0.25, SL), "#FFFFFF"); P.wrap(c.t, SB12 - 32, lt12).forEach(function (l) { t(l, 20, sy12, lt12); sy12 += s(4.3); }); sy12 += s(1.6); });
+      if (D.comp.length) { sy12 += s(3); side12("Compétences"); D.comp.forEach(function (it) { P.wrap(it, SB12 - 24, lt12).forEach(function (l) { t(l, 12, sy12, lt12); sy12 += s(4.2); }); P.rect(12, sy12 - s(2.4), SB12 - 24, 0.25, "#3A4448"); sy12 += s(1.6); }); }
+      if (D.lang.length) { sy12 += s(3); side12("Langues"); D.lang.forEach(function (l) { t(l.nom, 12, sy12, { f: "body", w: 600, size: s(8.7), color: "#FFFFFF" }); sy12 += s(2.4); if (l.niv) { bar(l.niv, 12, sy12, SB12 - 24, s(1.6), mix(C, 0.45), "#3A4448"); sy12 += s(5.6); } else { t(l.txt, 12, sy12 + s(2.4), lt12); sy12 += s(6.4); } }); }
+      [["Qualités", D.qual], ["Logiciels", D.log], ["Centres d'intérêt", D.int]].forEach(function (g) { if (!g[1].length) return; sy12 += s(3); side12(g[0]); sy12 = listeCol(g[1], 12, SB12 - 24, lt12, mix(C, 0.45), sy12, s(4.2)); });
+      track(sy12);
+      Y = 30;
+      t(D.prenom, X12, Y, { f: "body", w: 400, size: s(26), color: INK }); Y += s(10);
+      P.wrap(D.nom.toUpperCase(), W12, { f: "body", w: 700, size: s(26) }).forEach(function (l) { t(l, X12, Y, { f: "body", w: 700, size: s(26), color: INK }); Y += s(10); });
+      P.wrap(D.titre.toUpperCase(), W12, { f: "body", w: 600, size: s(9) }).forEach(function (l) { spaced(l, X12, Y, { f: "body", w: 600, size: s(9), color: C }, s(0.5)); Y += s(4.6); });
+      Y += s(9);
+      var sec12 = function (title) { ensure(s(14)); t(title.toUpperCase(), X12, Y, { f: "body", w: 700, size: s(10.5), color: INK }); var tw = P.width(title.toUpperCase(), { f: "body", w: 700, size: s(10.5) }); P.line(X12 + tw + 4, Y - s(1.3), X12 + W12, Y - s(1.3), "#D6DADD", 0.35); Y += s(7); };
+      if (D.accroche) { sec12("Profil"); para(D.accroche, X12, W12, body, s(4.6)); Y += s(5); }
+      sec12("Objectif"); recherche(X12, W12, "#F2F4F5", C, body); Y += s(3);
+      var b12 = stdBloc(C, null);
+      if (D.exps.length) { sec12("Expérience"); D.exps.forEach(function (e) { bloc(e, X12, W12, b12); }); Y += s(2); }
+      if (D.forms.length) { sec12("Formation"); D.forms.forEach(function (e) { bloc(e, X12, W12, b12); }); }
+      track(Y);
+    }
+
+    else if (modele === "monogramme") {
+      var M13 = 20, W13 = 170, MS = 26;
+      bgFn = function () { P.line(M13, H - 14, M13 + W13, H - 14, mix(C, 0.7), 0.3); };
+      bgFn();
+      Y = 18;
+      P.rect(M13, Y, MS, MS, C); P.rect(M13 + 1.2, Y + 1.2, MS - 2.4, MS - 2.4, "#FFFFFF"); P.rect(M13 + 2.2, Y + 2.2, MS - 4.4, MS - 4.4, C);
+      t(D.initiales, M13 + MS / 2, Y + MS / 2 + s(3.6), { f: "serif", w: 400, size: s(26), color: "#FFFFFF", align: "center" });
+      var nx13 = M13 + MS + 8, nw13 = W13 - MS - 8 - (D.rond ? 30 : 0), yy13 = Y + s(9);
+      t(D.prenom + " " + D.nom, nx13, yy13, { f: "serif", w: 400, size: s(24), color: INK }); yy13 += s(6.4);
+      P.wrap(D.titre.toUpperCase(), nw13, { f: "body", w: 600, size: s(8.6) }).forEach(function (l) { spaced(l, nx13, yy13, { f: "body", w: 600, size: s(8.6), color: C }, s(0.6)); yy13 += s(4.5); });
+      if (D.rond) avatar(M13 + W13 - 24, Y + 1, 24, "rond", mix(C, 0.85), C, null, 0);
+      Y = Math.max(yy13, Y + MS) + s(5);
+      P.wrap(D.contact.map(function (c) { return c.t; }).join("   ·   "), W13, { f: "body", size: s(8.8) }).forEach(function (l) { t(l, M13, Y, { f: "body", w: 400, size: s(8.8), color: GREY }); Y += s(4.4); });
+      Y += s(2); P.line(M13, Y, M13 + W13, Y, C, 0.5); P.line(M13, Y + 1, M13 + W13, Y + 1, C, 0.15); Y += s(9);
+      var LX13 = M13, LW13 = 50, RX13 = M13 + 60, RW13 = W13 - 60, top13 = Y, sy13 = Y;
+      var lsec13 = function (title) { t(title, LX13, sy13, { f: "serif", w: 400, size: s(13), color: INK }); sy13 += s(2); P.rect(LX13, sy13, 8, 0.6, C); sy13 += s(5.4); };
+      var lt13 = { f: "body", w: 400, size: s(8.8), color: TXT };
+      [["Compétences", D.comp], ["Qualités", D.qual], ["Langues", D.lang], ["Logiciels", D.log], ["Intérêts", D.int]].forEach(function (g) {
+        if (!g[1].length) return; lsec13(g[0]);
+        g[1].forEach(function (it) {
+          if (g[0] === "Langues") { t(it.nom, LX13, sy13, { f: "body", w: 600, size: s(8.8), color: INK }); if (it.niv) dots(it.niv, LX13 + LW13 - s(12.6), sy13 - s(1.1), s(1), C, mix(C, 0.85)); else if (it.txt) t(it.txt, LX13 + LW13, sy13, Object.assign({ align: "right" }, lt13)); sy13 += s(5); return; }
+          P.wrap(it, LW13, lt13).forEach(function (l) { t(l, LX13, sy13, lt13); sy13 += s(4.3); }); sy13 += s(0.6);
+        });
+        sy13 += s(4);
+      });
+      track(sy13);
+      P.line(RX13 - 6, top13 - s(4), RX13 - 6, H - 22, "#E2E5E7", 0.3);
+      Y = top13;
+      var rsec13 = function (title) { ensure(s(14)); t(title, RX13, Y, { f: "serif", w: 400, size: s(13), color: INK }); Y += s(2); P.rect(RX13, Y, 8, 0.6, C); Y += s(6); };
+      if (D.accroche) { rsec13("Profil"); para(D.accroche, RX13, RW13, body, s(4.6)); Y += s(5); }
+      rsec13("Objectif"); recherche(RX13, RW13, mix(C, 0.95), C, body); Y += s(3);
+      var b13 = stdBloc(C, null); b13.sub = { f: "body", w: 600, size: s(9.1), color: GREY };
+      if (D.exps.length) { rsec13("Expérience"); D.exps.forEach(function (e) { bloc(e, RX13, RW13, b13); }); Y += s(2); }
+      if (D.forms.length) { rsec13("Formation"); D.forms.forEach(function (e) { bloc(e, RX13, RW13, b13); }); }
+      track(Y);
+    }
+
+    else if (modele === "parcours") {
+      var M14 = 18, W14 = 174, TL = M14 + 40;
+      P.rect(0, 0, 210, 40, mix(C, 0.93));
+      P.rect(0, 40, 210, 0.8, C);
+      bgFn = function () { P.rect(0, 0, 210, 5, mix(C, 0.93)); };
+      if (D.rond) avatar(210 - M14 - 30, 5, 30, "rond", mix(C, 0.7), "#FFFFFF", "#FFFFFF", 1);
+      Y = 20;
+      var nw14 = D.rond ? W14 - 38 : W14;
+      t(D.prenom + " " + D.nom, M14, Y, { f: "display", w: 800, size: s(24), color: INK }); Y += s(7.5);
+      P.wrap(D.titre, nw14, { f: "body", w: 600, size: s(10.5) }).forEach(function (l) { t(l, M14, Y, { f: "body", w: 600, size: s(10.5), color: C }); Y += s(5); });
+      Y = 48;
+      var cx14 = M14, ct14 = { f: "body", w: 400, size: s(8.6), color: TXT };
+      D.contact.forEach(function (c) { var w = P.width(c.t, ct14) + s(6.5); if (cx14 + w > 192) { cx14 = M14; Y += s(6); } icon(c.ic, cx14 + s(2), Y - s(1.1), s(2.1), mix(C, 0.88), C); t(c.t, cx14 + s(5.2), Y, ct14); cx14 += w + s(4); });
+      Y += s(9);
+      var sec14 = function (title) { ensure(s(14)); t(title.toUpperCase(), M14, Y, { f: "body", w: 700, size: s(10), color: C }); Y += s(7); };
+      if (D.accroche) { sec14("Profil"); para(D.accroche, M14, W14, body, s(4.6)); Y += s(4); }
+      sec14("Objectif"); recherche(M14, W14, mix(C, 0.95), C, body); Y += s(3);
+      var frise = function (list) {
+        var y0 = Y, p0 = P.page();
+        list.forEach(function (e) {
+          ensure(s(12));
+          var dl = P.wrap(e.dates || "", TL - M14 - 8, { f: "body", w: 700, size: s(8.4) });
+          dl.forEach(function (l, i) { t(l, TL - 6, Y + i * s(4), { f: "body", w: 700, size: s(8.4), color: INK, align: "right" }); });
+          P.circle(TL, Y - s(1.2), s(1.6), C); P.circle(TL, Y - s(1.2), s(0.7), "#FFFFFF");
+          var x = TL + 7, w = M14 + W14 - x;
+          P.wrap(e.titre, w, { f: "body", w: 700, size: s(10.2) }).forEach(function (l) { t(l, x, Y, { f: "body", w: 700, size: s(10.2), color: INK }); Y += s(4.8); });
+          if (e.sous) { t(e.sous, x, Y, { f: "body", w: 600, size: s(9), color: GREY }); Y += s(4.6); }
+          e.puces.forEach(function (m) { P.wrap(m, w - s(3.6), body).forEach(function (l, i) { ensure(s(4.5)); if (!i) P.circle(x + s(1), Y - s(1.15), s(0.5), C); t(l, x + s(3.6), Y, body); Y += s(4.45); }); });
+          Y += s(3.4);
+        });
+        if (P.page() === p0) P.line(TL, y0 - s(1), TL, Y - s(6), mix(C, 0.7), 0.4);
+      };
+      if (D.exps.length) { sec14("Expérience"); frise(D.exps); Y += s(1); }
+      if (D.forms.length) { sec14("Formation"); frise(D.forms); Y += s(1); }
+      var CW14 = (W14 - 8) / 2, y14 = Y, colY = [y14, y14];
+      ensure(s(20));
+      y14 = Y; colY = [y14, y14];
+      var col = function (i, title, fn) { var x = M14 + i * (CW14 + 8); Y = colY[i]; t(title.toUpperCase(), x, Y, { f: "body", w: 700, size: s(9.4), color: C }); Y += s(6); fn(x); colY[i] = Y + s(3); };
+      if (D.comp.length) col(0, "Compétences", function (x) { Y = chips(D.comp, x, Y - s(4), CW14, { f: "body", w: 600, size: s(8) }, mix(C, 0.9), C); });
+      if (D.lang.length) col(1, "Langues", function (x) { D.lang.forEach(function (l) { t(l.nom, x, Y, { f: "body", w: 600, size: s(8.8), color: INK }); if (l.niv) bar(l.niv, x + 26, Y - s(2), CW14 - 26, s(1.8), C, mix(C, 0.85)); else t(l.txt, x + CW14, Y, Object.assign({ align: "right" }, body)); Y += s(5.4); }); });
+      var rest = [["Qualités", D.qual], ["Logiciels", D.log], ["Intérêts", D.int]].filter(function (g) { return g[1].length; });
+      rest.forEach(function (g, i) { var c = colY[0] <= colY[1] ? 0 : 1; col(c, g[0], function (x) { para(g[1].join("  ·  "), x, CW14, body, s(4.5)); }); });
+      Y = Math.max(colY[0], colY[1]);
+      track(Y);
+    }
+
+    else if (modele === "conseil") {
+      var M15 = 20, W15 = 170, LW15 = 36, CX15 = M15 + LW15, CW15 = W15 - LW15;
+      Y = 26;
+      var nw15 = D.rond ? W15 - 30 : W15;
+      if (D.rond) avatar(M15 + W15 - 24, 12, 24, "rond", mix(C, 0.85), C, null, 0);
+      t(D.prenom + " " + D.nom.toUpperCase(), M15, Y, { f: "body", w: 700, size: s(21), color: INK }); Y += s(6.5);
+      P.wrap(D.titre, nw15, { f: "body", w: 400, size: s(10.5) }).forEach(function (l) { t(l, M15, Y, { f: "body", w: 400, size: s(10.5), color: TXT }); Y += s(5); });
+      P.wrap(D.contact.map(function (c) { return c.t; }).join("   |   "), nw15, { f: "body", size: s(8.6) }).forEach(function (l) { t(l, M15, Y, { f: "body", w: 400, size: s(8.6), color: C }); Y += s(4.4); });
+      Y = Math.max(Y, D.rond ? 40 : 0) + s(4);
+      var sec15 = function (title, fn) {
+        ensure(s(14)); P.line(M15, Y - s(4.5), M15 + W15, Y - s(4.5), INK, 0.35);
+        var yl = Y; P.wrap(title.toUpperCase(), LW15 - 4, { f: "body", w: 700, size: s(8.4) }).forEach(function (l) { t(l, M15, yl, { f: "body", w: 700, size: s(8.4), color: INK }); yl += s(4); });
+        fn(); Y = Math.max(Y, yl) + s(6);
+      };
+      var item15 = function (e) {
+        ensure(s(10));
+        if (e.dates) t(e.dates, M15 + W15, Y, { f: "body", w: 400, size: s(8.6), color: GREY, align: "right" });
+        var tl = P.wrap(e.titre + (e.sous ? " — " + e.sous : ""), CW15 - (e.dates ? P.width(e.dates, { f: "body", size: s(8.6) }) + 4 : 0), { f: "body", w: 700, size: s(9.8) });
+        tl.forEach(function (l) { t(l, CX15, Y, { f: "body", w: 700, size: s(9.8), color: INK }); Y += s(4.7); });
+        e.puces.forEach(function (m) { P.wrap(m, CW15 - s(3.4), body).forEach(function (l, i) { ensure(s(4.5)); if (!i) P.rect(CX15 + s(0.4), Y - s(1.7), s(1), s(1), C); t(l, CX15 + s(3.4), Y, body); Y += s(4.45); }); });
+        Y += s(2.6);
+      };
+      if (D.accroche) sec15("Profil", function () { para(D.accroche, CX15, CW15, body, s(4.6)); });
+      sec15("Objectif", function () { [D.rech.poste, D.rech.quand, D.rech.rythme, D.rech.ecole].filter(Boolean).forEach(function (r, i) { para(r, CX15, CW15, Object.assign({}, body, { w: i ? 400 : 700, color: i ? TXT : INK }), s(4.6)); }); });
+      if (D.exps.length) sec15("Expérience", function () { D.exps.forEach(item15); Y -= s(2.6); });
+      if (D.forms.length) sec15("Formation", function () { D.forms.forEach(item15); Y -= s(2.6); });
+      var ex15 = [["Compétences", D.comp], ["Langues", D.lang.map(function (l) { return l.nom + (l.txt ? " (" + l.txt + ")" : ""); })], ["Informatique", D.log], ["Qualités", D.qual], ["Intérêts", D.int]].filter(function (g) { return g[1].length; });
+      if (ex15.length) sec15("Compétences", function () {
+        ex15.forEach(function (g) { var lab = g[0] + " : ", lo = { f: "body", w: 600, size: s(9.2), color: INK }, lw = P.width(lab, lo); var ls = P.wrap(g[1].join(", "), CW15 - lw, body); ensure(ls.length * s(4.6)); t(lab, CX15, Y, lo); ls.forEach(function (l) { t(l, CX15 + lw, Y, body); Y += s(4.6); }); Y += s(0.6); });
+      });
+      track(Y);
+    }
+
     else { /* sobre : une colonne, idéal pour les logiciels de recrutement */
       var M = 18, W7 = 174;
       Y = 24;
@@ -612,7 +760,7 @@
   async function lettrePdf(texte, p, cv) {
     var J = await load(), doc = newDoc(J);
     cv = cv || {};
-    var C = COULEURS[cv.couleur] || COULEURS.vert, disp = cv.modele === "elegance" || cv.modele === "executif" || cv.modele === "classique" ? "serif" : cv.modele === "creatif" ? "black" : "display";
+    var C = COULEURS[cv.couleur] || COULEURS.vert, disp = cv.modele === "elegance" || cv.modele === "executif" || cv.modele === "classique" || cv.modele === "monogramme" ? "serif" : cv.modele === "creatif" ? "black" : "display";
     doc.setProperties({ title: "Lettre de motivation " + clean(p.prenom + " " + p.nom), author: clean(p.prenom + " " + p.nom), creator: "TissAlternance" });
     var M = 22, W = 210 - 2 * M, y = 24, LH = 5.3;
     doc.setFillColor(C); doc.rect(0, 0, 210, 3.5, "F");
