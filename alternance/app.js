@@ -509,7 +509,7 @@
 
   /* ---------- CV ---------- */
   var CV = window.TACV;
-  S.cv = S.cv || { modele: "emeraude", couleur: "vert", exps: [{}], forms: [] };
+  S.cv = S.cv || { modele: "emeraude", couleur: "violet", exps: [{}], forms: [] };
   if (!S.cv.modele || S.cv.modele === "moderne") S.cv.modele = "emeraude";
   if (!CV.COULEURS[S.cv.couleur]) S.cv.couleur = "vert";
   var vue = "moi";

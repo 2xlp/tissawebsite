@@ -8,8 +8,8 @@
   "display": "standalone",
   "orientation": "portrait",
   "lang": "fr",
-  "background_color": "#0C1310",
-  "theme_color": "#0C1310",
+  "background_color": "#0F1020",
+  "theme_color": "#0F1020",
   "categories": ["education", "productivity"],
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
