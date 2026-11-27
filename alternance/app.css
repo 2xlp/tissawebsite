@@ -464,3 +464,13 @@ fieldset{border-color:var(--line);box-shadow:var(--shadow)}
 .adm-rb{background:#fff;border:1.5px solid #E5484D;color:#C62F35;min-height:42px}
 .adm-rb:disabled{opacity:.6}
 .adm-list[hidden]{display:none}
+
+.parr{display:grid;gap:10px;padding:16px;border-radius:16px;background:linear-gradient(135deg,#F3F0FF,#FCEFFA);border:1px solid #E3DCFF}
+.parr-t{margin:0;font:700 16px var(--display);color:var(--ink)}
+.parr-s{margin:0;font-size:14px;color:var(--ink-2)}
+.parr-bar{height:8px;border-radius:9px;background:#fff;overflow:hidden}
+.parr-bar i{display:block;height:100%;width:0;background:var(--grad);transition:width .4s}
+.parr-link{display:flex;gap:8px}
+.parr-link input{flex:1;min-width:0;font-size:13px}
+.parr small{color:var(--muted);font-size:12.5px}
+.of-parr{margin:4px 0 0;font-size:13.5px;color:var(--muted);text-align:center}

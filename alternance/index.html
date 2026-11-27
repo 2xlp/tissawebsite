@@ -460,6 +460,13 @@
       </div>
       <div id="cp-on" hidden>
         <div class="cp-card"><span class="cp-av" id="cp-av">?</span><div><b id="cp-email"></b><small id="cp-sync">Tout est sauvegardé ✓</small></div></div>
+        <div class="parr" id="parr" hidden>
+          <p class="parr-t">🎁 Invite 3 amis, l'offre Pro est offerte</p>
+          <p class="parr-s" id="parr-s"></p>
+          <div class="parr-bar" aria-hidden="true"><i id="parr-bar"></i></div>
+          <div class="parr-link"><input id="parr-url" readonly aria-label="Ton lien de parrainage"><button type="button" class="btn btn-accent" id="parr-share">Partager</button></div>
+          <small>Un ami compte quand il crée son compte avec ton lien et remplit son profil.</small>
+        </div>
         <button type="button" class="btn btn-ghost btn-wide" id="cp-logout">Se déconnecter de cet appareil</button>
       </div>
       <p class="err" id="cp-err" role="alert" hidden></p>
@@ -575,6 +582,7 @@
         <div class="of-row" role="row"><span role="cell">Sauvegarde dans ton compte</span><span role="cell" data-col="gratuit"><i class="ok"></i></span><span role="cell" data-col="essentiel"><i class="ok"></i></span><span role="cell" data-col="pro"><i class="ok"></i></span></div>
       </div>
 
+      <p class="of-parr">🎁 Ou invite 3 amis et l'offre Pro est offerte. <button type="button" class="linklike" id="of-parr">Mon lien de parrainage</button></p>
       <p class="of-warn" id="of-warn" hidden>Tu n'as pas de compte : ton offre restera seulement sur ce téléphone. <button type="button" class="linklike" id="of-compte">Créer mon compte d'abord</button></p>
       <p class="pw-small of-small">Paiement sécurisé par Stripe (carte, Apple Pay, Google Pay) · <a href="/cgv.html#alternance">Conditions</a> · <button type="button" class="linklike" id="pw-restore">Déjà payé ? Récupérer mon offre</button></p>
       <div id="pw-restore-box" hidden>

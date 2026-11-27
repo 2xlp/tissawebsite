@@ -16,7 +16,7 @@
   if (!st || st !== q.get("state")) return fin("Connexion interrompue", "Pour ta sécurité, relance « Connecter mon Gmail » depuis l'appli, dans le même navigateur.");
   if (st.charAt(0) === "L") {
     document.getElementById("g-t").textContent = "Connexion à ton compte…";
-    fetch(API + "?action=glogin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: q.get("code") }) })
+    fetch(API + "?action=glogin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: q.get("code"), parrain: (function () { try { return localStorage.getItem("tw-alt-ref") || ""; } catch (e) { return ""; } })() }) })
       .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || "Erreur " + r.status); return d; }); })
       .then(function (d) {
         try { sessionStorage.setItem("tw-alt-login", JSON.stringify(d)); } catch (e) {}

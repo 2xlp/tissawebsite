@@ -840,7 +840,7 @@
   });
 
   /* ---------- compte (sauvegarde sur le serveur) ---------- */
-  function donnees() { var d = JSON.parse(JSON.stringify(S)); delete d.compte; delete d.pass; delete d.maj; return d; }
+  function donnees() { var d = JSON.parse(JSON.stringify(S)); delete d.compte; delete d.pass; delete d.maj; delete d.parr; return d; }
   function localVide() { return !S.profil && !Object.keys(S.suivi || {}).length && !S.cvMode; }
   function appliquePass(p) {
     if (!p || !p.v) return;
@@ -859,6 +859,8 @@
   // arrivée d'un compte (connexion ou ouverture de l'appli) : on garde la version la plus récente
   function recoit(d, nouveau) {
     S.compte = { email: d.email, cj: d.cjeton || S.compte.cj, google: !!d.google };
+    if (d.parrainage) S.parr = d.parrainage;
+    try { localStorage.removeItem("tw-alt-ref"); } catch (e) {}
     var serveur = d.maj ? Date.parse(d.maj) : 0;
     var pleine = d.data && (d.data.profil || Object.keys(d.data.suivi || {}).length || d.data.cvMode);
     if (pleine && (localVide() || serveur > (S.maj || 0) + 1000) && !sessionStorage.getItem("tw-alt-rl")) {
@@ -893,7 +895,30 @@
     $("#cp-t").textContent = on ? "Ton compte" : cpMode === "login" ? "Content de te revoir" : "Crée ton compte, c'est gratuit";
     $("#cp-sub").hidden = on;
     if (on) { $("#cp-email").textContent = S.compte.email; $("#cp-av").textContent = S.compte.email.charAt(0).toUpperCase(); }
+    majParr();
   }
+  /* ---------- parrainage ---------- */
+  function majParr() {
+    var p = S.compte && S.parr, box = $("#parr"); if (!box) return;
+    box.hidden = !p; if (!p) return;
+    $("#parr-url").value = "https://tissaweb.fr/alternance/?p=" + p.code;
+    $("#parr-s").textContent = p.gagne ? "Bravo ! " + p.n + " amis inscrits : ton offre Pro est activée ✓" : p.n + " / " + p.but + " amis inscrits" + (p.n ? ", plus que " + (p.but - p.n) + " !" : "");
+    $("#parr-bar").style.width = Math.min(100, Math.round(p.n / p.but * 100)) + "%";
+  }
+  $("#parr-share").addEventListener("click", function () {
+    var u = $("#parr-url").value, t = "Je cherche mon alternance / mon taf avec TissAlternance : elle trouve les entreprises, fait le CV et la lettre et envoie pour toi. Inscris-toi avec mon lien 👉 ";
+    if (navigator.share) navigator.share({ title: "TissAlternance", text: t, url: u }).catch(function () {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(t + u).then(function () { toast("Lien copié ✓"); });
+  });
+  $("#of-parr").addEventListener("click", function () { $("#paywall").hidden = true; ouvreCompte(); });
+  (function () {
+    var q = new URLSearchParams(location.search), c = (q.get("p") || "").toUpperCase();
+    if (/^[A-Z0-9]{5,8}$/.test(c)) {
+      try { if (!S.compte) localStorage.setItem("tw-alt-ref", c); } catch (e) {}
+      q.delete("p"); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "") + location.hash);
+    }
+  })();
+  function refCode() { try { return localStorage.getItem("tw-alt-ref") || ""; } catch (e) { return ""; } }
   function ouvreCompte() { $("#cp-err").hidden = true; majCompte(); $("#compte").hidden = false; document.body.style.overflow = "hidden"; }
   function fermeCompte() { if (!S.compte && !S.sansCompte) return; $("#compte").hidden = true; document.body.style.overflow = ""; }
   $$("[data-close-cp]").forEach(function (b) { b.addEventListener("click", fermeCompte); });
@@ -910,7 +935,7 @@
     e.preventDefault();
     var b = $("#cp-go"); b.disabled = true; $("#cp-err").hidden = true;
     try {
-      var d = await api(cpMode === "login" ? "connexion" : "inscription", { email: $("#cp-mail").value.trim(), mdp: $("#cp-mdp").value, nom: S.profil ? ((S.profil.prenom || "") + " " + (S.profil.nom || "")).trim() : "" });
+      var d = await api(cpMode === "login" ? "connexion" : "inscription", { parrain: refCode(), email: $("#cp-mail").value.trim(), mdp: $("#cp-mdp").value, nom: S.profil ? ((S.profil.prenom || "") + " " + (S.profil.nom || "")).trim() : "" });
       if (!recoit(d, true)) { $("#compte").hidden = true; document.body.style.overflow = ""; toast(cpMode === "login" ? "Connecté ✓" : "Compte créé ✓ Tout est sauvegardé"); }
     } catch (err) { $("#cp-err").textContent = err.message; $("#cp-err").hidden = false; }
     finally { b.disabled = false; }
