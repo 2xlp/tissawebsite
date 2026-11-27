@@ -428,3 +428,7 @@ fieldset{border-color:var(--line);box-shadow:var(--shadow)}
 .of-sec>span.sel{background:#F3F0FF}
 .no{display:inline-block;width:12px;height:2px;border-radius:2px;background:#C9CAD6}
 .of-warn{margin:0;padding:12px 14px;border-radius:12px;background:#FFF6E8;border:1px solid #F2D9A8;color:#7A4B00;font-size:14px;text-align:center}
+.gm-alt{display:grid;gap:10px;padding:14px;border-radius:14px;background:#fff;border:1px solid var(--line)}
+.gm-alt ol{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px;color:var(--ink-2)}
+.gm-alt small{font-size:12.5px;color:var(--muted);line-height:1.4}
+#gm-alt{font-size:13.5px}

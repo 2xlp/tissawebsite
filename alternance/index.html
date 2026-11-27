@@ -92,6 +92,18 @@
           </div>
           <button type="button" class="btn btn-wide gm-btn" id="gm-go"><span class="gm-g" aria-hidden="true">G</span> Connecter mon Gmail</button>
           <button type="button" class="lnk" id="gm-off" hidden>Déconnecter</button>
+          <button type="button" class="lnk" id="gm-alt">Pas d'écran Google : se connecter avec un mot de passe d'application</button>
+          <div class="gm-alt" id="gm-alt-box" hidden>
+            <ol>
+              <li>Active la <b>validation en 2 étapes</b> sur ton compte Google, si ce n'est pas déjà fait.</li>
+              <li>Ouvre <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a>, tape « TissAlternance » puis <b>Créer</b>.</li>
+              <li>Google affiche un code de 16 lettres : copie-le ici.</li>
+            </ol>
+            <label>Ton adresse Gmail<input id="gm-alt-mail" type="email" autocomplete="email" inputmode="email" placeholder="prenom.nom@gmail.com"></label>
+            <label>Mot de passe d'application<input id="gm-alt-mdp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="abcd efgh ijkl mnop"></label>
+            <button type="button" class="btn btn-ink btn-wide" id="gm-alt-go">Connecter mon Gmail</button>
+            <small>Ce code sert seulement à envoyer tes candidatures. Il est stocké chiffré, et tu peux le supprimer à tout moment depuis ton compte Google.</small>
+          </div>
         </div>
         <div class="seg" role="radiogroup" aria-label="Accords dans la lettre">
           <span class="seg-l">Dans la lettre, écrire :</span>

@@ -442,12 +442,20 @@
     box.hidden = !FL.gmail;
     var on = gmailOk();
     box.classList.toggle("on", on);
-    $("#gm-go").hidden = on; $("#gm-off").hidden = !on;
+    $("#gm-go").hidden = on; $("#gm-off").hidden = !on; $("#gm-alt").hidden = on; if (on) $("#gm-alt-box").hidden = true;
     $("#gm-etat").innerHTML = on ? "Connecté : tes candidatures et relances partent de <b>" + esc(S.gmail.email) + "</b>. L'appli peut seulement envoyer, jamais lire tes mails."
       : "Connecte ton Gmail : l'appli envoie tes candidatures et tes relances depuis ta propre adresse. Elle peut seulement envoyer, jamais lire tes mails.";
     if (cur) majAuto();
   }
   $("#gm-go").addEventListener("click", gmailConnect);
+  $("#gm-alt").addEventListener("click", function () { var bx = $("#gm-alt-box"); bx.hidden = !bx.hidden; if (!bx.hidden) { $("#gm-alt-mail").value = $("#gm-alt-mail").value || (S.profil && S.profil.email) || ""; $("#gm-alt-mail").focus(); } });
+  $("#gm-alt-go").addEventListener("click", async function () {
+    var b = this; b.disabled = true; b.textContent = "Vérification…";
+    try {
+      var d = await api("gsmtp", { email: $("#gm-alt-mail").value.trim(), mdp: $("#gm-alt-mdp").value });
+      S.gmail = { email: d.email, v: d.jeton }; save(); $("#gm-alt-mdp").value = ""; majGmail(); toast("Gmail connecté ✓");
+    } catch (e) { toast(e.message); } finally { b.disabled = false; b.textContent = "Connecter mon Gmail"; }
+  });
   $("#sh-gmail").addEventListener("click", function () { toast("Connexion à Google…"); gmailConnect(); });
   $("#gm-off").addEventListener("click", async function () {
     var b = this; b.disabled = true;
