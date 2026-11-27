@@ -860,13 +860,17 @@
   function recoit(d, nouveau) {
     S.compte = { email: d.email, cj: d.cjeton || S.compte.cj, google: !!d.google };
     var serveur = d.maj ? Date.parse(d.maj) : 0;
-    if (d.data && (localVide() || serveur > (S.maj || 0) + 1000)) {
+    var pleine = d.data && (d.data.profil || Object.keys(d.data.suivi || {}).length || d.data.cvMode);
+    if (pleine && (localVide() || serveur > (S.maj || 0) + 1000) && !sessionStorage.getItem("tw-alt-rl")) {
+      sessionStorage.setItem("tw-alt-rl", "1");
       var garde = { compte: S.compte, pass: S.pass };
       S = Object.assign({ profil: null, suivi: {}, masques: {}, zone: "ville" }, d.data, garde, { maj: serveur });
       appliquePass(d.pass); store();
       sessionStorage.setItem("tw-alt-toast", nouveau ? "Content de te revoir ! Tes données sont récupérées ✓" : "");
       location.replace(location.pathname + location.hash); return true;
     }
+    sessionStorage.removeItem("tw-alt-rl");
+    if (d.maj && serveur > (S.maj || 0)) S.maj = serveur;
     if (!d.pass && S.pass && (S.pass.invite || S.pass.admin)) { delete S.pass; majPass(); }
     store(); appliquePass(d.pass); majCompte();
     if (nouveau || !d.data || (S.maj || 0) > serveur + 1000) pousse();
