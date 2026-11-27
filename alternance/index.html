@@ -31,6 +31,7 @@
     <button class="pill pill-btn" id="install" hidden>Installer l'appli</button>
     <span class="pill" id="free">Gratuit</span>
     <button class="pill pill-btn pill-pass" id="pass-btn" hidden>Offres</button>
+    <button class="pill pill-acc" id="adm-btn" hidden>Admin</button>
     <button class="pill pill-acc" id="acc-btn" hidden>Se connecter</button>
   </div>
 </header>
@@ -487,6 +488,18 @@
         <textarea id="kit-mail" rows="9" readonly></textarea>
         <button type="button" class="btn btn-ink btn-wide" id="kit-copy">Copier le mail</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="admin" role="dialog" aria-modal="true" aria-labelledby="adm-t" hidden>
+  <div class="sheet-bg" data-close-adm></div>
+  <div class="sheet-in adm-in">
+    <div class="sheet-head"><div><p class="sheet-k">Espace admin</p><h3 id="adm-t">Les comptes</h3><p class="sheet-sub" id="adm-stats">Chargement…</p></div><button class="x" data-close-adm aria-label="Fermer">×</button></div>
+    <div class="sheet-body">
+      <input id="adm-q" type="search" placeholder="Chercher un nom, une adresse, une ville…" autocomplete="off">
+      <div class="adm-f" role="group" aria-label="Filtrer"><button type="button" data-af="tous" aria-pressed="true">Tous</button><button type="button" data-af="gratuit" aria-pressed="false">Gratuit</button><button type="button" data-af="offert" aria-pressed="false">Offert</button><button type="button" data-af="paye" aria-pressed="false">Payé</button></div>
+      <div id="adm-list" class="adm-list"></div>
     </div>
   </div>
 </div>

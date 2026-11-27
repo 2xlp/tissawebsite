@@ -783,7 +783,7 @@
   function appliquePass(p) {
     if (!p || !p.v) return;
     if (S.pass && S.pass.v === p.v && !!S.pass.admin === !!p.admin) return;
-    S.pass = { tier: p.tier, email: p.email, v: p.v, invite: !!p.invite, admin: !!p.admin }; store(); majPass();
+    S.pass = { tier: p.tier, email: p.email, v: p.v, invite: !!p.invite, admin: !!p.admin }; store(); majPass(); if (S.compte) majCompte();
   }
   function syncTxt(t) { var el = $("#cp-sync"); if (el) el.textContent = t; }
   async function pousse() {
@@ -805,6 +805,7 @@
       sessionStorage.setItem("tw-alt-toast", nouveau ? "Content de te revoir ! Tes données sont récupérées ✓" : "");
       location.replace(location.pathname + location.hash); return true;
     }
+    if (!d.pass && S.pass && (S.pass.invite || S.pass.admin)) { delete S.pass; majPass(); }
     store(); appliquePass(d.pass); majCompte();
     if (nouveau || !d.data || (S.maj || 0) > serveur + 1000) pousse();
     return false;
@@ -820,6 +821,7 @@
   function majCompte() {
     var on = !!S.compte;
     $("#acc-btn").hidden = false; $("#acc-btn").textContent = on ? "Mon compte" : "Se connecter";
+    $("#adm-btn").hidden = !(on && S.pass && S.pass.admin);
     $("#cp-out").hidden = on; $("#cp-on").hidden = !on; $("#cp-reset").hidden = true;
     $("#cp-x").hidden = !on && !S.sansCompte; $(".cp-skip").hidden = on || !!S.sansCompte;
     $("#cp-t").textContent = on ? "Ton compte" : cpMode === "login" ? "Content de te revoir" : "Crée ton compte, c'est gratuit";
@@ -888,6 +890,48 @@
     if (!confirm("Te déconnecter ? Tes données restent sauvegardées dans ton compte et seront retirées de cet appareil.")) return;
     deconnexion(false);
   });
+  /* ---------- espace admin ---------- */
+  var ADM = { list: [], f: "tous" };
+  function dateCourte(d) { return d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : ""; }
+  function admRender() {
+    var q = $("#adm-q").value.trim().toLowerCase();
+    var l = ADM.list.filter(function (c) {
+      if (ADM.f === "gratuit" && (c.offert || c.paye || c.admin)) return false;
+      if (ADM.f === "offert" && !c.offert) return false;
+      if (ADM.f === "paye" && !c.paye) return false;
+      return !q || (c.email + " " + c.nom + " " + c.ville + " " + c.formation).toLowerCase().indexOf(q) >= 0;
+    });
+    $("#adm-list").innerHTML = l.length ? l.map(function (c) {
+      var statut = c.admin ? '<span class="tag g">Admin</span>' : c.paye ? '<span class="tag hot">Payé ' + (c.paye === "pro" ? "Pro" : "Essentiel") + "</span>" : c.offert ? '<span class="tag g">Offert ' + (c.offert === "pro" ? "Pro" : "Essentiel") + "</span>" : '<span class="tag">Gratuit</span>';
+      return '<div class="adm-c"><div class="adm-h"><span class="cp-av">' + esc((c.nom || c.email).charAt(0).toUpperCase()) + '</span><div><b>' + esc(c.nom || "Sans nom") + '</b><small>' + esc(c.email) + "</small></div></div>" +
+        '<div class="meta">' + statut + (c.google ? '<span class="tag">Google</span>' : "") + (c.ville ? '<span class="tag">' + esc(c.ville) + "</span>" : "") + (c.formation ? '<span class="tag">' + esc(c.formation) + "</span>" : "") + '<span class="tag">' + c.suivi + " candidature" + (c.suivi > 1 ? "s" : "") + '</span><span class="tag">Inscrit le ' + esc(dateCourte(c.cree)) + "</span></div>" +
+        (c.admin ? "" : '<div class="adm-seg" role="group" aria-label="Offre offerte à ' + esc(c.email) + '">' + ["", "essentiel", "pro"].map(function (t) { return '<button type="button" data-ae="' + esc(c.email) + '" data-at="' + t + '" aria-pressed="' + String((c.offert || "") === t) + '">' + (t === "" ? "Rien d'offert" : t === "pro" ? "Offrir Pro" : "Offrir Essentiel") + "</button>"; }).join("") + "</div>") + "</div>";
+    }).join("") : '<div class="empty"><b>Aucun compte</b>Personne ne correspond.</div>';
+  }
+  async function admOuvre() {
+    $("#admin").hidden = false; document.body.style.overflow = "hidden"; $("#adm-stats").textContent = "Chargement…";
+    try {
+      var d = await api("admin_comptes", { cjeton: S.compte.cj }); ADM.list = d.comptes || [];
+      var n = ADM.list.length, of = ADM.list.filter(function (c) { return c.offert; }).length, pa = ADM.list.filter(function (c) { return c.paye; }).length;
+      var sem = ADM.list.filter(function (c) { return Date.now() - Date.parse(c.cree) < 7 * 86400000; }).length;
+      $("#adm-stats").textContent = n + " compte" + (n > 1 ? "s" : "") + " · " + sem + " cette semaine · " + pa + " payé" + (pa > 1 ? "s" : "") + " · " + of + " offert" + (of > 1 ? "s" : "");
+      admRender();
+    } catch (e) { $("#adm-stats").textContent = e.message; }
+  }
+  $("#adm-btn").addEventListener("click", admOuvre);
+  $$("[data-close-adm]").forEach(function (b) { b.addEventListener("click", function () { $("#admin").hidden = true; document.body.style.overflow = ""; }); });
+  $("#adm-q").addEventListener("input", admRender);
+  $$("[data-af]").forEach(function (b) { b.addEventListener("click", function () { ADM.f = b.dataset.af; $$("[data-af]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); admRender(); }); });
+  $("#adm-list").addEventListener("click", async function (e) {
+    var b = e.target.closest("[data-ae]"); if (!b || b.getAttribute("aria-pressed") === "true") return;
+    var em = b.dataset.ae, t = b.dataset.at;
+    try {
+      await api("admin_offrir", { cjeton: S.compte.cj, email: em, tier: t });
+      ADM.list.forEach(function (c) { if (c.email === em) c.offert = t; }); admRender();
+      toast(t ? "Offre " + (t === "pro" ? "Pro" : "Essentiel") + " offerte à " + em + " ✓" : "Offre retirée pour " + em);
+    } catch (er) { toast(er.message); }
+  });
+
   function demarreCompte() {
     var t = sessionStorage.getItem("tw-alt-toast"); if (t) { sessionStorage.removeItem("tw-alt-toast"); setTimeout(function () { toast(t); }, 500); }
     var g = sessionStorage.getItem("tw-alt-login");
