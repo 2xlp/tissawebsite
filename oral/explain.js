@@ -1,6 +1,13 @@
 /* Clic sur un chiffre : petite bulle qui explique d'où il vient */
 (function(){
 const X=[
+ // Marché
+ ['marche','.mk-nums .card:nth-child(1) .mk-n',"<b>42 295 entreprises</b>Toutes les entreprises de Côte-d'Or en 2023 (dernier chiffre publié). Source : fiche statistique Bpifrance Création 2025."],
+ ['marche','.mk-nums .card:nth-child(2) .mk-n',"<b>7 438 créations en 2025</b>Chaque année, des milliers de nouvelles entreprises qui doivent trouver leurs premiers clients : notre réservoir de prospects. 66,4 % sont des micro-entreprises."],
+ ['marche','.mk-nums .card:nth-child(3) .mk-n',"<b>40 % utilisent l'IA</b>Baromètre France Num 2026, plus de 9 000 TPE-PME interrogées. Les petites entreprises sont prêtes pour un outil automatique."],
+ ['marche','.mk-nums .card:nth-child(4) .mk-n',"<b>0,06 %</b>25 abonnés visés en fin d'année 1 ÷ 42 295 entreprises de Côte-d'Or = 0,06 %. Même sans sortir du département, l'objectif est atteignable."],
+ // Positionnement
+ ['position','.pp.me span',"<b>TissaWeb</b>49 à 99 €/mois, et on fait tout : mise en place, mails, tri des réponses. Les logiciels sont moins chers mais à configurer soi-même ; les agences font tout mais coûtent 1 500 €/mois."],
  // Offre
  ['offre','.row.c3 .card:nth-child(1) .price',"<b>Mise en place, 99 € une fois</b>On importe ses prospects, on règle l'envoi et on écrit ses modèles de mails avec lui. Environ 2 h de travail pour nous."],
  ['offre','.row.c3 .card:nth-child(2) .price',"<b>Starter, 49 €/mois</b>100 prospects par mois et 1 relance. Un seul chantier gagné rembourse plusieurs mois d'abonnement."],
