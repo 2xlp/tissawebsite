@@ -117,26 +117,78 @@
         <div class="row2">
           <label>Secteur
             <select name="secteur" required>
-              <option value="commerce">Commerce / vente</option>
-              <option value="informatique">Informatique / développement</option>
-              <option value="marketing">Marketing / communication</option>
-              <option value="compta">Comptabilité / gestion / juridique</option>
-              <option value="rh">Ressources humaines / recrutement</option>
-              <option value="banque">Banque / assurance</option>
-              <option value="immobilier">Immobilier</option>
-              <option value="industrie">Industrie / production</option>
-              <option value="maintenance">Maintenance / automatisme</option>
-              <option value="btp">BTP / construction</option>
-              <option value="electricite">Électricité / énergie</option>
-              <option value="auto">Automobile / mécanique</option>
-              <option value="hotellerie">Hôtellerie / restauration</option>
-              <option value="beaute">Coiffure / esthétique</option>
-              <option value="logistique">Transport / logistique</option>
-              <option value="sante">Santé / pharmacie / optique</option>
-              <option value="social">Petite enfance / social</option>
-              <option value="paysage">Paysage / agriculture</option>
-              <option value="tourisme">Tourisme / événementiel</option>
-              <option value="autre">Autre : je tape un mot-clé</option>
+              <optgroup label="Commerce et vente">
+                <option value="commerce">Commerce / vente (tout)</option>
+                <option value="alimentation">Alimentation / métiers de bouche</option>
+                <option value="grande_distrib">Grande distribution / magasins</option>
+                <option value="mode">Mode / luxe / bijouterie</option>
+                <option value="ecommerce">E-commerce / vente à distance</option>
+                <option value="auto">Automobile / mécanique</option>
+              </optgroup>
+              <optgroup label="Bureau, gestion et conseil">
+                <option value="compta">Comptabilité / gestion</option>
+                <option value="juridique">Juridique / notariat</option>
+                <option value="rh">Ressources humaines / recrutement</option>
+                <option value="banque">Banque / assurance</option>
+                <option value="immobilier">Immobilier</option>
+                <option value="conseil">Conseil / études / ingénierie</option>
+              </optgroup>
+              <optgroup label="Numérique, com' et création">
+                <option value="informatique">Informatique / développement</option>
+                <option value="telecom">Télécoms / réseaux</option>
+                <option value="marketing">Marketing / communication</option>
+                <option value="design">Design / graphisme</option>
+                <option value="audiovisuel">Audiovisuel / photo / édition</option>
+                <option value="culture">Culture / spectacle / musées</option>
+              </optgroup>
+              <optgroup label="Industrie">
+                <option value="industrie">Industrie / production (tout)</option>
+                <option value="maintenance">Maintenance / automatisme</option>
+                <option value="metallurgie">Métallurgie / mécanique / usinage</option>
+                <option value="electronique">Électronique / électrotechnique</option>
+                <option value="aero">Aéronautique / ferroviaire / construction auto</option>
+                <option value="agroalimentaire">Industrie agroalimentaire</option>
+                <option value="chimie">Chimie / plasturgie / pharma industrielle</option>
+                <option value="bois">Bois / menuiserie / ameublement</option>
+              </optgroup>
+              <optgroup label="Bâtiment, énergie et environnement">
+                <option value="btp">BTP / construction (tout)</option>
+                <option value="architecture">Architecture / bureaux d'études</option>
+                <option value="electricite">Électricité / plomberie / chauffage</option>
+                <option value="environnement">Environnement / eau / déchets / énergie</option>
+              </optgroup>
+              <optgroup label="Services">
+                <option value="hotellerie">Hôtellerie / restauration</option>
+                <option value="tourisme">Tourisme / événementiel</option>
+                <option value="beaute">Coiffure / esthétique</option>
+                <option value="sport">Sport / loisirs / fitness</option>
+                <option value="proprete">Propreté / nettoyage</option>
+                <option value="securite">Sécurité / prévention</option>
+                <option value="services_personne">Services à la personne / aide à domicile</option>
+                <option value="animaux">Animaux / vétérinaire</option>
+              </optgroup>
+              <optgroup label="Santé, social et éducation">
+                <option value="sante">Pharmacie / optique / dentaire</option>
+                <option value="hopital">Hôpitaux / cliniques / médical</option>
+                <option value="social">Petite enfance / social</option>
+                <option value="education">Éducation / formation</option>
+              </optgroup>
+              <optgroup label="Transport et logistique">
+                <option value="logistique">Transport de marchandises / logistique</option>
+                <option value="transport_voyageurs">Transport de voyageurs / taxi / aérien</option>
+              </optgroup>
+              <optgroup label="Nature">
+                <option value="paysage">Paysage / jardins</option>
+                <option value="agriculture">Agriculture / viticulture / élevage</option>
+              </optgroup>
+              <optgroup label="Public et associations">
+                <option value="public">Mairies / services publics</option>
+                <option value="association">Associations / ONG / syndicats</option>
+              </optgroup>
+              <optgroup label="Autre">
+                <option value="toutes">Tous les secteurs</option>
+                <option value="autre">Je tape un mot-clé</option>
+              </optgroup>
             </select>
           </label>
           <label>Ville ou code postal<input name="ville" placeholder="ex. Dijon" autocomplete="address-level2" required></label>
