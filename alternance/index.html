@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>TissAlternance : trouve ton alternance, CV et lettre de motivation</title>
-<meta name="description" content="TissAlternance, l'appli gratuite pour trouver ton alternance : entreprises près de chez toi, création de CV en PDF, lettre de motivation à leur nom et rappel des relances.">
+<meta name="description" content="TissAlternance, l'appli pour trouver ton alternance, un CDI, un CDD ou un stage : entreprises près de chez toi, création de CV en PDF, lettre de motivation à leur nom et rappel des relances.">
 <link rel="canonical" href="https://tissaweb.fr/alternance/">
 <meta property="og:title" content="TissAlternance – trouve ton alternance">
 <meta property="og:description" content="Les entreprises autour de toi, ton CV, ta lettre écrite à leur nom, le suivi des relances. Gratuit.">
@@ -41,7 +41,7 @@
     <div class="hero-txt">
       <p class="eyebrow">Pour les étudiants qui cherchent une entreprise</p>
       <h1>Trouve ton alternance.<br><span>On fait le CV et les lettres.</span></h1>
-      <p class="lead">TissAlternance trouve les entreprises qui emploient autour de chez toi, crée ton CV, écrit ta lettre de motivation à leur nom et te dit quand relancer. Toi, tu relis et tu envoies.</p>
+      <p class="lead">Alternance, CDI, CDD ou stage : TissAlternance trouve les entreprises qui emploient autour de chez toi, crée ton CV, écrit ta lettre de motivation à leur nom et te dit quand relancer. Toi, tu relis et tu envoies.</p>
       <div class="hero-cta">
         <a class="btn btn-accent" href="#app" data-go="profil">Commencer, c'est 2 minutes</a>
         <span class="hero-note">Gratuit · sans inscription obligatoire.</span>
@@ -77,6 +77,16 @@
     </div>
     <form id="f-profil" class="form" novalidate>
       <fieldset>
+        <legend>Tu cherches</legend>
+        <div class="ct" role="radiogroup" aria-label="Type de contrat">
+          <label><input type="radio" name="contrat" value="alternance" checked><span>Alternance</span></label>
+          <label><input type="radio" name="contrat" value="cdi"><span>CDI</span></label>
+          <label><input type="radio" name="contrat" value="cdd"><span>CDD</span></label>
+          <label><input type="radio" name="contrat" value="stage"><span>Stage</span></label>
+        </div>
+        <small class="ct-info" id="ct-info">Tes mails, ta lettre et ton CV parlent d'alternance.</small>
+      </fieldset>
+      <fieldset>
         <legend>Toi</legend>
         <div class="row2">
           <label>Prénom<input name="prenom" autocomplete="given-name" required></label>
@@ -108,21 +118,21 @@
         </div>
         <div class="seg" role="radiogroup" aria-label="Accords dans la lettre">
           <span class="seg-l">Dans la lettre, écrire :</span>
-          <label><input type="radio" name="genre" value="f"> « étudiante »</label>
-          <label><input type="radio" name="genre" value="m" checked> « étudiant »</label>
+          <label><input type="radio" name="genre" value="f"> au féminin</label>
+          <label><input type="radio" name="genre" value="m" checked> au masculin</label>
         </div>
       </fieldset>
       <fieldset>
-        <legend>Ta formation</legend>
+        <legend id="lg-form">Ta formation</legend>
         <div class="row2">
-          <label>Diplôme préparé<input name="formation" placeholder="ex. BTS MCO, Bachelor RH" required></label>
+          <label><span id="lb-form">Diplôme préparé</span> <span class="opt" id="op-form" hidden>facultatif</span><input name="formation" placeholder="ex. BTS MCO, Bachelor RH" required></label>
           <label>École <span class="opt">facultatif</span><input name="ecole" placeholder="ex. Pigier Dijon"></label>
         </div>
         <div class="row2">
-          <label>Début de l'alternance<input name="debut" placeholder="ex. septembre 2027" required></label>
-          <label>Durée<input name="duree" placeholder="ex. 2 ans"></label>
+          <label><span id="lb-debut">Début de l'alternance</span><input name="debut" placeholder="ex. septembre 2027" required></label>
+          <label id="w-duree"><span id="lb-duree">Durée</span><input name="duree" placeholder="ex. 2 ans"></label>
         </div>
-        <label>Rythme <span class="opt">facultatif</span><input name="rythme" placeholder="ex. 2 jours en formation, 3 jours en entreprise"></label>
+        <label id="w-rythme">Rythme <span class="opt">facultatif</span><input name="rythme" placeholder="ex. 2 jours en formation, 3 jours en entreprise"></label>
       </fieldset>
       <fieldset>
         <legend>Ce que tu cherches</legend>

@@ -57,9 +57,26 @@
       else if (el.type === "checkbox") el.checked = !!p[el.name];
       else el.value = p[el.name];
     });
-    kw();
+    kw(); majContrat();
   }
   function kw() { $(".kw", F).hidden = F.secteur.value !== "autre"; }
+  var CT_INFO = { alternance: "Tes mails, ta lettre et ton CV parlent d'alternance.", cdi: "Tes mails, ta lettre et ton CV parlent d'un CDI. Pas besoin d'être en formation.", cdd: "Tes mails, ta lettre et ton CV parlent d'un CDD. Pas besoin d'être en formation.", stage: "Tes mails, ta lettre et ton CV parlent d'un stage avec convention de ton école." };
+  function ctForm() { var r = $('input[name="contrat"]:checked', F); return r ? r.value : "alternance"; }
+  function majContrat() {
+    var c = ctForm(), etu = c === "alternance" || c === "stage";
+    $("#ct-info").textContent = CT_INFO[c];
+    $("#lg-form").textContent = etu ? "Ta formation" : "Ta formation et tes dispos";
+    $("#lb-form").textContent = etu ? "Diplôme préparé" : "Dernier diplôme";
+    $("#op-form").hidden = etu; F.formation.required = etu;
+    F.formation.placeholder = etu ? "ex. BTS MCO, Bachelor RH" : "ex. Bac pro, CAP, BTS";
+    $("#lb-debut").textContent = c === "alternance" ? "Début de l'alternance" : c === "stage" ? "Début du stage" : "Disponible à partir de";
+    F.debut.placeholder = c === "alternance" ? "ex. septembre 2027" : c === "stage" ? "ex. avril 2027" : "ex. tout de suite, janvier 2027";
+    $("#w-duree").hidden = c === "cdi";
+    $("#lb-duree").textContent = c === "cdd" ? "Durée souhaitée" : "Durée";
+    F.duree.placeholder = c === "stage" ? "ex. 8 semaines" : c === "cdd" ? "ex. 6 mois" : "ex. 2 ans";
+    $("#w-rythme").hidden = c !== "alternance";
+  }
+  $$('input[name="contrat"]', F).forEach(function (r) { r.addEventListener("change", majContrat); });
   F.secteur.addEventListener("change", kw);
   F.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -75,7 +92,10 @@
     var err = $("#err-profil");
     if (bad.length) { err.textContent = "Il manque quelques infos (en rouge)."; err.hidden = false; bad[0].focus(); return; }
     err.hidden = true;
-    var changed = !S.profil || ["secteur", "ville", "q"].some(function (k) { return S.profil[k] !== p[k]; });
+    var changed = !S.profil || ["secteur", "ville", "q", "contrat"].some(function (k) { return S.profil[k] !== p[k]; });
+    if (p.contrat === "cdi") p.duree = "";
+    if (p.contrat !== "alternance") p.rythme = "";
+    if (S.cv && S.cv.titre && /^(Alternance|Recherche CDI|Recherche CDD|Stage) – /.test(S.cv.titre)) S.cv.titre = CTR[p.contrat || "alternance"].titre + " – " + cap1(p.metier);
     S.profil = p; save();
     if (changed) R.data = null;
     tab(S.cvMode ? "recherche" : "cv", true);
@@ -90,9 +110,9 @@
     b.addEventListener("click", function () { R.taille = b.dataset.taille; $$("[data-taille]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); renderList(); });
   });
   $("#r-more").addEventListener("click", function () { search(R.page + 1); });
-  function source() { return FL.lba && S.source !== "sirene" ? "lba" : "sirene"; }
+  function source() { return FL.lba && S.source !== "sirene" && K(S.profil) === "alternance" ? "lba" : "sirene"; }
   function majSource() {
-    $("#src-chips").hidden = !FL.lba;
+    $("#src-chips").hidden = !FL.lba || K(S.profil) !== "alternance";
     $$("[data-source]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.source === source())); });
     $("#tip-src").innerHTML = source() === "lba" ? "<b>Entreprises qui recrutent en alternance</b> (service public La bonne alternance) : offres publiées et entreprises qui embauchent souvent des alternants." : "<b>Astuce :</b> les PME répondent plus souvent aux candidatures spontanées. Les grands groupes passent plutôt par leur site carrières.";
   }
@@ -173,6 +193,15 @@
     };
   }
   function ecoleTxt(p) { return p.ecole ? " à " + p.ecole : ""; }
+  var CTR = {
+    alternance: { un: "un contrat en alternance", obj: "Candidature en alternance", titre: "Alternance" },
+    cdi: { un: "un CDI", obj: "Candidature – CDI", titre: "Recherche CDI" },
+    cdd: { un: "un CDD", obj: "Candidature – CDD", titre: "Recherche CDD" },
+    stage: { un: "un stage", obj: "Candidature de stage", titre: "Stage" },
+  };
+  function K(p) { return p && CTR[p.contrat] ? p.contrat : "alternance"; }
+  function unCt(p) { var k = K(p); return CTR[k].un + (k !== "alternance" && k !== "cdi" && p.duree ? " de " + p.duree : ""); }
+  function formaTxt(p) { return p.formation ? "Côté formation : " + p.formation + ecoleTxt(p) + "." : ""; }
   function signature(p) { return p.prenom + " " + p.nom + "\n" + p.tel + "\n" + p.email; }
   function qualitesTxt(p) {
     var q = (p.qualites || "").split(/[,;]+/).map(function (s) { return s.trim(); }).filter(Boolean).slice(0, 3);
@@ -189,6 +218,7 @@
   function actPrecise(x) { return x.activite && !GENERIQUE.test(x.activite) ? low1(x.activite) : ""; }
 
   function texteMail(p, x) {
+    if (K(p) !== "alternance") return texteMailEmploi(p, x);
     var t = T(p), n = nomCourt(x.nom), act = actPrecise(x), v = x.ville || "";
     var intros = [
       "Actuellement " + t.inscrit + " en " + p.formation + ecoleTxt(p) + ", je recherche une entreprise pour effectuer mon alternance à partir de " + p.debut + ", sur un poste de " + p.metier + ". " + n + (v ? ", à " + v + "," : "") + " correspond exactement au type d'entreprise dans laquelle je souhaite progresser.",
@@ -209,6 +239,31 @@
     parts.push("", "Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.", "", signature(p));
     return parts.join("\n");
   }
+  function texteMailEmploi(p, x) {
+    var t = T(p), k = K(p), n = nomCourt(x.nom), act = actPrecise(x), v = x.ville || "", un = unCt(p), intros;
+    if (k === "stage") intros = [
+      "Actuellement " + t.inscrit + " en " + p.formation + ecoleTxt(p) + ", je recherche " + un + " à partir de " + p.debut + ", sur un poste de " + p.metier + ". " + n + (v ? ", à " + v + "," : "") + " correspond exactement au type d'entreprise dans laquelle je souhaite apprendre.",
+      "Je me permets de vous adresser ma candidature pour " + un + " en tant que " + p.metier + ", dans le cadre de ma formation " + p.formation + ecoleTxt(p) + ", à partir de " + p.debut + ". " + (act ? "Votre activité (" + act + ") m'intéresse particulièrement" : "Votre entreprise m'intéresse particulièrement") + ".",
+    ];
+    else intros = [
+      "Je me permets de vous adresser ma candidature pour " + un + " en tant que " + p.metier + ", à partir de " + p.debut + ". " + (act ? "Votre activité (" + act + ") m'intéresse particulièrement" : "Votre entreprise m'intéresse particulièrement") + ", et j'aimerais mettre mon énergie au service de " + n + ".",
+      "Je recherche " + un + " sur un poste de " + p.metier + ", à partir de " + p.debut + ". " + n + (v ? ", à " + v + "," : "") + " correspond exactement au type d'entreprise que je souhaite rejoindre.",
+      "Disponible à partir de " + p.debut + ", je souhaite rejoindre " + n + " en tant que " + p.metier + (k === "cdi" ? " en CDI" : " en CDD" + (p.duree ? " (" + p.duree + ")" : "")) + ". Une entreprise comme la vôtre" + (v ? ", implantée à " + v + "," : "") + " est l'endroit idéal pour " + (k === "cdi" ? "m'investir sur la durée." : "être utile rapidement."),
+    ];
+    if (x.type === "offre" && x.titre) intros = ["Je vous adresse ma candidature pour votre offre « " + x.titre + " ». Je suis " + t.disponible + " à partir de " + p.debut + " et ce poste correspond exactement à ce que je recherche."];
+    var parts = [ouverture(x), "", intros[hash(keyOf(x)) % intros.length]];
+    var mid = [];
+    if (k !== "stage") { var fo = formaTxt(p); if (fo) mid.push(fo); }
+    var e = phraseExp(p); if (e) mid.push(e);
+    var q = qualitesTxt(p);
+    mid.push(q ? "On me décrit comme " + q + ", et j'ai envie de m'investir concrètement auprès de votre équipe." : "Je suis " + t.motive + " et j'ai envie de m'investir concrètement auprès de votre équipe.");
+    if (p.permis) mid.push("Je suis titulaire du permis B.");
+    parts.push("", mid.join(" "));
+    if (k === "stage") parts.push("", "La convention de stage est établie avec mon école : de votre côté, il n'y a qu'à la signer.");
+    parts.push("", "Vous trouverez mon CV en pièce jointe. Je serais " + t.ravi + " d'échanger avec vous, par téléphone ou dans vos locaux, au moment qui vous conviendra.");
+    parts.push("", "Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.", "", signature(p));
+    return parts.join("\n");
+  }
   function texteLettre(p, x) {
     var t = T(p), n = nomCourt(x.nom), act = actPrecise(x), v = x.ville || "";
     var q = qualitesTxt(p), e = phraseExp(p);
@@ -217,13 +272,18 @@
       p.prenom + " " + p.nom, p.tel, p.email, "",
       n, x.adresse || "", "",
       (v || p.ville) + ", le " + d, "",
-      "Objet : candidature pour un contrat en alternance – " + p.metier, "",
+      "Objet : candidature pour " + unCt(p) + " – " + p.metier, "",
       ouverture(x), "",
-      "Votre entreprise, " + n + (v ? ", installée à " + v : "") + (act ? " (activité : " + act + ")" : "") + ", est précisément le type de structure dans laquelle je souhaite apprendre le métier de " + p.metier + " : au contact des clients, des équipes et des vraies situations du quotidien.",
+      "Votre entreprise, " + n + (v ? ", installée à " + v : "") + (act ? " (activité : " + act + ")" : "") + ", est précisément le type de structure dans laquelle je souhaite " + (K(p) === "cdi" || K(p) === "cdd" ? "exercer" : "apprendre") + " le métier de " + p.metier + " : au contact des clients, des équipes et des vraies situations du quotidien.",
       "",
-      "Actuellement " + t.inscrit + " en " + p.formation + ecoleTxt(p) + ", je recherche une entreprise pour une alternance" + (p.duree ? " de " + p.duree : "") + " à partir de " + p.debut + "." + (p.rythme ? " Le rythme prévu est le suivant : " + low1(p.rythme).replace(/[.\s]+$/, "") + "." : "") + (e ? " " + e : "") + (q ? " Je suis " + q + ", des qualités que je souhaite mettre au service de votre équipe." : "") + (p.permis ? " Je suis titulaire du permis B." : ""),
+      (K(p) === "alternance" ? "Actuellement " + t.inscrit + " en " + p.formation + ecoleTxt(p) + ", je recherche une entreprise pour une alternance" + (p.duree ? " de " + p.duree : "") + " à partir de " + p.debut + "." + (p.rythme ? " Le rythme prévu est le suivant : " + low1(p.rythme).replace(/[.\s]+$/, "") + "." : "")
+        : K(p) === "stage" ? "Actuellement " + t.inscrit + " en " + p.formation + ecoleTxt(p) + ", je recherche " + unCt(p) + " à partir de " + p.debut + "."
+        : "Je recherche " + unCt(p) + " sur un poste de " + p.metier + ", à partir de " + p.debut + "." + (p.formation ? " " + formaTxt(p) : "")) + (e ? " " + e : "") + (q ? " Je suis " + q + ", des qualités que je souhaite mettre au service de votre équipe." : "") + (p.permis ? " Je suis titulaire du permis B." : ""),
       "",
-      "Rejoindre " + n + " me permettrait de mettre en pratique ma formation et de vous apporter une aide réelle, tout en me formant à vos méthodes. Le coût de ma formation est pris en charge par votre OPCO, et une aide de l'État à l'embauche d'un alternant peut s'appliquer selon les conditions en vigueur.",
+      K(p) === "alternance" ? "Rejoindre " + n + " me permettrait de mettre en pratique ma formation et de vous apporter une aide réelle, tout en me formant à vos méthodes. Le coût de ma formation est pris en charge par votre OPCO, et une aide de l'État à l'embauche d'un alternant peut s'appliquer selon les conditions en vigueur."
+        : K(p) === "stage" ? "Ce stage me permettrait de mettre en pratique ma formation et de vous apporter une aide réelle sur le terrain. La convention de stage est établie avec mon école."
+        : K(p) === "cdi" ? "Rejoindre " + n + " me permettrait de m'investir durablement dans une équipe et de vous apporter une aide concrète dès mon arrivée."
+        : "Rejoindre " + n + " me permettrait de vous apporter une aide concrète et rapidement opérationnelle, sur toute la durée du contrat.",
       "",
       "Je serais " + t.ravi + " de vous présenter ma motivation lors d'un entretien, à la date qui vous conviendra.",
       "",
@@ -234,13 +294,13 @@
   function texteRelance(p, x, s, auto) {
     var n = nomCourt(x.nom);
     return [ouverture(x), "",
-      "Je me permets de revenir vers vous au sujet de ma candidature pour un contrat en alternance au poste de " + p.metier + ", que je vous ai adressée le " + dateFr(s.date) + ".",
+      "Je me permets de revenir vers vous au sujet de ma candidature pour " + unCt(p) + " au poste de " + p.metier + ", que je vous ai adressée le " + dateFr(s.date) + ".",
       "", "Mon intérêt pour " + n + " est toujours le même, et je reste " + T(p).disponible + " pour un échange, même court, par téléphone ou dans vos locaux." + (auto ? "" : " Je vous joins à nouveau mon CV."),
       "", "Je vous remercie par avance pour votre retour et vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.",
       "", signature(p)].join("\n");
   }
   function objet(p, doc, x) {
-    return (doc === "relance" ? "Relance – " : "") + "Candidature en alternance – " + (x && x.titre ? x.titre : p.metier) + " – " + p.prenom + " " + p.nom;
+    return (doc === "relance" ? "Relance – " : "") + CTR[K(p)].obj + " – " + (x && x.titre ? x.titre : p.metier) + " – " + p.prenom + " " + p.nom;
   }
 
   /* ---------- panneau ---------- */
@@ -292,7 +352,7 @@
   function majMail() {
     var to = $("#sh-to").value.trim();
     var body = $("#sh-texte").value;
-    if (curDoc === "lettre") body = "Madame, Monsieur,\n\nVeuillez trouver ci-joint ma candidature (CV et lettre de motivation) pour un contrat en alternance.\n\nJe vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n" + signature(S.profil);
+    if (curDoc === "lettre") body = "Madame, Monsieur,\n\nVeuillez trouver ci-joint ma candidature (CV et lettre de motivation) pour " + unCt(S.profil) + ".\n\nJe vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n" + signature(S.profil);
     $("#sh-mail").href = "mailto:" + encodeURIComponent(to).replace(/%40/g, "@") + "?subject=" + encodeURIComponent($("#sh-objet").value) + "&body=" + encodeURIComponent(body);
   }
   ["#sh-to", "#sh-texte", "#sh-objet"].forEach(function (s) { $(s).addEventListener("input", majMail); });
@@ -489,7 +549,7 @@
   }
   function dataUrl(f) { return new Promise(function (ok, ko) { var r = new FileReader(); r.onload = function () { ok(String(r.result).replace(/^data:[^;]*;/, "data:application/pdf;")); }; r.onerror = function () { ko(r.error); }; r.readAsDataURL(f); }); }
   function corpsMail() {
-    return curDoc === "lettre" ? "Madame, Monsieur,\n\nVeuillez trouver ci-joint ma candidature (CV et lettre de motivation) pour un contrat en alternance.\n\nJe vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n" + signature(S.profil) : $("#sh-texte").value;
+    return curDoc === "lettre" ? "Madame, Monsieur,\n\nVeuillez trouver ci-joint ma candidature (CV et lettre de motivation) pour " + unCt(S.profil) + ".\n\nJe vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.\n\n" + signature(S.profil) : $("#sh-texte").value;
   }
   /* vérification de l'adresse de l'étudiant */
   var verifOk = null;
@@ -562,11 +622,13 @@
     var p = S.profil; if (!p) return;
     if (!S.cv.forms || !S.cv.forms.length) S.cv.forms = [{ diplome: p.formation, ecole: p.ecole, ville: p.ville, debut: "", fin: "En cours" }];
     if (!S.cv.exps || !S.cv.exps.length) S.cv.exps = [{}];
-    if (!S.cv.titre) S.cv.titre = "Alternance – " + cap1(p.metier);
+    if (!S.cv.titre) S.cv.titre = CTR[K(p)].titre + " – " + cap1(p.metier);
   }
   function accroche(p) {
     var q = qualitesTxt(p);
-    return (p.genre === "f" ? "Étudiante" : "Étudiant") + " en " + p.formation + ecoleTxt(p) + ", je recherche une alternance" + (p.duree ? " de " + p.duree : "") + " en tant que " + p.metier + " à partir de " + p.debut + ". " +
+    var k = K(p);
+    if (k === "cdi" || k === "cdd") return "Je recherche " + unCt(p) + " en tant que " + p.metier + ", à partir de " + p.debut + ". " + (q ? cap1(q) + ", j'ai" : "J'ai") + " envie de m'investir pleinement dans une équipe et d'être utile dès le premier jour.";
+    return (p.genre === "f" ? "Étudiante" : "Étudiant") + " en " + p.formation + ecoleTxt(p) + ", je recherche " + (k === "stage" ? "un stage" : "une alternance") + (p.duree ? " de " + p.duree : "") + " en tant que " + p.metier + " à partir de " + p.debut + ". " +
       (q ? cap1(q) + ", j'ai" : "J'ai") + " envie d'apprendre sur le terrain et de m'investir pleinement dans une équipe.";
   }
   var FIELDS = {
@@ -758,7 +820,7 @@
   });
   function kitMail() {
     var p = S.profil || {};
-    return "Objet : Merci pour notre entretien\n\nMadame, Monsieur,\n\nJe vous remercie pour le temps que vous m'avez accordé aujourd'hui. Notre échange m'a confirmé mon envie de rejoindre votre équipe en alternance" + (p.formation ? " dans le cadre de mon " + p.formation : "") + ".\n\nJe reste disponible pour tout complément d'information et serais ravi(e) de mettre ma motivation au service de votre entreprise.\n\nBien cordialement,\n" + ((p.prenom || "") + " " + (p.nom || "")).trim() + (p.tel ? "\n" + p.tel : "");
+    return "Objet : Merci pour notre entretien\n\nMadame, Monsieur,\n\nJe vous remercie pour le temps que vous m'avez accordé aujourd'hui. Notre échange m'a confirmé mon envie de rejoindre votre équipe" + (K(p) === "alternance" ? " en alternance" + (p.formation ? " dans le cadre de mon " + p.formation : "") : K(p) === "stage" ? " pour mon stage" : "") + ".\n\nJe reste disponible pour tout complément d'information et serais ravi(e) de mettre ma motivation au service de votre entreprise.\n\nBien cordialement,\n" + ((p.prenom || "") + " " + (p.nom || "")).trim() + (p.tel ? "\n" + p.tel : "");
   }
   $("#s-kit").addEventListener("click", function () {
     if (!isPro()) { paywall("kit"); return; }
