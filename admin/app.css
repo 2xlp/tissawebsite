@@ -580,3 +580,8 @@ code{background:var(--bg);padding:1px 6px;border-radius:5px;font-size:.85em}
 .lite3d .b3-plate{animation:none}
 .lite3d .sheet > section{animation:twFade .3s ease-out both!important}
 .lite3d .t3d{will-change:auto}
+
+.pf-h{font-size:1.05rem;margin:18px 0 8px}
+.pf-in{width:100%;min-width:70px;font:inherit;font-size:.85rem;padding:5px 7px;border:1px solid var(--line,#d9dfdc);border-radius:7px;background:transparent;color:inherit}
+.pf-in.num{text-align:right;max-width:90px}
+.pf-in:focus{outline:2px solid var(--accent,#3ddc97);outline-offset:0}

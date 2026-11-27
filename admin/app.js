@@ -1745,6 +1745,81 @@ async function start() {
   document.addEventListener("visibilitychange", async () => { if (!document.hidden) { try { await loadAll(); rerender(); } catch (e) {} } });
 }
 
+/* ================= Pubs & perfs (fonction tw-perfs) ================= */
+async function perfsCall(action, body) {
+  const C = window.TW_CONFIG, { data } = await sb.auth.getSession();
+  const r = await fetch(`${C.url}/functions/v1/tw-perfs?action=${action}`, { method: "POST", headers: { "Content-Type": "application/json", apikey: C.key, Authorization: "Bearer " + (data.session ? data.session.access_token : "") }, body: JSON.stringify(body || {}) });
+  const out = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(out.error || "Erreur " + r.status);
+  return out;
+}
+async function loadPerfs() {
+  S.perfsLoading = true;
+  try { S.perfs = await perfsCall("get"); S.perfs._t = Date.now(); S.perfsErr = null; }
+  catch (e) { S.perfsErr = e.message; }
+  S.perfsLoading = false;
+  if (S.view === "perfs") render();
+}
+VIEWS.perfs = function () {
+  if ((!S.perfs || Date.now() - S.perfs._t > 120000) && !S.perfsLoading && !S.perfsErr) loadPerfs();
+  const head = `<div class="head"><div><h1>Pubs &amp; perfs</h1><p>Tout ce qui a été lancé pour TissaWeb et TissAlternance, au même endroit.</p></div><button class="btn sm" type="button" data-perfs="reload">${S.perfsLoading ? "Mise à jour…" : "↻ Actualiser"}</button></div>`;
+  if (S.perfsErr) return head + `<p class="alert warn">Impossible de charger les perfs : ${esc(S.perfsErr)} <button class="btn sm" type="button" data-perfs="retry">Réessayer</button></p>`;
+  const P = S.perfs; if (!P) return head + `<div class="card"><p class="note">Chargement des chiffres…</p></div>`;
+  const R = P.reseaux || {}, C = P.campagnes || [], nb = (v) => (Math.round(+v || 0)).toLocaleString("fr-FR");
+  const tk = R.tiktok || { videos: [] }, gg = R.google || {}, fb = R.facebook || {};
+  const tkV = (tk.videos || []).reduce((a, v) => a + v.vues, 0), tkL = (tk.videos || []).reduce((a, v) => a + v.likes, 0);
+  const dep = C.reduce((a, c) => a + (+c.depense || 0), 0), bud = C.reduce((a, c) => a + (+c.budget || 0), 0);
+  const vues = C.reduce((a, c) => a + (+c.vues || 0), 0) + tkV + (gg.affichages || 0) + (fb.affichages || 0);
+  const clics = C.reduce((a, c) => a + (+c.clics || 0), 0) + (gg.clics_site || 0), res = C.reduce((a, c) => a + (+c.resultats || 0), 0);
+  const ins = P.inscriptions || [], mx = Math.max(1, ...ins.map((x) => x.n));
+  const bars = ins.map((b) => `<div class="sbar" title="${sDate(b.jour)} : ${b.n} inscription(s)"><i style="height:${b.n ? Math.max(4, Math.round((b.n / mx) * 100)) : 0}%"></i></div>`).join("");
+  const soc = R.manque ? `<p class="alert warn">Les réseaux (TikTok, fiche Google, page Facebook) ne sont pas encore branchés : il manque la clé Windsor.ai dans Supabase (secret <b>WINDSOR_API_KEY</b>).</p>` : R.erreur ? `<p class="alert warn">Réseaux indisponibles : ${esc(R.erreur)}</p>` : `
+  <div class="kpis">
+    <div class="kpi"><span>TikTok @tissaweb.fr</span><b class="num">${nb(tkV)}</b><span>vues · ${nb(tkL)} likes · ${(tk.videos || []).length} vidéo(s)${tk.erreur ? " · ⚠️" : ""}</span></div>
+    <div class="kpi"><span>Fiche Google</span><b class="num">${nb(gg.affichages)}</b><span>affichages · ${nb(gg.clics_site)} clics site · ${nb(gg.appels)} appels${gg.erreur ? " · ⚠️" : ""}</span></div>
+    <div class="kpi"><span>Page Facebook</span><b class="num">${nb(fb.affichages)}</b><span>affichages · ${nb(fb.interactions)} interactions · ${nb(fb.abonnes)} abonnés${fb.erreur ? " · ⚠️" : ""}</span></div>
+  </div>
+  <div class="card dash"><div class="card-h"><h2>Vidéos TikTok</h2><span class="note">30 derniers jours</span></div>
+    <div class="tablewrap"><table><thead><tr><th>Vidéo</th><th class="r">Vues</th><th class="r">Likes</th><th class="r">Coms</th><th class="r">Partages</th><th class="r">Profil</th></tr></thead><tbody>
+    ${(tk.videos || []).length ? tk.videos.map((v) => `<tr><td>${esc(v.titre.length > 70 ? v.titre.slice(0, 70) + "…" : v.titre)}</td><td class="r num">${nb(v.vues)}</td><td class="r num">${nb(v.likes)}</td><td class="r num">${nb(v.coms)}</td><td class="r num">${nb(v.partages)}</td><td class="r num">${nb(v.profil)}</td></tr>`).join("") : `<tr><td colspan="6"><span class="note">Aucune vidéo sur 30 jours.</span></td></tr>`}
+    </tbody></table></div></div>`;
+  const inp = (c, k, t) => `<input class="pf-in${t === "n" ? " num" : ""}" data-pfid="${c.id}" data-pfk="${k}" value="${esc(String(c[k] ?? ""))}" ${t === "n" ? 'inputmode="decimal"' : ""} aria-label="${k}">`;
+  return head + `
+  <div class="kpis">
+    <div class="kpi"><span>Dépensé en pubs</span><b class="num">${eur(dep)}</b><span>sur ${eur0(bud)} engagés</span></div>
+    <div class="kpi"><span>Vues tous canaux</span><b class="num">${nb(vues)}</b><span>pubs + TikTok + Google + Facebook (30 j)</span></div>
+    <div class="kpi"><span>Clics vers le site</span><b class="num">${nb(clics)}</b><span>${nb(res)} résultat(s) (devis, visites…)</span></div>
+    <div class="kpi"><span>Inscrits TissAlternance</span><b class="num">${nb(P.appli.comptes)}</b><span>${nb(P.appli.comptes7)} cette semaine · ${nb(P.appli.pass)} Pass (${eur0(P.appli.ca)})</span></div>
+  </div>
+  <h2 class="pf-h">Réseaux (en direct)</h2>
+  ${soc}
+  <div class="card dash"><div class="card-h"><h2>Pubs Meta, groupes et mails</h2><span class="note">Modifie les chiffres directement (relevés dans le gestionnaire de pubs Meta)</span></div>
+    <div class="tablewrap"><table style="min-width:760px"><thead><tr><th>Canal</th><th>Pub / publication</th><th>Statut</th><th class="r">Budget €</th><th class="r">Dépensé €</th><th class="r">Vues</th><th class="r">Clics</th><th class="r">Résultats</th><th></th></tr></thead><tbody>
+    ${C.map((c) => `<tr><td>${inp(c, "canal")}</td><td>${inp(c, "campagne")}</td><td>${inp(c, "statut")}</td><td class="r">${inp(c, "budget", "n")}</td><td class="r">${inp(c, "depense", "n")}</td><td class="r">${inp(c, "vues", "n")}</td><td class="r">${inp(c, "clics", "n")}</td><td class="r">${inp(c, "resultats", "n")}</td><td class="r"><button class="btn sm ghost danger" type="button" data-danger data-pfdel="${c.id}" title="Supprimer">✕</button></td></tr>`).join("")}
+    </tbody></table></div>
+    <button class="btn sm" type="button" data-perfs="add">+ Ajouter une pub</button></div>
+  <div class="grid2 even dash">
+    <div class="card"><div class="card-h"><h2>Inscriptions TissAlternance</h2><span class="note">14 jours</span></div><div class="sbars" style="--n:${ins.length}">${bars}</div><div class="sbar-l"><span>${ins.length ? sDate(ins[0].jour) : ""}</span><span>aujourd'hui</span></div></div>
+    <div class="card"><div class="card-h"><h2>Prospection TissaWeb</h2><span class="note">30 jours</span></div>
+      <div class="kpis"><div class="kpi"><span>Mails envoyés</span><b class="num">${nb(P.prospection.mailsOut)}</b></div><div class="kpi"><span>Réponses</span><b class="num">${nb(P.prospection.mailsIn)}</b></div><div class="kpi"><span>Intéressés</span><b class="num">${nb(P.prospection.interesses)}</b><span>${nb(P.prospection.clients)} client(s) · ${nb(P.prospection.prospects)} prospects</span></div></div></div>
+  </div>
+  <p class="note">Mis à jour ${ago(P.at)}. Google affiche ses chiffres avec 2 à 3 jours de retard.</p>`;
+};
+document.addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-perfs],[data-pfdel]"); if (!b) return;
+  try {
+    if (b.dataset.perfs === "reload" || b.dataset.perfs === "retry") { S.perfsErr = null; S.perfs && (S.perfs._t = 0); await loadPerfs(); return; }
+    if (b.dataset.perfs === "add") { const r = await perfsCall("add"); S.perfs.campagnes.push(r.ligne); render(); return; }
+    if (b.dataset.pfdel) { if (!confirm("Supprimer cette ligne ?")) return; await perfsCall("del", { id: b.dataset.pfdel }); S.perfs.campagnes = S.perfs.campagnes.filter((c) => c.id !== b.dataset.pfdel); render(); }
+  } catch (err) { toast(err.message || "Erreur", 4000); }
+});
+document.addEventListener("change", async (e) => {
+  const i = e.target.closest("[data-pfid]"); if (!i) return;
+  const k = i.dataset.pfk, v = i.classList.contains("num") ? String(i.value).replace(",", ".").replace(/\s/g, "") : i.value;
+  try { await perfsCall("save", { id: i.dataset.pfid, [k]: v }); const c = S.perfs.campagnes.find((x) => x.id === i.dataset.pfid); if (c) c[k] = i.classList.contains("num") ? +v || 0 : v; render(); toast("Enregistré ✓"); }
+  catch (err) { toast(err.message || "Erreur", 4000); }
+});
+
 /* ================= démarrage ================= */
 (function boot() {
   const C = window.TW_CONFIG || {};
