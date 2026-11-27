@@ -507,9 +507,13 @@
   <div class="sheet-in adm-in">
     <div class="sheet-head"><div><p class="sheet-k">Espace admin</p><h3 id="adm-t">Les comptes</h3><p class="sheet-sub" id="adm-stats">Chargement…</p></div><button class="x" data-close-adm aria-label="Fermer">×</button></div>
     <div class="sheet-body">
+      <div class="adm-tabs" role="tablist"><button type="button" data-at2="comptes" aria-pressed="true">Comptes</button><button type="button" data-at2="paiements" aria-pressed="false">Paiements</button></div>
+      <div id="adm-pay" class="adm-list" hidden></div>
+      <div id="adm-cpt">
       <input id="adm-q" type="search" placeholder="Chercher un nom, une adresse, une ville…" autocomplete="off">
       <div class="adm-f" role="group" aria-label="Filtrer"><button type="button" data-af="tous" aria-pressed="true">Tous</button><button type="button" data-af="gratuit" aria-pressed="false">Gratuit</button><button type="button" data-af="offert" aria-pressed="false">Offert</button><button type="button" data-af="paye" aria-pressed="false">Payé</button></div>
       <div id="adm-list" class="adm-list"></div>
+      </div>
     </div>
   </div>
 </div>

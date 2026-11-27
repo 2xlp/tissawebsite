@@ -985,6 +985,34 @@
     } catch (e) { $("#adm-stats").textContent = e.message; }
   }
   $("#adm-btn").addEventListener("click", admOuvre);
+  var PAY = [];
+  function payRender() {
+    var l = PAY.filter(function (p) { return !p.test; });
+    var tot = l.filter(function (p) { return !p.rembourse; }).reduce(function (a, p) { return a + (p.montant || 0); }, 0);
+    $("#adm-pay").innerHTML = '<p class="adm-tot">' + l.length + " paiement" + (l.length > 1 ? "s" : "") + " · <b>" + (tot / 100).toLocaleString("fr-FR", { style: "currency", currency: "EUR" }) + "</b> encaissés (hors remboursés)</p>" +
+      (l.length ? l.map(function (p) {
+        var m = ((p.montant || 0) / 100).toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
+        return '<div class="adm-c"><div class="adm-h"><span class="cp-av">€</span><div><b>' + (p.tier === "pro" ? "Pro" : "Essentiel") + " · " + m + '</b><small>' + esc(p.email) + "</small></div></div>" +
+          '<div class="meta"><span class="tag">Payé le ' + esc(dateCourte(p.le)) + "</span>" + (p.rembourse ? '<span class="tag">Remboursé le ' + esc(dateCourte(p.rembourse)) + "</span>" : "") + "</div>" +
+          (p.rembourse ? "" : '<button type="button" class="btn btn-wide adm-rb" data-rb="' + esc(p.id) + '" data-rbm="' + esc(m) + '" data-rbe="' + esc(p.email) + '">Rembourser ' + esc(m) + "</button>") + "</div>";
+      }).join("") : '<div class="empty"><b>Aucun paiement</b>Les achats Essentiel et Pro apparaîtront ici.</div>');
+  }
+  async function payCharge() {
+    $("#adm-pay").innerHTML = '<div class="skel"></div>';
+    try { var d = await api("admin_paiements", { cjeton: S.compte.cj }); PAY = d.paiements || []; payRender(); } catch (e) { $("#adm-pay").innerHTML = '<div class="empty"><b>Erreur</b>' + esc(e.message) + "</div>"; }
+  }
+  $$("[data-at2]").forEach(function (b) { b.addEventListener("click", function () {
+    $$("[data-at2]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    var p = b.dataset.at2 === "paiements"; $("#adm-pay").hidden = !p; $("#adm-cpt").hidden = p; $("#adm-t").textContent = p ? "Les paiements" : "Les comptes";
+    if (p) payCharge();
+  }); });
+  $("#adm-pay").addEventListener("click", async function (e) {
+    var b = e.target.closest("[data-rb]"); if (!b) return;
+    if (!confirm("Rembourser " + b.dataset.rbm + " à " + b.dataset.rbe + " ?\n\nL'argent revient sur sa carte (5 à 10 jours) et son offre est retirée. C'est définitif.")) return;
+    b.disabled = true; b.textContent = "Remboursement…";
+    try { await api("admin_rembourser", { cjeton: S.compte.cj, id: b.dataset.rb }); toast("Remboursé ✓ " + b.dataset.rbm + " à " + b.dataset.rbe); payCharge(); }
+    catch (er) { toast(er.message); b.disabled = false; b.textContent = "Rembourser " + b.dataset.rbm; }
+  });
   $$("[data-close-adm]").forEach(function (b) { b.addEventListener("click", function () { $("#admin").hidden = true; document.body.style.overflow = ""; }); });
   $("#adm-q").addEventListener("input", admRender);
   $$("[data-af]").forEach(function (b) { b.addEventListener("click", function () { ADM.f = b.dataset.af; $$("[data-af]").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); }); admRender(); }); });
