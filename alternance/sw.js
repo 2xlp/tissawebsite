@@ -1,6 +1,6 @@
 /* TissAlternance : fonctionne hors connexion pour l'interface (profil, CV, lettres, suivi).
    La recherche d'entreprises passe toujours par le réseau. Changer V à chaque mise à jour des fichiers. */
-var V = "ta-v19";
+var V = "ta-v20";
 var SHELL = ["/alternance/", "/alternance/app.css", "/alternance/app.js", "/alternance/cv.js", "/alternance/vendor/jspdf.umd.min.js",
   "/alternance/icon-192.png", "/alternance/fonts/onest-400.ttf", "/alternance/fonts/onest-600.ttf", "/alternance/fonts/onest-700.ttf", "/alternance/fonts/bricolage-700.ttf", "/alternance/fonts/bricolage-800.ttf", "/alternance/fonts/dmserif-400.ttf", "/alternance/fonts/archivoblack-400.ttf", "/fonts/fonts.css", "/fonts/onest-latin-wght-normal.woff2", "/fonts/bricolage-grotesque-latin-opsz-normal.woff2"];
 self.addEventListener("install", function (e) { e.waitUntil(caches.open(V).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); })); });
@@ -16,8 +16,7 @@ self.addEventListener("fetch", function (e) {
       .catch(function () { return caches.match("/alternance/"); }));
     return;
   }
-  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then(function (hit) {
-    var net = fetch(e.request).then(function (r) { if (r.ok) { var c = r.clone(); caches.open(V).then(function (x) { x.put(e.request, c); }); } return r; });
-    return hit || net;
-  }));
+  // réseau d'abord (jamais d'ancien app.js avec une nouvelle page), cache seulement hors connexion
+  e.respondWith(fetch(e.request).then(function (r) { if (r.ok) { var c = r.clone(); caches.open(V).then(function (x) { x.put(e.request, c); }); } return r; })
+    .catch(function () { return caches.match(e.request, { ignoreSearch: true }); }));
 });
