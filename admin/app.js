@@ -719,6 +719,15 @@ function sheetDemande(id) {
     ${mailBlock(m, { kind: "demande", id: d.id })}`;
   });
 }
+/* réglages émetteur : enregistrement automatique (évite de perdre l'IBAN si l'appli se recharge) */
+let cfgT = null;
+async function autoSaveEm() {
+  const c = JSON.parse(JSON.stringify(cfg())); c.emetteurs = { hugo: em("hugo"), lucas: em("lucas") };
+  document.querySelectorAll("[data-k][data-f]").forEach((i) => { let v = i.value.trim(); if (i.dataset.f === "acre") v = v === "1"; c.emetteurs[i.dataset.k][i.dataset.f] = v; });
+  await saveCfg(c); S.cfgDirty = false; toast("Enregistré automatiquement");
+}
+document.addEventListener("input", (e) => { if (!e.target.matches || !e.target.matches("[data-k][data-f]")) return; S.cfgDirty = true; clearTimeout(cfgT); cfgT = setTimeout(() => autoSaveEm().catch(() => {}), 900); });
+document.addEventListener("change", (e) => { if (!e.target.matches || !e.target.matches("[data-k][data-f]")) return; S.cfgDirty = true; clearTimeout(cfgT); autoSaveEm().catch(() => {}); });
 const PDF = ["pEnt", "pAct", "pTel", "pMail", "pAdr", "pAng", "pNotes"], PDK = (id) => "tw-pdraft-" + (id || "new");
 function pDraft(id) { try { return JSON.parse(localStorage.getItem(PDK(id)) || "null"); } catch (e) { return null; } }
 function pDraftDel(id) { try { localStorage.removeItem(PDK(id)); } catch (e) {} }
@@ -1742,7 +1751,7 @@ async function start() {
   syncMail(); setInterval(() => { if (!document.hidden) syncMail(); }, 120000);
   registerSW();
   // rafraîchit tout au retour sur l'appli
-  document.addEventListener("visibilitychange", async () => { if (!document.hidden) { try { await loadAll(); rerender(); } catch (e) {} } });
+  document.addEventListener("visibilitychange", async () => { if (!document.hidden) { try { await loadAll(); if (S.cfgDirty || document.querySelector("[data-k]:focus")) return; rerender(); } catch (e) {} } });
 }
 
 /* ================= Pubs & perfs (fonction tw-perfs) ================= */
